@@ -41,6 +41,7 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
-![image](https://github.com/user-attachments/assets/99dd2a78-0f70-4620-9b42-46231e42e9f0)
+![image](https://github.com/user-attachments/assets/ae3c1775-0aa1-457b-92cb-7ad6960a84f8)
+
 
 
