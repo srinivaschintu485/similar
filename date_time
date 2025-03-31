@@ -1,0 +1,26 @@
+import pandas as pd
+
+def parse_date(date_str):
+    """ Attempt to parse a single date given in different formats. """
+    for fmt in ("%d/%m-%Y", "%d-%m-%Y", "%d/%m/%Y","%d-%m/%Y"):
+        try:
+            return pd.to_datetime(date_str, format=fmt)
+        except ValueError:
+            continue
+    return pd.NaT  # Return Not a Time if all formats fail
+
+def calculate_date_difference(source, destination):
+    source_date = parse_date(source)
+    destination_date = parse_date(destination)
+    
+    if pd.isna(source_date) or pd.isna(destination_date):
+        return 0  # If either date fails to parse, return 0
+
+    date_difference = (destination_date - source_date).days
+    return 1 if date_difference <= 1 else 0
+
+# Example usage:
+source_date = "2-1/2020"
+destination_date = "2/1/2020"
+label = calculate_date_difference(source_date, destination_date)
+print(label)  # Output will be 1 if the dates are within 1 day of each other, else 0
