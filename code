@@ -1,0 +1,69 @@
+import difflib
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import udf, col
+from pyspark.sql.types import FloatType, IntegerType
+from IPython.display import display
+import ipywidgets as widgets
+
+# Initialize Spark Session
+spark = SparkSession.builder.appName("Text Comparison Application").getOrCreate()
+
+def ngrams(string, n=2):
+    string = ''.join(e for e in string.lower() if e.isalnum())
+    ngrams = zip(*[string[i:] for i in range(n)])
+    return [''.join(ngram) for ngram in ngrams]
+
+def fuzzy_ngram_match(word1, word2, n=2):
+    ngrams1 = ngrams(word1, n)
+    ngrams2 = ngrams(word2, n)
+    similarity = difflib.SequenceMatcher(None, ngrams1, ngrams2).ratio()
+    return similarity
+
+@udf(returnType=FloatType())
+def fuzzy_udf(word1, word2):
+    return fuzzy_ngram_match(word1, word2)
+
+def create_dataframe(word1, word2):
+    df_input = spark.createDataFrame([(word1, word2)], ["Source", "Destination"])
+    return df_input.withColumn("Fuzzy_Score", fuzzy_udf(col("Source"), col("Destination")))
+
+def model_predict(df_input):
+    # Simulate model prediction
+    df_input = df_input.withColumn("Prediction", (df_input["Fuzzy_Score"] * 10).cast(IntegerType()))
+    return df_input
+
+text_source = widgets.Text(value='citibank', description='Source:', placeholder='Type something')
+text_destination = widgets.Text(value='citi bank', description='Destination:', placeholder='Type something')
+button_predict = widgets.Button(description='Predict')
+output = widgets.Output()
+
+def on_button_clicked(b):
+    with output:
+        output.clear_output(wait=True)
+        word1 = text_source.value.strip()
+        word2 = text_destination.value.strip()
+        df_input = create_dataframe(word1, word2)
+        df_result = model_predict(df_input)
+        
+        similarity_score = df_result.select("Fuzzy_Score").collect()[0][0]
+        print(f'Similarity Score: {similarity_score:.2f}')
+        
+        prediction = df_result.select("Prediction").collect()[0][0]
+        labels = {
+            0: 'No Match', 1: 'Extra Space Issues', 2: 'Special Character Differences',
+            3: 'Case Sensitivity', 4: 'Leading Zero Issue', 5: 'Matched Currency Name',
+            6: 'Scientific Notation Difference', 7: 'Currency Symbol Difference',
+            8: 'Rounded Off Numbers', 9: 'Negative vs Positive', 10: 'Thousands Separator Difference'
+        }
+        
+        # Filter out 'No Match' if its score is less than 7
+        top_predictions = sorted([(i, labels[i]) for i in range(11)], key=lambda x: -x[0])[:5]
+        if prediction < 7:
+            top_predictions = [pred for pred in top_predictions if pred[1] != 'No Match']
+        
+        print("Top Predictions:")
+        for pred in top_predictions:
+            print(pred[1])
+
+button_predict.on_click(on_button_clicked)
+display(widgets.VBox([text_source, text_destination, button_predict, output]))
