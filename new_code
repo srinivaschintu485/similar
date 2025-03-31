@@ -1,0 +1,26 @@
+import heapq
+
+def on_button_clicked(b):
+    with output:
+        output.clear_output(wait=True)
+        word1 = text_source.value.strip()
+        word2 = text_destination.value.strip()
+        df_input = prepare_features(word1, word2)
+        prediction = model.transform(df_input).select("prediction").collect()[0][0]
+        probs = model.transform(df_input).select("probability").collect()[0][0]
+
+        ngram_score = fuzzy_ngram_match(word1, word2)
+        print(f'Similarity Score: {ngram_score:.2f}')
+
+        # Get top 5 labels and their probabilities
+        top_labels = heapq.nlargest(5, enumerate(probs), key=lambda x: x[1])
+
+        # Print top labels, dropping "No Match" if its probability < 0.7
+        for idx, prob in top_labels:
+            label = labels[idx]
+            if label == 'No Match' and prob < 0.7:
+                continue
+            print(f'Label: {label}, Probability: {prob:.2f}')
+        
+button_predict.on_click(on_button_clicked)
+display(widgets.VBox([text_source, text_destination, button_predict, output]))
