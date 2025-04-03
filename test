@@ -1,0 +1,43 @@
+import pandas as pd
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import udf, col
+from pyspark.sql.types import StringType, ArrayType
+
+# Initialize Spark session
+spark = SparkSession.builder.appName("ExcelDataProcessing").getOrCreate()
+
+# Read Excel file into Spark DataFrame specifically targeting 'breakProfileReport' sheet
+df = spark.read.format("com.crealytics.spark.excel") \
+    .option("useHeader", "true") \
+    .option("treatEmptyValuesAsNulls", "true") \
+    .option("inferSchema", "true") \
+    .load("path_to_your_excel_file.xlsx")
+
+# Assuming model and similarity score calculation are defined elsewhere and already loaded into the session
+# UDF to get top 3 predictions
+@udf(returnType=ArrayType(StringType()))
+def get_top_3_predictions(prob_vector):
+    import numpy as np
+    top_indices = np.argsort(prob_vector)[-3:][::-1]  # Get indices of top 3 probabilities
+    top_labels = [labels[idx] for idx in top_indices if prob_vector[idx] > 0.5]  # Filter labels with prob > 0.5
+    return top_labels[:3]  # Ensure only three labels are returned
+
+# Assuming similarity calculation function is defined as calculate_similarity_udf
+# Add predictions and similarity score to DataFrame
+df = df.withColumn("Similarity_Percentage", calculate_similarity_udf(col("SOURCE_DATA"), col("TARGET_DATA"))) \
+       .withColumn("Top_Predictions", get_top_3_predictions(model.transform(df).select("probability")))
+
+# Split the top predictions into separate columns
+df = df.withColumn("Top_Prediction_1", df["Top_Predictions"].getItem(0)) \
+       .withColumn("Top_Prediction_2", df["Top_Predictions"].getItem(1)) \
+       .withColumn("Top_Prediction_3", df["Top_Predictions"].getItem(2))
+
+# Select relevant columns to output
+df_final = df.select("SOURCE_DATA", "TARGET_DATA", "Similarity_Percentage", "Top_Prediction_1", "Top_Prediction_2", "Top_Prediction_3")
+
+# Convert back to Pandas DataFrame and save to new Excel file
+result_pdf = df_final.toPandas()
+result_pdf.to_excel("output_with_predictions.xlsx", index=False)
+
+# Stop the Spark session
+spark.stop()
