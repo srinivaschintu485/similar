@@ -1,0 +1,38 @@
+from pyspark.sql.functions import udf
+from pyspark.sql.types import ArrayType, StringType, StructField, StructType, FloatType
+
+# Define your labels
+labels = ["No Match", "Extra Space Issues", "Special Character Differences", "Case Sensitivity", "Leading Zero Issue", "Currency Symbol Difference", "Null", "Rounded OFF Numbers", "Negative vs Positive", "Thousands Separator Difference"]
+
+def get_top_3_labels(prob_vector):
+    import numpy as np
+
+    # Combine labels and probabilities into a list of tuples
+    labeled_probs = list(zip(labels, prob_vector))
+    
+    # Filter out 'No Match' if probability < 0.6
+    filtered_probs = [item for item in labeled_probs if not (item[0] == "No Match" and item[1] < 0.6)]
+    
+    # Sort based on probability in descending order
+    sorted_probs = sorted(filtered_probs, key=lambda x: x[1], reverse=True)
+    
+    # Get the top 3 items
+    top_3 = sorted_probs[:3]
+    
+    # Return list of StructType or another suitable format
+    return [(label, float(prob)) for label, prob in top_3]
+
+# Define the schema for the UDF
+schema = ArrayType(StructType([
+    StructField("label", StringType(), False),
+    StructField("probability", FloatType(), False)
+]))
+
+# Register the UDF
+udf_top_3 = udf(get_top_3_labels, schema)
+
+# Apply the UDF to the DataFrame
+df_with_top_3 = df.withColumn("top_3_labels", udf_top_3(df.probability))
+
+# Show the results
+df_with_top_3.select("top_3_labels").show(truncate=False)
