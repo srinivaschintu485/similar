@@ -145,13 +145,18 @@ For questions, contributions, or access to internal notebooks, please contact th
 
 © 2025 Citi Internal – Confidential and Proprietary.
 
-<div style="padding: 1rem; border: 1px solid #ccc; border-radius: 10px; box-shadow: 4px 4px 8px rgba(0,0,0,0.1); background: linear-gradient(#f9f9f9, #fff);">
-  <h3>💡 What This Project Does</h3>
-  <ul>
-    <li>Detects numeric/textual discrepancies in massive datasets</li>
-    <li>Uses PySpark for scalable transformation</li>
-    <li>Outputs clean, tagged data ready for downstream models</li>
-  </ul>
-</div>
+High-Level Summary of Findings
+Precert – AIML is an automated solution that compares structured data from source and target files to identify and explain discrepancies. The system is designed to reduce the manual effort required to investigate data mismatches across enterprise systems. It processes input files in formats such as .xlsx, .csv, and .txt, calculates a similarity index, and predicts the root causes of differences using a machine learning ensemble.
+
+Over 10 predefined discrepancy categories—including case sensitivity, special character variations, numerical precision mismatches, and scientific notation differences—are considered during analysis. Each record is evaluated using multiple classification models, and the final output includes the top three predicted reasons for mismatch along with confidence scores. These insights are used by Citi Bank teams to improve data quality and reduce manual reconciliation.
+
+Model Framework
+The system receives metadata and file references via Kafka, processes the data using Spark, and applies a set of engineered rules and classifiers. Each source–target record pair is passed through an ensemble of three machine learning models—Random Forest, Linear SVM, and Logistic Regression.
+
+When all models agree on a discrepancy label, the system finalizes that prediction. If two models agree and one differs, the majority label is selected as the final disposition. In cases where all three models disagree, the result is escalated for manual review or flagged for further investigation.
+
+Final predictions are exported in Excel format and structured to match the input layout for traceability. This ensures consistent handling across systems and improves downstream processing by business users and data stewards.
+
+
 
 
