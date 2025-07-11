@@ -145,6 +145,13 @@ For questions, contributions, or access to internal notebooks, please contact th
 
 © 2025 Citi Internal – Confidential and Proprietary.
 
-
+<div style="padding: 1rem; border: 1px solid #ccc; border-radius: 10px; box-shadow: 4px 4px 8px rgba(0,0,0,0.1); background: linear-gradient(#f9f9f9, #fff);">
+  <h3>💡 What This Project Does</h3>
+  <ul>
+    <li>Detects numeric/textual discrepancies in massive datasets</li>
+    <li>Uses PySpark for scalable transformation</li>
+    <li>Outputs clean, tagged data ready for downstream models</li>
+  </ul>
+</div>
 
 
