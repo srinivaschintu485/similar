@@ -181,20 +181,24 @@ Result: reduced firefighting, increased trust in reporting pipelines, and faster
 ![Include animation or chart here - e.g., input → Kafka → Spark ML → Prediction → Kafka Output]
 
 🔁 Intelligent Workflow
-Stage	What Happens
-Producer	Publishes JSON messages to Kafka with metadata + file paths (Excel, CSV, TXT)
-Consumer	Consumes from Kafka, fetches files, and compares source vs. target datasets
-Feature Engine	Extracts structured feature vectors representing differences
-ML Model	Predicts similarity index + mismatch reasons using trained classifiers
-Kafka Output	Sends structured predictions back downstream — with JSON formatted exactly like input
+| Stage              | What Happens                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| **Producer**       | Publishes JSON messages to Kafka with metadata + file paths (Excel, CSV, TXT)         |
+| **Consumer**       | Consumes from Kafka, fetches files, and compares source vs. target datasets           |
+| **Feature Engine** | Extracts structured feature vectors representing differences                          |
+| **ML Model**       | Predicts similarity index + mismatch reasons using trained classifiers                |
+| **Kafka Output**   | Sends structured predictions back downstream — with JSON formatted exactly like input |
+
 
 🧠 Core Innovations
-Innovation	Impact
-ML-Driven Mismatch Reasoning	Understand why records differ, not just that they do
-Quantified Similarity Index	Track and score trust in data at a granular level
-Multi-Prediction Support	Offers ranked predictions for interpretability
-Schema-Agnostic Design	Works across Excel, CSV, JSON – plug-and-play compatibility
-Kafka Feedback Loop	Enables downstream systems to act immediately on insights
+| Innovation                       | Impact                                                      |
+| -------------------------------- | ----------------------------------------------------------- |
+| **ML-Driven Mismatch Reasoning** | Understand *why* records differ, not just that they do      |
+| **Quantified Similarity Index**  | Track and score trust in data at a granular level           |
+| **Multi-Prediction Support**     | Offers ranked predictions for interpretability              |
+| **Schema-Agnostic Design**       | Works across Excel, CSV, JSON – plug-and-play compatibility |
+| **Kafka Feedback Loop**          | Enables downstream systems to act immediately on insights   |
+
 
 📤 Outputs That Matter
 Result Format:
@@ -215,13 +219,15 @@ Faster root-cause resolution
 Integrated with existing Kafka-based architecture
 
 ⚙️ What Powers This System
-Layer	Tech Stack Used
-Messaging	Apache Kafka (Producers & Consumers)
-Compute	Spark (pyspark-based feature processing)
-Prediction Layer	Scikit-learn / Spark MLlib (Random Forest, SVM, etc.)
-Orchestration	Manual (now), future: Lightspeed + Helm + Docker + Oozie
-Storage	Oracle for processed result persistence
-Codebase	Python 3.10+, modular, CI/CD-ready, supports spark-submit
+| Layer                | Tech Stack Used                                             |
+| -------------------- | ----------------------------------------------------------- |
+| **Messaging**        | Apache Kafka (Producers & Consumers)                        |
+| **Compute**          | Spark (pyspark-based feature processing)                    |
+| **Prediction Layer** | Scikit-learn / Spark MLlib (Random Forest, SVM, etc.)       |
+| **Orchestration**    | Manual (now), future: Lightspeed + Helm + Docker + Oozie    |
+| **Storage**          | Oracle for processed result persistence                     |
+| **Codebase**         | Python 3.10+, modular, CI/CD-ready, supports `spark-submit` |
+
 
 🛠 Technical Details (with Security & Scalability in Mind)
 SSL-secured Kafka config (kafka_props.properties)
@@ -233,12 +239,14 @@ Containerizable via Docker; Helm support planned for OpenShift deployments
 Pythonic, lint-checked (flake8), testable (pytest), and CI/CD-compliant structure
 
 📊 Current Status vs. Future-Ready Roadmap
-Area	Current State	Planned Enhancements
-Execution	Manual via CLI Spark scripts	CI/CD via Lightspeed, Docker, Helm
-Prediction Scope	Limited to ~3 categories	Expanded ML labels via retraining
-Release Management	No formal build or changelog	Versioned .whl or container releases
-Data Sources	Local files (xlsx/csv/txt)	Expand to APIs and live databases
-Deployment Target	Dev server only	Full OpenShift deployment
+| Area               | Current State                | Planned Enhancements                   |
+| ------------------ | ---------------------------- | -------------------------------------- |
+| Execution          | Manual via CLI Spark scripts | CI/CD via Lightspeed, Docker, Helm     |
+| Prediction Scope   | Limited to \~3 categories    | Expanded ML labels via retraining      |
+| Release Management | No formal build or changelog | Versioned `.whl` or container releases |
+| Data Sources       | Local files (xlsx/csv/txt)   | Expand to APIs and live databases      |
+| Deployment Target  | Dev server only              | Full OpenShift deployment              |
+
 
 🌟 The Vision
 Imagine a future where:
