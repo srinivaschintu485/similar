@@ -345,18 +345,21 @@ Aligned with the feature extraction logic used in the model
 3.3 Input Data Checks
 To ensure the quality of this training data, the following controls were applied:
 
-Check Type	Description
-Schema validation	Ensured all required fields (value_1, value_2, label) were present
-Type coercion	Applied numeric_check, scientific_notation_check etc. to validate inputs
-Mutual exclusivity	Only one mismatch type per row to prevent label confusion
-Category coverage	All defined mismatch types were included with roughly equal counts
-Manual sampling	Random sample of 200 records was manually verified for labeling accuracy
+| Check Type             | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| **Schema validation**  | Ensured all required fields (`value_1`, `value_2`, `label`) were present     |
+| **Type coercion**      | Applied `numeric_check`, `scientific_notation_check` etc. to validate inputs |
+| **Mutual exclusivity** | Only one mismatch type per row to prevent label confusion                    |
+| **Category coverage**  | All defined mismatch types were included with roughly equal counts           |
+| **Manual sampling**    | Random sample of 200 records was manually verified for labeling accuracy     |
+
 
 3.4 Data Weaknesses and Compensating Controls
-Identified Weakness	Potential Impact	Compensating Control
-Lack of real-world noise	May underperform on ambiguous or noisy records	Future retraining planned with labeled production data
-Synthetically “perfect” mismatches	May overfit to obvious formatting differences	Introduced slight randomness in spacing, casing, decimals
-No multi-label examples	Cannot detect compound errors (e.g., currency + space)	Considered out of scope for v1; handled by rule layer
+| Identified Weakness                | Potential Impact                                       | Compensating Control                                      |
+| ---------------------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
+| Lack of real-world noise           | May underperform on ambiguous or noisy records         | Future retraining planned with labeled production data    |
+| Synthetically “perfect” mismatches | May overfit to obvious formatting differences          | Introduced slight randomness in spacing, casing, decimals |
+| No multi-label examples            | Cannot detect compound errors (e.g., currency + space) | Considered out of scope for v1; handled by rule layer     |
 
 3.5 Justification of Data Suitability
 Despite being synthetic, the training data was purposefully constructed to mirror the types of issues frequently encountered during real-world system reconciliations. These include:
