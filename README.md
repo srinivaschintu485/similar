@@ -265,101 +265,114 @@ This project is a step in that direction — transforming raw comparisons into c
 
 
 
+Chapter 3: Model Data
+This chapter documents the training data used to develop the model, including its origin, preparation, quality controls, assumptions, and justification for its use. The model's objective is to classify mismatches between structured source and target fields into predefined root cause categories such as leading zero issue, rounded number, currency format difference, etc. The quality and structure of the training data directly influence the model’s accuracy, generalizability, and interpretability.
 
-📌 Project Overview
-Purpose:
-This service processes JSON input messages to extract metadata and analyze structured data (e.g., XLSX, CSV, TXT). The system identifies differences between a source and target dataset and uses a Machine Learning (ML) model to:
+This chapter describes the dataset used to develop and train the model. It covers the source of the training data, the process used to generate and label it, the checks implemented to ensure its quality, and the rationale for using synthetically generated data to meet the modeling objectives.
 
-Generate a similarity index
+This model is designed to classify mismatches between structured data values — such as numbers, names, codes — into meaningful root causes (e.g., leading zero, case sensitivity, scientific notation). These mismatch types often appear in enterprise reconciliation tasks where the same record can appear differently across systems due to formatting, locale, or transformation rules.
 
-Predict the reasons for mismatches using pre-trained logic
+3.1 Data Sources
+The training data for this model was synthetically generated using Python scripts built to simulate real-world discrepancies across structured fields. Each training example consists of:
 
-Provide actionable insights to address discrepancies
+A pair of values:
 
-Problem Statement:
-Manual comparison of datasets is time-consuming, error-prone, and lacks context. This service introduces automation and intelligence, helping users understand why data differences occur — not just where.
+value_1: a clean source value
 
-End Users:
-Citi employees across multiple functions rely on the system to interpret and act upon discrepancies in their operational and reporting pipelines.
+value_2: a modified version of the same, with a specific type of discrepancy
 
-🧩 Project Components
-🔹 Core System Components
-Component	Role
-Kafka	Acts as the messaging backbone, enabling real-time communication between producer and consumer services.
-Oracle Database	Stores processed data and intermediate outputs for future audit and analysis.
-ML Model	Applies classification and similarity scoring to help diagnose dataset differences.
+A label: the known reason for the discrepancy (e.g., "Leading Zero", "Rounded Off")
 
-🔄 Data Flow
-🟢 Producer
-Sends JSON messages into Kafka.
+The synthetic data was generated in a controlled and labeled environment, allowing for full traceability and coverage across edge cases. Rather than depending solely on production logs — which are often skewed or unlabeled — this approach ensures that:
 
-Messages include metadata and file paths for the input files (Excel, CSV, TXT).
+All mismatch categories are equally represented
 
-🟠 Consumer
-Listens to Kafka topics, reads incoming messages.
+The model can learn from clear, unambiguous examples
 
-Downloads the source and target datasets.
+The feature engineering logic is aligned with label assignment
 
-Performs preprocessing and sends relevant features to the ML model.
+Mismatch categories covered include:
 
-🧠 Machine Learning
-Compares the datasets using engineered features.
+Leading Zero (e.g., "00123" vs "123")
 
-Calculates a similarity index to reflect closeness.
+Currency Format Differences (e.g., "$100" vs "100.00")
 
-Predicts reasons for mismatches using labeled training data.
+Negative vs Positive (e.g., "-50" vs "50")
 
-Supports multi-class predictions (up to 3 predictions per input for user insights).
+Scientific Notation (e.g., "1.2e-3" vs "0.0012")
 
-🔵 Downstream
-Outputs are sent back to Kafka in the same format as the input message, allowing downstream systems to consume enriched results.
+Extra Space, Case Sensitivity, Thousand Separator Differences, etc.
 
-📤 Output & Evaluation
-Output Format:
-JSON containing similarity scores and predicted reasons for discrepancies (aligned to input schema for consistency).
+Matched Values (used as control)
 
-Success Metrics:
+This dataset provides a realistic foundation for learning how discrepancies typically present in structured enterprise data.
 
-Accuracy of predictions
+3.2 Data Preparation and Preprocessing
+The synthetic dataset was created using a suite of Python functions (developed under the JEDI_ML framework) that each simulate a different type of transformation. The generation logic applies specific rules to produce:
 
-Interpretability of mismatch reasons
+One type of error per row
 
-Usability of the similarity score in business pipelines
+Clearly labeled discrepancy type
 
-⚙️ Technical Details
-🔧 Configurations
-Kafka properties (SSL, serializers, deserializers) are defined in kafka_props.properties.
+Randomized but realistic values
 
-Oracle database is integrated for persistent storage of enriched data.
+For example:
 
-🛠 Tools and Libraries
-Python libraries: kafka-python, configparser, json, logging
+python
+Copy
+Edit
+value_1 = "1234"
+value_2 = "1,234"
+label = "Thousand Separator"
+These records were stored in CSV format, and all preprocessed records went through:
 
-ML stack: [details not shown, likely scikit-learn, pandas, Spark ML]
+Whitespace and case normalization
 
-⚠️ Known Limitations
-Currently supports a limited number of prediction categories due to scope of training data.
+Conversion of numeric fields to Decimal for precision
 
-Broader prediction coverage requires retraining with diverse datasets.
+Flagging of unusable rows (e.g., nulls, invalid types)
 
-🚀 Deployment & Execution
-Current State:
-Both Producer and Consumer are triggered via command-line Spark scripts (spark-submit) on a dev server.
+Balancing of class labels to ensure no overrepresentation of "Matched"
 
-Planned Enhancements:
-Migrate to a fully automated CI/CD pipeline using Apache Oozie or Lightspeed (for scheduling and deployment).
+The result was a clean and balanced dataset where each row is:
 
-Containerize the solution using Docker + Helm for OpenShift deployments.
+Valid
 
-🌟 Future Roadmap
-Enhancement	Purpose
-Expand training data coverage	Improve model generalization across varied use cases
-Implement CI/CD & Helm	Automate deployment and versioned release to OpenShift
-Add testing & SonarQube to build pipeline	Improve maintainability, traceability, and security
-Improve dashboard visualizations	Empower users with interpretable ML insights
+Labeled with high confidence
 
+Aligned with the feature extraction logic used in the model
 
+3.3 Input Data Checks
+To ensure the quality of this training data, the following controls were applied:
 
+Check Type	Description
+Schema validation	Ensured all required fields (value_1, value_2, label) were present
+Type coercion	Applied numeric_check, scientific_notation_check etc. to validate inputs
+Mutual exclusivity	Only one mismatch type per row to prevent label confusion
+Category coverage	All defined mismatch types were included with roughly equal counts
+Manual sampling	Random sample of 200 records was manually verified for labeling accuracy
 
+3.4 Data Weaknesses and Compensating Controls
+Identified Weakness	Potential Impact	Compensating Control
+Lack of real-world noise	May underperform on ambiguous or noisy records	Future retraining planned with labeled production data
+Synthetically “perfect” mismatches	May overfit to obvious formatting differences	Introduced slight randomness in spacing, casing, decimals
+No multi-label examples	Cannot detect compound errors (e.g., currency + space)	Considered out of scope for v1; handled by rule layer
 
+3.5 Justification of Data Suitability
+Despite being synthetic, the training data was purposefully constructed to mirror the types of issues frequently encountered during real-world system reconciliations. These include:
 
+Data type mismatches due to system formatting
+
+Semantic differences masked by syntax (e.g., "-0.5" vs "0.5")
+
+False mismatches caused by cosmetic variations (spaces, commas)
+
+The dataset is suitable for modeling because:
+
+It is fully labeled with known ground truth
+
+It offers controlled diversity across all key discrepancy types
+
+It allows for clear evaluation and explainability, aligning with MRM principles
+
+In future iterations, the synthetic data will be augmented with real mismatches labeled from production scenarios, creating a hybrid training set that captures both real-world complexity and rule-driven clarity.
