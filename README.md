@@ -137,3 +137,106 @@ The engine detects and categorizes the following types of data discrepancies:
 - 📦 Model/data version control with MLflow or DVC  
 - 📈 Visualization dashboard to monitor discrepancy trends
 
+ RAG-Driven Jira Workflow Recommendation System
+📌 Overview
+This project introduces a Retrieval-Augmented Generation (RAG) based intelligent system that automates workflow recommendations for newly created Jira tickets. By leveraging past ticket descriptions and their corresponding resolution workflows, the system intelligently determines whether a similar Jira issue has occurred before and, if so, retrieves the appropriate workflow. In the absence of an exact match, it intelligently proposes a new workflow suggestion using a Large Language Model (LLM), enhanced with historical context.
+
+This system bridges the gap between tribal knowledge, repeated engineering effort, and automated knowledge reuse in enterprise environments.
+
+🧠 Core Problem
+Organizations often maintain large volumes of operational workflows tied to Jira tickets. However, engineers and analysts routinely:
+
+Recreate existing logic,
+
+Miss prior resolutions to similar problems, or
+
+Lack an organized way to retrieve and reuse previous efforts.
+
+This leads to:
+
+Inconsistent implementations,
+
+Redundant work, and
+
+Loss of valuable engineering knowledge over time.
+
+💡 Solution: RAG for Intelligent Workflow Resolution
+This system applies the Retrieval-Augmented Generation (RAG) paradigm to intelligently map new Jira issues to existing knowledge. It does so by:
+
+Indexing historical Jira descriptions and their associated resolution workflows using vector embeddings.
+
+Retrieving semantically similar tickets for any new Jira request.
+
+Generating a contextual recommendation using an LLM when prior matches are weak or unavailable.
+
+🔁 System Architecture
+The solution is split into two major workflows: Preprocessing (offline knowledge curation) and Query-time Retrieval & Generation (real-time workflow suggestions).
+
+🔨 1. Preprocessing Phase (Offline)
+Step	Component	Description
+1	Knowledge Source	Ingest a curated table of historical Jira tickets containing description, workflow, and Jira ID.
+2	Embedding Model	Convert each Jira description into semantic vector representations using models like all-MiniLM, BGE, or OpenAI Ada.
+3	Vector Indexing	Store the vectorized tickets in a Vector Database (e.g., FAISS, Pinecone, ChromaDB), tagged with metadata (Jira ID, workflow steps, etc.).
+4	Metadata Linking	Maintain linkage between each embedding and its corresponding workflow action for quick retrieval.
+
+⚙️ 2. Query-Time Workflow (Real-Time)
+Step	Component	Description
+1	User Input	A new Jira ticket is raised and its description is submitted to the system.
+2	Embedding Lookup	The description is embedded using the same model used in the preprocessing step.
+3	Semantic Search	Top-k nearest neighbors (most semantically similar Jira descriptions) are fetched from the vector DB.
+4	Confidence Thresholding	If similarity score is above a defined threshold (e.g., cosine > 0.9), a prior Jira is considered a match.
+5	Match Found → Reuse	Retrieve and display the existing workflow with optional modifications.
+6	No Match → Generate	If no strong match is found, a LLM (e.g., GPT-4) is prompted with:
+
+The new Jira description
+
+Top k similar workflows (even if weak matches)
+
+→ It returns a context-aware workflow recommendation |
+| 7 | User Validation | The recommended workflow is accepted, edited, or overridden. |
+| 8 | Knowledge Update | Approved Jira + Workflow is added to the vector DB for future reuse. |
+
+📦 Components
+Module	Description
+jira_ingest.py	Parses and prepares Jira tickets from structured sources (CSV/Excel/API)
+embedder.py	Converts textual descriptions into embeddings using Sentence Transformers or OpenAI APIs
+vector_store.py	Interfaces with FAISS or Chroma for storage, retrieval, and similarity search
+rag_orchestrator.py	Coordinates between user input, retrieval, thresholding, and generation logic
+llm_generator.py	Prompts the LLM with enriched context and fetches suggested workflows
+ui_gradio.py	(Optional) Gradio UI for testing query inputs and displaying outputs
+pipeline_update.py	Handles post-approval insertion of new Jira-workflow pairs into the knowledge base
+
+✨ Key Innovations
+✅ Semantic Similarity Retrieval instead of keyword search.
+
+🤖 LLM-Augmented Workflow Generation with domain-aware prompting.
+
+🔄 Self-Learning Loop where accepted Jira-workflows enhance future suggestions.
+
+🧠 Zero-Code Retrieval for operations teams via UI or API.
+
+⚙️ Pluggable Architecture supporting different embedding models, vector DBs, and LLM backends.
+
+📈 Example Use Cases
+New Jira	Outcome
+"Validate OM_TRADE_FACT passthroughs"	Finds a prior match → Suggests previously used parsing workflow.
+"Add XML ingestion rules for payment detail errors"	No close match → LLM proposes a new XML parsing and logging workflow using historical context.
+"Compare count from source vs topic for COE"	Partial match found → Suggests adapted Kafka verification steps.
+
+🔐 Future Enhancements
+Fine-tune confidence thresholds using feedback loop
+
+Store user corrections and edits to train a custom workflow suggestion model
+
+Add version control and audit tracking for every suggested and accepted workflow
+
+Enable domain-specific finetuning (e.g., Healthcare, Finance, Manufacturing Jira workflows)
+
+🧠 Conceptual Diagram
+Refer to the diagram below to understand the complete flow:
+
+
+(Replace with your own version — the one you uploaded is well-suited.)
+
+🏁 Conclusion
+This system acts as an intelligent assistant for Jira resolution, enabling teams to reuse, adapt, or generate resolution workflows with minimal manual effort. By embedding prior knowledge and tapping into generative AI capabilities, it empowers technical teams with consistent, fast, and context-aware decision-making — saving hours of analysis and reducing workflow duplication.
