@@ -200,308 +200,111 @@ Result: reduced firefighting, increased trust in reporting pipelines, and faster
 | **Kafka Feedback Loop**          | Enables downstream systems to act immediately on insights   |
 
 
-📤 Outputs That Matter
-Result Format:
-JSON payload containing:
+3. Modeling Datasets
+Development Dataset Creation
+To develop the training dataset for the AIML-based data reconciliation system, we synthesized a diverse collection of structured source–target record pairs. These pairs were designed to simulate real-world data inconsistencies typically encountered across enterprise systems — including financial, banking, and operational databases. The primary objective was to create a hybrid dataset that blends real-world mismatch scenarios with controlled, labeled examples for robust model learning.
 
-similarityIndex: 0.87
+The data creation process involved the following stages:
 
-predictionReason: Schema mismatch on key fields
+1. Source–Target Pair Generation
+Synthetic data was generated using Python scripts that programmatically injected known data variations across matched fields. Each record pair consisted of a Source_Data row and a corresponding Target_Data row, simulating how data might appear differently across two systems (e.g., upstream and downstream environments).
 
-confidenceScore: 92%
+Examples of inconsistencies included:
+| Source\_Data  | Target\_Data                                         | Expected Result      |
+| ------------- | ---------------------------------------------------- | -------------------- |
+| Hong Kong     | The Hong Kong Special Administrative Region of China | Matching Country     |
+| 200           | 200.5                                                | Rounded off          |
+| 0483489.35    | 483489.35                                            | Leading Zero         |
+| -274906.05    | 274906.05                                            | Positive vs Negative |
+| citibank      | citi bank                                            | Extra Space          |
+| CITI BANK     | Citi bank                                            | Case Sensitive       |
+| CI\@TI B\@N@K | Citi bank                                            | Special Characters   |
 
-Value for Teams:
 
-Clear audit trail
+Each of these entries was tagged with the expected classification label, such as:
 
-Faster root-cause resolution
+Match
 
-Integrated with existing Kafka-based architecture
+Mismatch - Case Sensitivity
 
-⚙️ What Powers This System
-| Layer                | Tech Stack Used                                             |
-| -------------------- | ----------------------------------------------------------- |
-| **Messaging**        | Apache Kafka (Producers & Consumers)                        |
-| **Compute**          | Spark (pyspark-based feature processing)                    |
-| **Prediction Layer** | Scikit-learn / Spark MLlib (Random Forest, SVM, etc.)       |
-| **Orchestration**    | Manual (now), future: Lightspeed + Helm + Docker + Oozie    |
-| **Storage**          | Oracle for processed result persistence                     |
-| **Codebase**         | Python 3.10+, modular, CI/CD-ready, supports `spark-submit` |
+Mismatch - Special Character
 
+Mismatch - Extra Space
 
-🛠 Technical Details (with Security & Scalability in Mind)
-SSL-secured Kafka config (kafka_props.properties)
+Mismatch - Numeric Deviation
 
-Structured logging + metrics hooks for traceability
+Mismatch - Leading Zero
 
-Containerizable via Docker; Helm support planned for OpenShift deployments
+etc.
 
-Pythonic, lint-checked (flake8), testable (pytest), and CI/CD-compliant structure
+This labeling schema helped the model learn to both identify mismatches and explain the reason for the mismatch — a key requirement for traceability and human oversight.
 
-📊 Current Status vs. Future-Ready Roadmap
-| Area               | Current State                | Planned Enhancements                   |
-| ------------------ | ---------------------------- | -------------------------------------- |
-| Execution          | Manual via CLI Spark scripts | CI/CD via Lightspeed, Docker, Helm     |
-| Prediction Scope   | Limited to \~3 categories    | Expanded ML labels via retraining      |
-| Release Management | No formal build or changelog | Versioned `.whl` or container releases |
-| Data Sources       | Local files (xlsx/csv/txt)   | Expand to APIs and live databases      |
-| Deployment Target  | Dev server only              | Full OpenShift deployment              |
+2. Class Definitions and Labeling Logic
+Mismatch classes were defined in three broad categories:
 
+Alphabetic Variants:
 
-🌟 The Vision
-Imagine a future where:
+Extra space (e.g., citi bank vs. citibank)
 
-Schema drifts are auto-classified within minutes
+Special character issues (e.g., c!tib@nk vs. citibank)
 
-Downstream data issues are traced in near-real-time
+Case sensitivity (e.g., CITIBANK vs. citibank)
 
-Business teams understand why discrepancies happen — without needing a data engineer
+Alphanumeric Variants:
 
-This project is a step in that direction — transforming raw comparisons into contextual intelligence.
+Scientific notation (e.g., 2.98E+07 vs. 29800000.85)
 
+Currency symbol mismatch (e.g., 123 USD vs. $123)
 
+Null handling (e.g., null vs. null = Match)
 
+Numeric Variants:
 
+Rounding differences (123.5 vs. 123)
 
+Leading/trailing zeros (01234 vs. 1234)
 
+Negative sign handling (-5 vs. 5)
 
-Chapter 3: Model Data
-This chapter documents the training data used to develop the model, including its origin, preparation, quality controls, assumptions, and justification for its use. The model's objective is to classify mismatches between structured source and target fields into predefined root cause categories such as leading zero issue, rounded number, currency format difference, etc. The quality and structure of the training data directly influence the model’s accuracy, generalizability, and interpretability.
+Comma separator issues (1,234 vs. 1234)
 
-This chapter describes the dataset used to develop and train the model. It covers the source of the training data, the process used to generate and label it, the checks implemented to ensure its quality, and the rationale for using synthetically generated data to meet the modeling objectives.
+Each record was fed into the pipeline with ground truth annotation for supervised learning.
 
-This model is designed to classify mismatches between structured data values — such as numbers, names, codes — into meaningful root causes (e.g., leading zero, case sensitivity, scientific notation). These mismatch types often appear in enterprise reconciliation tasks where the same record can appear differently across systems due to formatting, locale, or transformation rules.
+3. Dataset Assembly Process
+All generated pairs passed through a validation pipeline built on Apache Spark, where they were enriched with derived metadata and formatted into a standardized training schema. A simplified flow of this process:
 
-3.1 Data Sources
-The training data for this model was synthetically generated using Python scripts built to simulate real-world discrepancies across structured fields. Each training example consists of:
+[ Synthetic Source File ] + [ Synthetic Target File ]
+            ↓
+    Controlled Mismatch Injection
+            ↓
+      Join on Primary Keys (e.g., ID, Date)
+            ↓
+ Feature Extraction & Reason Tagging
+            ↓
+       Label Assignment (Match/Reason)
+            ↓
+   Final AIML Dataset for Model Training
 
-A pair of values:
+The final dataset contained:
 
-value_1: a clean source value
+Unique ID for each record pair
 
-value_2: a modified version of the same, with a specific type of discrepancy
+Field-level comparison metrics
 
-A label: the known reason for the discrepancy (e.g., "Leading Zero", "Rounded Off")
+Mismatch reason labels
 
-The synthetic data was generated in a controlled and labeled environment, allowing for full traceability and coverage across edge cases. Rather than depending solely on production logs — which are often skewed or unlabeled — this approach ensures that:
+A binary match indicator
 
-All mismatch categories are equally represented
+Optional: confidence threshold for auto-reconciliation
 
-The model can learn from clear, unambiguous examples
+4. Why This Dataset Is Reliable
+The generation logic was rule-driven, ensuring explainable and reproducible mismatches.
 
-The feature engineering logic is aligned with label assignment
+The process included balanced class distribution to prevent overfitting to the dominant class (i.e., ‘Match’).
 
-Mismatch categories covered include:
+Each record was auditable and could be traced back to its synthetic origin for re-testing or enhancement.
 
-Leading Zero (e.g., "00123" vs "123")
+The classes reflect actual issues faced in reconciliation pipelines across real banking systems, making the model highly relevant to production-grade deployment.
 
-Currency Format Differences (e.g., "$100" vs "100.00")
 
-Negative vs Positive (e.g., "-50" vs "50")
-
-Scientific Notation (e.g., "1.2e-3" vs "0.0012")
-
-Extra Space, Case Sensitivity, Thousand Separator Differences, etc.
-
-Matched Values (used as control)
-
-This dataset provides a realistic foundation for learning how discrepancies typically present in structured enterprise data.
-
-3.2 Data Preparation and Preprocessing
-The synthetic dataset was created using a suite of Python functions (developed under the JEDI_ML framework) that each simulate a different type of transformation. The generation logic applies specific rules to produce:
-
-One type of error per row
-
-Clearly labeled discrepancy type
-
-Randomized but realistic values
-
-For example:
-
-python
-Copy
-Edit
-value_1 = "1234"
-value_2 = "1,234"
-label = "Thousand Separator"
-These records were stored in CSV format, and all preprocessed records went through:
-
-Whitespace and case normalization
-
-Conversion of numeric fields to Decimal for precision
-
-Flagging of unusable rows (e.g., nulls, invalid types)
-
-Balancing of class labels to ensure no overrepresentation of "Matched"
-
-The result was a clean and balanced dataset where each row is:
-
-Valid
-
-Labeled with high confidence
-
-Aligned with the feature extraction logic used in the model
-
-3.3 Input Data Checks
-To ensure the quality of this training data, the following controls were applied:
-
-| Check Type             | Description                                                                  |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| **Schema validation**  | Ensured all required fields (`value_1`, `value_2`, `label`) were present     |
-| **Type coercion**      | Applied `numeric_check`, `scientific_notation_check` etc. to validate inputs |
-| **Mutual exclusivity** | Only one mismatch type per row to prevent label confusion                    |
-| **Category coverage**  | All defined mismatch types were included with roughly equal counts           |
-| **Manual sampling**    | Random sample of 200 records was manually verified for labeling accuracy     |
-
-
-3.4 Data Weaknesses and Compensating Controls
-| Identified Weakness                | Potential Impact                                       | Compensating Control                                      |
-| ---------------------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
-| Lack of real-world noise           | May underperform on ambiguous or noisy records         | Future retraining planned with labeled production data    |
-| Synthetically “perfect” mismatches | May overfit to obvious formatting differences          | Introduced slight randomness in spacing, casing, decimals |
-| No multi-label examples            | Cannot detect compound errors (e.g., currency + space) | Considered out of scope for v1; handled by rule layer     |
-
-3.5 Justification of Data Suitability
-Despite being synthetic, the training data was purposefully constructed to mirror the types of issues frequently encountered during real-world system reconciliations. These include:
-
-Data type mismatches due to system formatting
-
-Semantic differences masked by syntax (e.g., "-0.5" vs "0.5")
-
-False mismatches caused by cosmetic variations (spaces, commas)
-
-The dataset is suitable for modeling because:
-
-It is fully labeled with known ground truth
-
-It offers controlled diversity across all key discrepancy types
-
-It allows for clear evaluation and explainability, aligning with MRM principles
-
-In future iterations, the synthetic data will be augmented with real mismatches labeled from production scenarios, creating a hybrid training set that captures both real-world complexity and rule-driven clarity.
-
-ata Overview
-Intended Usage Population
-The intended usage population of the model includes enterprise data records that undergo system-to-system reconciliation — typically within financial services, regulatory compliance, or operational audit processes. These records may come from various domains such as claims, customer transactions, product pricing, or account summaries, and are often compared between source and target systems.
-
-The model is especially useful in environments where:
-
-Structured files (CSV, Excel) are exchanged between internal teams, vendors, or legacy systems
-
-Discrepancies are not due to actual business logic differences, but rather formatting, rounding, or encoding issues
-
-Manual reconciliation processes are high effort and error-prone
-
-Thus, the model supports data quality teams, finance auditors, and compliance reviewers who validate data consistency across systems.
-
-High-Level Description of the Data Used
-The data used to train and validate the model is synthetically generated using Python functions that simulate realistic mismatch patterns. Each training example consists of:
-
-A source value (value_1)
-
-A target value (value_2) that has been deliberately altered to introduce a specific error type
-
-A label describing the reason for mismatch (e.g., "Leading Zero", "Rounded Off", "Scientific Notation")
-
-The dataset is balanced and spans over 15+ root cause categories. It represents different types of data values commonly seen in enterprise systems: numbers, currency fields, names, codes, and alphanumeric identifiers. This synthetic data ensures wide coverage of mismatch types that are difficult to collect from production logs due to low labeling availability.
-
-Appropriateness of Selected Data for Modeling
-The selected synthetic dataset is appropriate for model development because it:
-
-Fully represents the mismatch categories relevant to downstream business use cases
-
-Ensures label accuracy, which is critical for training classification models
-
-Covers edge cases (e.g., scientific notation, negative signs) often underrepresented in production samples
-
-Aligns tightly with the feature extraction logic, allowing the model to learn from exact examples that match the validation pipeline
-
-Although the data is not collected from a real-time production flow, it is designed to replicate common discrepancies encountered during automated or manual reconciliations. It also allows consistent testing and benchmarking of model performance under controlled conditions.
-
-In future iterations, this synthetic dataset will be augmented with real mismatched records captured from validation pipelines, to bring in noisy, ambiguous cases and further strengthen generalization.
-
-Use of Stress Period Data
-The model is not intended for customer behavior prediction or financial forecasting under economic stress. Instead, it supports point-in-time validation of structured record consistency. Therefore, inclusion of data from economic stress periods is not required.
-
-The model operates purely on record-level discrepancy detection, and does not incorporate external economic factors or longitudinal customer-level behavior. This is consistent with the use case under the Consumer Valuation and AML Models framework — where snapshot data suffices for ensuring technical consistency.
-
-Data Sources and Reconciliation
-Input Data Checks and Controls
-To ensure the modeling input data is properly sourced and reliable, a rigorous data validation and control process was established before training began. Since the model relies on synthetic data to simulate mismatches between source and target systems, the following measures were implemented:
-
-Controlled Generation: All training data was generated using custom Python scripts that applied deliberate transformations to simulate real-world discrepancy types (e.g., scientific notation, currency symbol shifts, casing issues, etc.). Each transformation was applied deterministically to ensure traceability.
-
-Validation of Inputs: Every generated source-target pair was reviewed to ensure logical consistency, such as matching data types and structure. For example, numeric fields were tested against various formatting patterns (rounded vs. decimal, positive/negative flips).
-
-Automated Labeling: Since each mismatch was injected programmatically, the associated root-cause label was assigned at the time of generation. This ensured a 1:1 relationship between transformation and label, with no subjectivity or manual intervention.
-
-Audit Trail: Each synthetic record included metadata fields tracking the mismatch category, original value, altered value, and transformation logic used. These metadata fields were used later during testing for result explanation and auditability.
-
-These controls ensure that the data used in model development is reliable, explainable, and reproducible, satisfying model governance and validation expectations.
-
-Internal Data Sources
-While the initial training is based on synthetic inputs, the real production data flows into the pipeline via enterprise data validation use cases, especially in areas like:
-
-Claims Processing Files
-
-Account Master Tables
-
-NPI / Product Catalog Data
-
-Transaction Exports from Source vs Target Systems
-
-These real files are not always labeled but are used in future iterations for unlabeled inference testing, fine-tuning, or adding realism to hybrid datasets.
-
-Reconciliation Process
-For production integration, the model also supports reconciliation by:
-
-Flagging mismatches across key data points like amounts, IDs, names, and formats
-
-Predicting the likely root cause, based on the patterns seen during training
-
-Routing flagged cases for manual review, especially when the model returns low confidence
-
-Where independent validation is required (e.g., finance or audit teams), the predictions are exported along with:
-
-Original source and target values
-
-Model-assigned mismatch reason
-
-Confidence scores
-This supports a maker-checker process, where reviewers can verify the model’s judgment and trace back the prediction logic.
-
-Outcome of Reconciliation
-The synthetic model's use was piloted across a few validation pipelines, where the following results were noted:
-
-~80% of mismatches were automatically categorized with high confidence
-
-~60% of those could be auto-reconciled based on thresholds or pre-agreed rules (e.g., ignoring leading zeros)
-
-For edge cases, the flagged output enabled faster triage by analysts, reducing turnaround time
-
-Where mismatches couldn't be resolved or were new types, feedback was incorporated back into training data, improving future detection.
-
-Thus, the data — both synthetic and real — remains usable for model development, and the reconciliation logic forms a feedback loop that keeps enhancing the model.
-
-Details and Justification of Proxy Data Usage
-In this model, synthetic data serves as a proxy for real-world structured reconciliation scenarios, especially in early development phases where real mismatches are either unavailable, unlabeled, or inconsistently formatted. The synthetic data was programmatically generated to simulate realistic mismatches found in source vs. target systems — including format discrepancies, null value shifts, leading/trailing zero issues, sign reversals, casing differences, and more.
-
-The use of this proxy dataset was justified on the following grounds:
-
-Lack of labeled real mismatches: Most production reconciliation data is unlabeled and cannot be reliably used for supervised training.
-
-Controlled pattern injection: Proxy data allows for precise control over the types and distributions of mismatches introduced, making it easier to train and debug the classification models.
-
-Regulatory neutrality: No sensitive PII/PHI or transactional data is used during model training, ensuring privacy and compliance during development.
-
-Controls for Proxy Data Usage
-To ensure that the use of proxy data does not bias model performance or limit generalizability, the following controls were established:
-
-Hybrid Testing Pipeline: The model was validated on both synthetic (proxy) data and unlabeled real-world production samples to observe behavior in live conditions.
-
-Drift Monitoring: Over time, predictions on real data are compared against human-reviewed outputs to assess drift and identify emerging mismatch patterns not captured by proxies.
-
-Feedback Loop: Real mismatches that are later confirmed manually are logged and fed back into the system to enrich future training data, gradually replacing proxy-only reliance.
-
-In conclusion, proxy data played a critical role in enabling early model training, with sufficient governance and testing mechanisms in place to manage risk, enhance adaptability, and ensure alignment with production use cases.
 
