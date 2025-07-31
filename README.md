@@ -173,20 +173,24 @@ Generating a contextual recommendation using an LLM when prior matches are weak 
 The solution is split into two major workflows: Preprocessing (offline knowledge curation) and Query-time Retrieval & Generation (real-time workflow suggestions).
 
 🔨 1. Preprocessing Phase (Offline)
-Step	Component	Description
-1	Knowledge Source	Ingest a curated table of historical Jira tickets containing description, workflow, and Jira ID.
-2	Embedding Model	Convert each Jira description into semantic vector representations using models like all-MiniLM, BGE, or OpenAI Ada.
-3	Vector Indexing	Store the vectorized tickets in a Vector Database (e.g., FAISS, Pinecone, ChromaDB), tagged with metadata (Jira ID, workflow steps, etc.).
-4	Metadata Linking	Maintain linkage between each embedding and its corresponding workflow action for quick retrieval.
+| Step | Component            | Description                                                                                                                                    |
+| ---- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | **Knowledge Source** | Ingest a curated table of historical Jira tickets containing `description`, `workflow`, and `Jira ID`.                                         |
+| 2    | **Embedding Model**  | Convert each Jira description into semantic vector representations using models like `all-MiniLM`, `BGE`, or `OpenAI Ada`.                     |
+| 3    | **Vector Indexing**  | Store the vectorized tickets in a **Vector Database** (e.g., FAISS, Pinecone, ChromaDB), tagged with metadata (Jira ID, workflow steps, etc.). |
+| 4    | **Metadata Linking** | Maintain linkage between each embedding and its corresponding workflow action for quick retrieval.                                             |
+
 
 ⚙️ 2. Query-Time Workflow (Real-Time)
-Step	Component	Description
-1	User Input	A new Jira ticket is raised and its description is submitted to the system.
-2	Embedding Lookup	The description is embedded using the same model used in the preprocessing step.
-3	Semantic Search	Top-k nearest neighbors (most semantically similar Jira descriptions) are fetched from the vector DB.
-4	Confidence Thresholding	If similarity score is above a defined threshold (e.g., cosine > 0.9), a prior Jira is considered a match.
-5	Match Found → Reuse	Retrieve and display the existing workflow with optional modifications.
-6	No Match → Generate	If no strong match is found, a LLM (e.g., GPT-4) is prompted with:
+| Step | Component                   | Description                                                                                                    |
+| ---- | --------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 1    | **User Input**              | A new Jira ticket is raised and its `description` is submitted to the system.                                  |
+| 2    | **Embedding Lookup**        | The description is embedded using the same model used in the preprocessing step.                               |
+| 3    | **Semantic Search**         | Top-k nearest neighbors (most semantically similar Jira descriptions) are fetched from the vector DB.          |
+| 4    | **Confidence Thresholding** | If similarity score is above a defined threshold (e.g., cosine > 0.9), a prior Jira is **considered a match**. |
+| 5    | **Match Found → Reuse**     | Retrieve and display the **existing workflow** with optional modifications.                                    |
+| 6    | **No Match → Generate**     | If no strong match is found, a **LLM (e.g., GPT-4)** is prompted with:                                         |
+
 
 The new Jira description
 
@@ -197,14 +201,16 @@ Top k similar workflows (even if weak matches)
 | 8 | Knowledge Update | Approved Jira + Workflow is added to the vector DB for future reuse. |
 
 📦 Components
-Module	Description
-jira_ingest.py	Parses and prepares Jira tickets from structured sources (CSV/Excel/API)
-embedder.py	Converts textual descriptions into embeddings using Sentence Transformers or OpenAI APIs
-vector_store.py	Interfaces with FAISS or Chroma for storage, retrieval, and similarity search
-rag_orchestrator.py	Coordinates between user input, retrieval, thresholding, and generation logic
-llm_generator.py	Prompts the LLM with enriched context and fetches suggested workflows
-ui_gradio.py	(Optional) Gradio UI for testing query inputs and displaying outputs
-pipeline_update.py	Handles post-approval insertion of new Jira-workflow pairs into the knowledge base
+| Module                | Description                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `jira_ingest.py`      | Parses and prepares Jira tickets from structured sources (CSV/Excel/API)                 |
+| `embedder.py`         | Converts textual descriptions into embeddings using Sentence Transformers or OpenAI APIs |
+| `vector_store.py`     | Interfaces with FAISS or Chroma for storage, retrieval, and similarity search            |
+| `rag_orchestrator.py` | Coordinates between user input, retrieval, thresholding, and generation logic            |
+| `llm_generator.py`    | Prompts the LLM with enriched context and fetches suggested workflows                    |
+| `ui_gradio.py`        | (Optional) Gradio UI for testing query inputs and displaying outputs                     |
+| `pipeline_update.py`  | Handles post-approval insertion of new Jira-workflow pairs into the knowledge base       |
+
 
 ✨ Key Innovations
 ✅ Semantic Similarity Retrieval instead of keyword search.
@@ -218,10 +224,12 @@ pipeline_update.py	Handles post-approval insertion of new Jira-workflow pairs in
 ⚙️ Pluggable Architecture supporting different embedding models, vector DBs, and LLM backends.
 
 📈 Example Use Cases
-New Jira	Outcome
-"Validate OM_TRADE_FACT passthroughs"	Finds a prior match → Suggests previously used parsing workflow.
-"Add XML ingestion rules for payment detail errors"	No close match → LLM proposes a new XML parsing and logging workflow using historical context.
-"Compare count from source vs topic for COE"	Partial match found → Suggests adapted Kafka verification steps.
+| New Jira                                              | Outcome                                                                                        |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `"Validate OM_TRADE_FACT passthroughs"`               | Finds a prior match → Suggests previously used parsing workflow.                               |
+| `"Add XML ingestion rules for payment detail errors"` | No close match → LLM proposes a new XML parsing and logging workflow using historical context. |
+| `"Compare count from source vs topic for COE"`        | Partial match found → Suggests adapted Kafka verification steps.                               |
+
 
 🔐 Future Enhancements
 Fine-tune confidence thresholds using feedback loop
