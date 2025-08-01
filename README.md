@@ -81,5 +81,17 @@ The numeric_check column is of type int64, used likely as a binary flag.
 The Label column is of type object, representing categorical classes to be predicted.
 
 This analysis confirms that the dataset is numerically well-structured for supervised learning tasks and ready for encoding and normalization steps.
+| Label Category                     | Description                                                                                                                                                                                                                         |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **No Match**                       | This class represents cases where the source and target data had no recognizable or learnable pattern of mismatch. It forms the **largest class**, highlighting scenarios of complete data inconsistency or unexpected differences. |
+| **Negative vs Positive**           | This category includes cases where a negative value in one dataset was matched to a positive value in another (e.g., `-500` vs `500`). Often occurs due to formatting or entry errors.                                              |
+| **Thousand Separator Difference**  | Mismatches due to comma-based formatting in numeric values (e.g., `1,000.00` vs `1000.00`). This is a common formatting inconsistency across systems.                                                                               |
+| **Special Character Differences**  | Covers differences caused by characters such as `@`, `!`, `#`, etc., either present in one field or misplaced, e.g., `citi@bank` vs `citibank`.                                                                                     |
+| **Extra Space Issues**             | Variations due to unnecessary or missing white spaces within the data (e.g., `Citi Bank` vs `Citi  Bank`). Common in uncleaned textual data.                                                                                        |
+| **Case Sensitivity**               | Includes mismatches that occur due to uppercase vs lowercase differences, such as `Citibank` vs `CITIBANK`. Often not meaningful but picked up in exact matches.                                                                    |
+| **Matched**                        | Represents records where the source and target values match perfectly. Useful for baseline comparison during model validation.                                                                                                      |
+| **Scientific Notation Difference** | Errors resulting from variations in how exponential values are represented (e.g., `2.98E+07` vs `29800000.00`). Occurs often in financial or scientific datasets.                                                                   |
+| **Leading Zero Issue**             | Includes differences such as `000123` vs `123`, which appear in system-generated numeric codes, especially in banking or invoice data.                                                                                              |
+| **Rounded Off Numbers**            | Represents cases where one value is a rounded-off version of another, such as `200.00` vs `200.5`. This is typically seen in transactional or currency values.                                                                      |
 
 
