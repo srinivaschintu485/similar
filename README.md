@@ -40,58 +40,44 @@ These discrepancies are systematically identified and resolved, ensuring your da
 **Advanced Currency Handling:** Supports an array of global currency symbols, enhancing the tool's utility for international financial data operations.
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
+Derived Variables
+In this modeling exercise, a set of derived variables were constructed to quantify discrepancies between source and target columns across various formatting and content dimensions. These variables are essential in capturing the nature and root causes of mismatches between two fields, especially when controlled variations are introduced. The logic behind each derived variable is explained below:
 
-![image](https://github.com/user-attachments/assets/ae3c1775-0aa1-457b-92cb-7ad6960a84f8)
+1. Scientific_Notation_Flag
+Indicates whether one of the values is represented in scientific notation (e.g., 1.23E4) while the other is not. Helps detect formatting mismatches in numerical representations.
 
-Overview
-The goal of the Exploratory Data Analysis (EDA) phase was to understand the structure, quality, and distribution of the dataset generated for training the AIML model responsible for identifying and categorizing mismatches between source and target data values. The dataset contains a total of 122,411 rows and 16 features, including the target classification label and engineered features representing numerical, formatting, and semantic differences.
-4.2 Dataset Composition
-The dataset includes the following key features:
+2. Thousand_Separator_Flag
+Checks for the presence or absence of thousand separators (e.g., 1,000 vs. 1000). A mismatch here could indicate locale or formatting-related differences.
 
-Label: The mismatch category label (e.g., "Case Sensitivity", "Leading Zero", "No Match", etc.)
+3. Rounded_Off_Flag
+Flags whether a numerical value appears rounded off (e.g., 9.876 vs. 9.88). The difference is captured either via exact match tolerance or absolute difference below a threshold.
 
-Feature-based scores like:
+4. Leading_Zero_Flag
+Detects if one of the values has extra leading zeros (e.g., 00123 vs. 123). This helps in catching standardization or padding-related transformations.
 
-Scientific_Notation, Thousand_Separator, Rounded_Off, Leading_Zero, Negative_Check, numeric_check
+5. Negative_Check_Flag
+Determines whether a sign inversion or missing minus sign exists (e.g., -200 vs. 200), which is critical in financial and metric-driven datasets.
 
-String length indicators: source_len, destination_len
+6. Numeric_Check_Score
+A composite score that captures how much the numeric parts of two values differ. This is typically calculated via absolute/percentage delta.
 
-Similarity or difference metrics: Case_Sensitive_Score, Special_Character_Score, Space_diff, etc.
+7. Case_Sensitive_Score
+Compares strings in a case-sensitive manner. Useful when the mismatch is purely due to capitalization differences (e.g., Bank vs. bank).
 
-These features are engineered using domain logic to quantify different mismatch patterns in the data reconciliation process.
+8. Case_Insensitive_Score
+A relaxed version of the above, used to detect deeper differences after normalizing casing.
 
-Label Distribution
-A bar plot of the Label column was generated to analyze the distribution of mismatch types. The categories include:
+9. Special_Character_Diff
+Flags mismatches caused by the presence or absence of special characters like @, #, -, /, etc. This helps detect parsing or tokenization issues.
 
-No Match: Highest occurring label (~25k records), where no alignment could be determined.
+10. Space_Diff / Space_Score
+Captures extra or missing whitespace (e.g., ABC DEF vs. ABCDEF). The score reflects how many such differences exist and their impact.
 
-Negative vs Positive, Thousand Separator Difference, Special Character Differences, Extra Space Issues: Each has ~10k+ occurrences, indicating common formatting-based mismatches.
+11. Source_Length / Destination_Length
+Numeric features measuring the string lengths of both source and target values. Can help models infer truncation, padding, or formatting issues.
 
-Rounded Off Numbers, Leading Zero Issues, Scientific Notation Differences: Slightly lower in frequency but still significant in pattern learning.
+Each of these derived variables was engineered to provide the model with a granular and interpretable understanding of field-level differences. These features are later used by the classification model to assign a label such as Match or the specific Mismatch Reason based on the patterns learned.
 
-This distribution helps assess class imbalance and guides resampling or weighting strategies during model training.
-
-4.4 Data Types and Structure
-A snapshot of the dataset's data types revealed:
-
-All score and difference features are stored as float64.
-
-The numeric_check column is of type int64, used likely as a binary flag.
-
-The Label column is of type object, representing categorical classes to be predicted.
-
-This analysis confirms that the dataset is numerically well-structured for supervised learning tasks and ready for encoding and normalization steps.
-| Label Category                     | Description                                                                                                                                                                                                                         |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **No Match**                       | This class represents cases where the source and target data had no recognizable or learnable pattern of mismatch. It forms the **largest class**, highlighting scenarios of complete data inconsistency or unexpected differences. |
-| **Negative vs Positive**           | This category includes cases where a negative value in one dataset was matched to a positive value in another (e.g., `-500` vs `500`). Often occurs due to formatting or entry errors.                                              |
-| **Thousand Separator Difference**  | Mismatches due to comma-based formatting in numeric values (e.g., `1,000.00` vs `1000.00`). This is a common formatting inconsistency across systems.                                                                               |
-| **Special Character Differences**  | Covers differences caused by characters such as `@`, `!`, `#`, etc., either present in one field or misplaced, e.g., `citi@bank` vs `citibank`.                                                                                     |
-| **Extra Space Issues**             | Variations due to unnecessary or missing white spaces within the data (e.g., `Citi Bank` vs `Citi  Bank`). Common in uncleaned textual data.                                                                                        |
-| **Case Sensitivity**               | Includes mismatches that occur due to uppercase vs lowercase differences, such as `Citibank` vs `CITIBANK`. Often not meaningful but picked up in exact matches.                                                                    |
-| **Matched**                        | Represents records where the source and target values match perfectly. Useful for baseline comparison during model validation.                                                                                                      |
-| **Scientific Notation Difference** | Errors resulting from variations in how exponential values are represented (e.g., `2.98E+07` vs `29800000.00`). Occurs often in financial or scientific datasets.                                                                   |
-| **Leading Zero Issue**             | Includes differences such as `000123` vs `123`, which appear in system-generated numeric codes, especially in banking or invoice data.                                                                                              |
-| **Rounded Off Numbers**            | Represents cases where one value is a rounded-off version of another, such as `200.00` vs `200.5`. This is typically seen in transactional or currency values.                                                                      |
+                                                              |
 
 
