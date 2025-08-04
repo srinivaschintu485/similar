@@ -133,6 +133,43 @@ Independent or orthogonal features like Scientific_Notation or Negative_Check ma
 
 Some correlations suggest potential for feature engineering consolidation, such as merging or transforming similar features.
 
+Association and Correlation Matrix (Categorical + Numerical)
+This visualization combines two statistical relationship metrics:
+
+Squares represent categorical associations such as uncertainty coefficient or correlation ratio, indicating how much a feature provides informative value to the target variable (Label).
+
+Circles represent numerical Pearson correlations between pairs of continuous features (ranging from -1 to 1). The size and color intensity show the strength and direction of the relationship:
+
+Dark blue = Strong positive
+
+Red = Strong negative
+
+Small/pale = Weak correlation
+
+Key Observations
+High Informative Features for Label:
+
+Thousand_Separator, Rounded_Off, and Special_Character_Diff show large squares in the first row, indicating they provide significant information for predicting the label (Match/Mismatch).
+
+Strong Positive Numerical Correlations:
+
+Rounded_Off and Leading_Zero (circle size ≈ 0.7)
+
+Special_Character_Score and Special_Character_Diff (almost perfect correlation)
+
+Low Association or Redundancy:
+
+Scientific_Notation and Negative_Check have low associations both numerically and categorically — these may either be sparse or not helpful in model training.
+
+Case_Insensitive_Score and Case_Sensitive_Score again show up as very similar, implying potential redundancy.
+
+Interpretation Strategy:
+Prioritize features with large squares in the first row, as they help the model differentiate between match/mismatch classes.
+
+Drop or combine highly correlated features to reduce dimensionality and avoid multicollinearity.
+
+Retain features that are weakly correlated with others but highly informative to the label — these offer orthogonal (non-redundant) information.
+
 
 
                                                               |
