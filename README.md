@@ -40,6 +40,8 @@ These discrepancies are systematically identified and resolved, ensuring your da
 **Advanced Currency Handling:** Supports an array of global currency symbols, enhancing the tool's utility for international financial data operations.
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
+
+
 Segmentation Scheme
 This section outlines whether different segments of data were modeled separately (e.g., based on observation groups like mismatch type, data domain, etc.). In our case, a single model was built across all records without separate modeling per segment.
 
@@ -61,4 +63,7 @@ DEV (Development Sample)
 OOT (Out-of-Time Sample)
 
 This ensured that the model behavior remained stable and generalizable across different types of mismatches present in the synthetic data.
+
+
+
 
