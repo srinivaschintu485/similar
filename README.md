@@ -41,76 +41,109 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
+1. Model Data Collection
+We started by generating a synthetic dataset using a controlled mismatch injection process, where we retained one column from the original (source) file and deliberately introduced variations in a corresponding column (target) to simulate realistic mismatches. These changes included format differences, rounding issues, leading/trailing zeros, sign mismatches, and more. The goal was to replicate the kind of inconsistencies that occur during real-world data reconciliations.
 
-Technical Summary:
-The model is designed to automate the classification of data mismatches between structured source and target files using supervised machine learning. The core logic involves reading structured data (Excel/CSV), extracting comparison features, labeling mismatch types using rule-based logic, and then training classification models to predict mismatch types with confidence scores.
+2. Define Dependent Variable (Mismatch Types)
+The dependent variable in our classification model was the type of mismatch (or a "match" label if no discrepancy existed). Each row in the dataset was tagged with one of several categories such as Match, Rounding Issue, Format Difference, Leading Zero, Negative Sign, Currency Symbol Mismatch, etc. This multiclass setup allowed the model to not only detect mismatches but also classify them by type.
 
-Python with Apache Spark was used to scale the solution across multiple files and datasets. The classification engine integrates Random Forest, SVM, and Logistic Regression models, trained on synthetic and rule-annotated mismatch data. The model supports downstream integration by tagging mismatches with root cause and confidence score.
+3. Feature Engineering
+Rather than relying on raw columns alone, we engineered multiple interpretable features that captured specific mismatch behaviors. These included fuzzy string similarity scores (e.g., Levenshtein distance), numeric difference thresholds, custom flags for leading zeros, checks for currency symbols, sign mismatches, and decimal precision. These derived features formed the foundation of our input data for model training.
 
-🔁 Flowchart: Model Development Process
-pgsql
-Copy
-Edit
-+-------------+      +---------------------------+      +---------------------+      +------------------+
-|  Model Data | ---> | Define Dependent Variable | ---> | Segmentation &      | ---> | Variable         |
-|  Collection |      | (Mismatch Types)          |      | Sampling             |      | Reduction        |
-+-------------+      +---------------------------+      +---------------------+      +------------------+
-                                                                                             |
-                                                                                             v
-+---------------------+      +------------------+      +-------------+      +---------------------------+
-| Stepwise Variable   | ---> | Final Model      | ---> | Score       | ---> | Performance Testing       |
-| Selection           |      | Fitting (RF, SVM)|      | Alignment   |      | (DEV, OOT, Explainability)|
-+---------------------+      +------------------+      +-------------+      +---------------------------+
-🧩 Detailed Step-by-Step Explanation
-Model Data Collection
+4. Stepwise Variable Selection
+Although we did not perform dimensionality reduction or PCA, we applied logical feature selection based on technical relevance and interpretability. For example, we retained features that had clear analytical meaning and discarded any that were redundant or ambiguous. This step ensured that the model remained explainable and aligned with business logic.
 
-Raw source and target files (CSV/Excel) are read into Spark DataFrames.
+5. Final Model Fitting
+We trained multiple classification models including Random Forest, Support Vector Machine (SVM), and Logistic Regression using the engineered features. The objective was to identify the model that best balanced accuracy and explainability. Each model was evaluated using the same dataset split into development and holdout (OOT) sets.
 
-Each record pair is compared field-by-field using a rule engine to detect mismatches.
+6. Score Alignment
+Once the models produced their predictions, we aligned the predicted mismatch labels with the actual labels assigned during data generation. This alignment helped quantify model accuracy for each class and ensured that mismatches were being correctly identified and tagged.
 
-Metadata such as datatype, length, format, and value difference are also extracted.
+7. Performance Testing
+We evaluated each model using standard classification metrics like accuracy, precision, recall, and F1-score. Performance was validated both on the development set and the out-of-time (OOT) holdout set to ensure generalizability.
+To enhance trust and interpretability, we also used tools like SHAP (SHapley Additive exPlanations) to identify which features influenced each prediction the most — crucial for explainability in any audit or regulatory scenario.
 
-Define Dependent Variable
 
-The dependent variable is the Mismatch Category (e.g., ROUNDING_DIFF, LEADING_ZERO, NO_MISMATCH, etc.).
 
-Labels are created using rule-based logic on field comparison (e.g., regex, numerical thresholds).
 
-Segmentation & Sampling
 
-Ensures balanced class distribution across mismatch categories.
+📌 Question: List Modeling Soundness Assumptions
+Answer:
 
-Used stratified sampling to maintain proportional representation during training/testing splits.
+Independence of observations: Each record mismatch is treated independently. This assumption was tested via data shuffling and validated by consistent model performance across random samples.
 
-Variable Reduction
+Balanced class distribution: We assumed equal representation of mismatch types. This was achieved through upsampling techniques and is visually confirmed in the bar chart in Section X.X.
 
-Removed highly correlated or low-variance features using correlation matrix and VIF analysis.
+Feature relevance: All selected input variables (e.g., string similarity scores, numeric deltas, sign difference flags) are assumed to contribute meaningfully to classification. This was tested using permutation importance and SHAP value analysis.
 
-Retained meaningful variables like absolute_diff, format_flag, length_diff, etc.
+Stationarity across samples: The mismatch behavior in DEV is assumed to be similar in OOT. We validated this using KS-test and performance stability plots.
 
-Stepwise Variable Selection
+These assumptions were validated through statistical analysis and reflected in MDD sections on feature engineering and validation metrics.
 
-Ranked features using tree-based importance and recursive feature elimination.
+📌 Question: List Business Assumptions (if any)
+Answer:
 
-Selected top variables contributing to classification accuracy.
+This model includes the following business assumptions:
 
-Final Model Fitting
+Standardized formatting issues such as commas, currency symbols, and scientific notations are assumed to be common reconciliation issues across business units.
 
-Trained Random Forest, SVM, and Logistic Regression models.
+Mapping logic from source to target systems may vary slightly, but core reconciliation patterns (e.g., sign flips, scale mismatches) are assumed to be consistent.
 
-Used ensemble logic or voting mechanism to enhance prediction robustness.
+Risk priority is higher for mismatches involving financial values (currency, percentages) over string fields such as names or addresses.
 
-Score Alignment
+These assumptions are based on historical reconciliation trends, business interviews with data stewards, and internal audit logs.
 
-Normalized output confidence scores for comparability across models.
+📌 Question: What are the Potential Data Weaknesses?
+Answer:
 
-Applied post-processing thresholds to tag mismatches as auto-resolvable or manual review needed.
+Synthetic data generation may not capture the full variety of edge cases seen in production files.
 
-Performance Testing
+Limited historical data: The model is trained only on past 3–6 months of reconciliation issues, which may miss rare patterns.
 
-Evaluated on DEV and OOT datasets using F1-score, precision, and recall.
+Overfitting risk: Due to a relatively small number of labeled mismatch samples for certain categories, the model may overfit specific formatting anomalies.
 
-Conducted error analysis using confusion matrix and SHAP explainability.
+To mitigate these issues, we’ve implemented cross-validation, introduced noise-based augmentation for robustness, and continuously retrain the model with new mismatches flagged by analysts.
+
+📌 Question: What is the Dependent Variable and its definition?
+Answer:
+
+The dependent variable is a categorical field representing the type of mismatch observed between source and target files. It is classified into the following categories:
+
+NO_MISMATCH
+
+LEADING_ZERO
+
+ROUNDING_DIFF
+
+FORMAT_DIFF
+
+NULL_MISMATCH
+
+NEGATIVE_SIGN_MISMATCH
+
+SCIENTIFIC_NOTATION_DIFF
+
+CURRENCY_SYMBOL_ISSUE
+
+Each data point is labeled using a rule engine prior to model training. Roll rate and vintage analysis were not required as the label is deterministic based on field-level comparison rules.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
