@@ -41,29 +41,34 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
+"Initial Variable Reduction Process" Section:
+In this project, a formal variable reduction process involving statistical techniques (such as low variance filtering, IV check, multicollinearity removal, etc.) was not performed. Instead, feature selection was driven by domain expertise and interpretability considerations.
 
-Segmentation Scheme
-This section outlines whether different segments of data were modeled separately (e.g., based on observation groups like mismatch type, data domain, etc.). In our case, a single model was built across all records without separate modeling per segment.
+A total of 18 features were selected based on their relevance to the reconciliation logic, including structural text metrics (e.g., Similarity_Percentage, source_len, destination_len), numeric transformations (e.g., Rounded_Off, Scientific_Notation), and formatting differences (e.g., Case_Sensitive_Score, Currency_Diff, Leading_Zero).
 
-🔹 Segmentation Technique
-No explicit segmentation technique was applied in this project. All records (whether matched or mismatched) were treated uniformly under a unified model structure.
+These features were engineered to capture typical mismatch patterns observed during file comparison and were retained without automated reduction to preserve their explainability and alignment with known reconciliation failure reasons.
 
-However, internally, the dataset included multiple mismatch types (e.g., leading zero, rounding, format mismatch, sign change), but instead of creating separate models per type, a single ensemble classifier (Random Forest, SVM, etc.) was trained across all types. The mismatch type was considered as a categorical feature, not as a segmentation driver.
+Since the number of features was already small and meaningful, further dimensionality reduction was deemed unnecessary.
 
-Thus, segmentation was not used to drive separate modeling equations but was embedded in the feature space to improve model generalization across mismatch classes.
+“Variable / Model Selection” (Based on your actual work):
+The final set of 18 features used in the model was selected based on domain relevance and interpretability rather than statistical filtering techniques. These features were engineered to capture the types of mismatches that typically occur in structured data reconciliation, such as case sensitivity issues, numeric formatting differences (e.g., scientific notation, rounding), and symbolic differences (e.g., currency symbols, special characters).
 
-🔹 Final Segmentation
-As no disjoint segments were modeled independently, the final segmentation also remains unified. The model was trained on the entire dataset with class labels "Mismatch" vs "NoMismatch", ensuring consistent performance across all mismatch types.
+Each feature was manually designed and retained due to its clear linkage to known root causes of mismatches. For example:
 
-🔹 Segmentation Stability
-Since no explicit segmentation was performed, stability analysis by segment was not applicable. However, model performance was tested uniformly across the entire dataset, including both:
+Similarity_Percentage and space_score capture general textual similarity.
 
-DEV (Development Sample)
+Leading_Zero, Rounded_Off, Scientific_Notation, and Currency_Diff handle numeric formatting inconsistencies.
 
-OOT (Out-of-Time Sample)
+Case_Sensitive_Score and Special_Character_Score handle case and character mismatches.
 
-This ensured that the model behavior remained stable and generalizable across different types of mismatches present in the synthetic data.
+No variables were dropped, as all selected features were meaningful from a business logic standpoint. This decision was intentional to preserve model explainability, which is critical in regulated environments like AML or model risk governance.
 
+For model training, we experimented with Random Forest and SVM. Hyperparameters were tuned using grid search on the development (DEV) set:
 
+For Random Forest: number of trees (n_estimators), maximum depth (max_depth), and minimum samples per split were varied.
+
+For SVM: kernel type, C, and gamma parameters were tuned.
+
+The final model was selected based on a balance of performance (AUC, F1-score) and interpretability, with additional review for explainability and alignment with domain expectations.
 
 
