@@ -41,65 +41,75 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
-Sampling Methodology and Results
-Sampling Method
-Sampling was not applicable, as the development dataset was fully synthetically generated rather than sampled from a real-world population. For each record, one side (e.g., source_column) remained unaltered, while controlled modifications were injected into the target_column to simulate various mismatch scenarios (e.g., rounding differences, case sensitivity, spacing issues, special characters, etc.).
 
-This method was guided by domain logic and targeted the most frequently observed reconciliation anomalies in production environments. Each mismatch type was intentionally included, ensuring that the dataset aligns with the downstream modeling requirements.
+**Model Objective**
+The primary objective of the model is to automate the identification and classification of mismatches between structured source and target data files using machine learning. This model is part of a broader data quality framework, aimed at reducing manual reconciliation efforts, improving audit traceability, and enabling faster root cause analysis across financial and operational datasets.
 
-To ensure fair representation across different classes (e.g., “Match”, “Mismatch - Rounding”, “Mismatch - Case”, etc.), we implemented proportional balancing during data generation — as visualized in the mismatch distribution bar chart included in the EDA section.
+The model is trained on a synthetically generated dataset that simulates realistic data mismatches encountered during reconciliation processes (e.g., formatting differences, rounding discrepancies, case sensitivity issues, spacing variations, and numeric inconsistencies). For each source-target record pair, a set of handcrafted features is extracted to capture these variations and generate a "reason score" that feeds into the classifier.
 
-Sampling Verification
-As no traditional sampling was performed, sampling verification in the classical sense was not required. However, we verified that the final dataset was representative by construction through the following checks:
+Using ensemble classification techniques (e.g., Random Forest, SVM, Logistic Regression), the model predicts whether the pair is a match or a mismatch, and if mismatched, assigns a likely mismatch reason. The predictions are supported by structured reasoning scores and feature importance metrics, making the model's decisions interpretable and traceable.
 
-Ensured balanced class distribution across match/mismatch categories, preventing bias toward any single mismatch reason.
+The model’s output is intended to serve two key use cases:
 
-Used descriptive statistics (mean, standard deviation, min, max, quartiles) to confirm feature integrity.
+Automated Labeling for reconciliation platforms and audit pipelines.
 
-Performed correlation analysis and feature importance ranking to validate the predictive relevance of engineered features.
+Pre-Screening of records to prioritize review efforts by flagging high-confidence mismatches with suggested root causes.
 
-Thus, while traditional sampling was not used, design-driven balance and verification ensured that the synthetic dataset closely mirrors real-world reconciliation challenges while remaining suitable for AIML model training.
+Flowchart – AIML Model Dataset Preparation (Column-wise Controlled Mismatch Approach)
+pgsql
+Copy
+Edit
+[Single Base Table with Original Data]
+           │
+           ├──► [Column A] → *Kept constant across records*
+           │
+           └──► [Column B] → *Introduce Controlled Variations* (e.g., format, precision, special characters, leading zeros)
+                        ↓
+         [Combine Both Columns into Pairwise Records]
+                        ↓
+         [Inject Known Mismatch Types into Column B]
+                        ↓
+         [Join or Compare Column A vs. Column B Row-wise]
+                        ↓
+         [Extract Features (e.g., length diff, pattern, numeric diff)]
+                        ↓
+         [Tag Reason for Mismatch or Label as Match]
+                        ↓
+         [Assign Label: "Match" / "Mismatch – Reason"]
+                        ↓
+     [Final AIML Dataset with Features + Labels Ready for Training]
+How This Fits the Citi MRM Documentation Template
+Modeling Data Assumptions:
 
+Assumes mismatches are synthetically injected in a controlled and labeled manner.
+Assumes that one column is the correct value (anchor), and the other represents real-world noise/errors.
 
+Sampling Method:
 
-Modeling Data Assumptions
-Several assumptions were embedded during the design of the synthetic dataset and feature engineering process for the AIML-based structured data reconciliation model:
+Not applicable. Entire population is synthetically generated. However, class balance was ensured across match vs mismatch labels (evident from bar graph distribution).
 
-Synthetic mismatches reflect real-world scenarios
-Assumption: The injected mismatches (e.g., rounding errors, case differences, extra spaces) represent the most common reconciliation failures observed in production.
-Justification: Mismatch types were curated based on actual data quality logs and stakeholder feedback from past reconciliation workflows.
+Descriptive Statistics:
 
-Feature extraction is comprehensive and domain-relevant
-Assumption: The engineered features (e.g., case-sensitive score, numeric check, space diff, etc.) are sufficient to distinguish match vs. mismatch cases.
-Justification: Feature importance scores and correlation matrices (see Section 3.5) indicate distinct patterns across label categories.
+Summary statistics (mean, std, min/max, missing %, etc.) can be shown for numeric features such as:
+length_diff, leading_zero_flag, num_diff, type_mismatch_flag, etc.
+You may paste histograms or boxplots for key features.
 
-No data leakage exists between training and labels
-Assumption: All features used for model training are computed from the inputs only (source/target pairs), without referencing the label.
-Justification: Labels were assigned after all feature engineering steps based on deterministic mismatch logic, ensuring a clean separation.
+Dependent Variable:
 
-Balanced class distribution improves generalizability
-Assumption: Artificially balancing the dataset prevents class imbalance bias during training.
-Justification: The class distribution bar graph (see EDA section) confirms equal representation across mismatch types, ensuring fair training behavior.
+Binary variable: Match (0) vs. Mismatch (1)
+Further subclassified by reason codes (Mismatch: LeadingZero, Mismatch: Rounding, etc.)
 
-These assumptions are testable and have been evaluated through exploratory data analysis, feature correlation studies, and distribution visualizations (refer to Section 3.3 and 3.5 for supporting visuals and metrics).
+Model Objective:
 
-Potential Data Weaknesses
-Despite the controlled design of the synthetic dataset, the following potential weaknesses were identified:
+Automate structured data comparison between source and target by classifying mismatches and identifying reasons for discrepancies using machine learning.
 
-Lack of real-world noise
-Since the data is artificially generated, certain unpredictable human or system behaviors (e.g., typos, encoding issues, multi-language noise) may not be fully captured.
-Mitigation: Consider hybridizing future versions of the dataset with small samples of production data (anonymized) to validate edge cases.
+Modeling Soundness Assumptions:
 
-Over-simplified mismatch logic
-The classification logic assumes a clear and isolated reason for each mismatch, whereas in reality, multiple issues may co-occur.
-Mitigation: Extend the data generator to support compound mismatch scenarios, and train multi-label models if needed.
+Assumes independent mismatch categories. Features are engineered to be interpretable and support explainability.
+Models used (e.g., Random Forest, Logistic Regression) satisfy statistical assumptions and are evaluated using cross-validation.
 
-Label confidence is 100% synthetic
-All labels are derived from deterministic rules; no human-in-the-loop validation was done.
-Mitigation: Include a manual validation sample or SMEs (Subject Matter Experts) to review a subset of labeled data for ground truth alignment.
+Potential Data Weaknesses:
 
-Feature collinearity
-Correlation matrix (see Section 3.6) shows strong correlation between some features (e.g., case-insensitive and case-sensitive scores), which may lead to redundancy or overfitting.
-Mitigation: Use dimensionality reduction or regularization techniques during model development to prevent over-dependence.
-
+Synthetic nature of data may not capture all real-world corner cases.
+May require re-tuning if new formats or mismatches emerge in production.
 
