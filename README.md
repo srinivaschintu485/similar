@@ -41,47 +41,65 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
-Association and Correlation Matrix (Categorical + Numerical)
-This visualization combines two statistical relationship metrics:
+Sampling Methodology and Results
+Sampling Method
+Sampling was not applicable, as the development dataset was fully synthetically generated rather than sampled from a real-world population. For each record, one side (e.g., source_column) remained unaltered, while controlled modifications were injected into the target_column to simulate various mismatch scenarios (e.g., rounding differences, case sensitivity, spacing issues, special characters, etc.).
 
-Squares represent categorical associations such as uncertainty coefficient or correlation ratio, indicating how much a feature provides informative value to the target variable (Label).
+This method was guided by domain logic and targeted the most frequently observed reconciliation anomalies in production environments. Each mismatch type was intentionally included, ensuring that the dataset aligns with the downstream modeling requirements.
 
-Circles represent numerical Pearson correlations between pairs of continuous features (ranging from -1 to 1). The size and color intensity show the strength and direction of the relationship:
+To ensure fair representation across different classes (e.g., “Match”, “Mismatch - Rounding”, “Mismatch - Case”, etc.), we implemented proportional balancing during data generation — as visualized in the mismatch distribution bar chart included in the EDA section.
 
-Dark blue = Strong positive
+Sampling Verification
+As no traditional sampling was performed, sampling verification in the classical sense was not required. However, we verified that the final dataset was representative by construction through the following checks:
 
-Red = Strong negative
+Ensured balanced class distribution across match/mismatch categories, preventing bias toward any single mismatch reason.
 
-Small/pale = Weak correlation
+Used descriptive statistics (mean, standard deviation, min, max, quartiles) to confirm feature integrity.
 
-Key Observations
-High Informative Features for Label:
+Performed correlation analysis and feature importance ranking to validate the predictive relevance of engineered features.
 
-Thousand_Separator, Rounded_Off, and Special_Character_Diff show large squares in the first row, indicating they provide significant information for predicting the label (Match/Mismatch).
-
-Strong Positive Numerical Correlations:
-
-Rounded_Off and Leading_Zero (circle size ≈ 0.7)
-
-Special_Character_Score and Special_Character_Diff (almost perfect correlation)
-
-Low Association or Redundancy:
-
-Scientific_Notation and Negative_Check have low associations both numerically and categorically — these may either be sparse or not helpful in model training.
-
-Case_Insensitive_Score and Case_Sensitive_Score again show up as very similar, implying potential redundancy.
-
-Interpretation Strategy:
-Prioritize features with large squares in the first row, as they help the model differentiate between match/mismatch classes.
-
-Drop or combine highly correlated features to reduce dimensionality and avoid multicollinearity.
-
-Retain features that are weakly correlated with others but highly informative to the label — these offer orthogonal (non-redundant) information.
+Thus, while traditional sampling was not used, design-driven balance and verification ensured that the synthetic dataset closely mirrors real-world reconciliation challenges while remaining suitable for AIML model training.
 
 
 
+Modeling Data Assumptions
+Several assumptions were embedded during the design of the synthetic dataset and feature engineering process for the AIML-based structured data reconciliation model:
 
+Synthetic mismatches reflect real-world scenarios
+Assumption: The injected mismatches (e.g., rounding errors, case differences, extra spaces) represent the most common reconciliation failures observed in production.
+Justification: Mismatch types were curated based on actual data quality logs and stakeholder feedback from past reconciliation workflows.
 
-                                                              |
+Feature extraction is comprehensive and domain-relevant
+Assumption: The engineered features (e.g., case-sensitive score, numeric check, space diff, etc.) are sufficient to distinguish match vs. mismatch cases.
+Justification: Feature importance scores and correlation matrices (see Section 3.5) indicate distinct patterns across label categories.
+
+No data leakage exists between training and labels
+Assumption: All features used for model training are computed from the inputs only (source/target pairs), without referencing the label.
+Justification: Labels were assigned after all feature engineering steps based on deterministic mismatch logic, ensuring a clean separation.
+
+Balanced class distribution improves generalizability
+Assumption: Artificially balancing the dataset prevents class imbalance bias during training.
+Justification: The class distribution bar graph (see EDA section) confirms equal representation across mismatch types, ensuring fair training behavior.
+
+These assumptions are testable and have been evaluated through exploratory data analysis, feature correlation studies, and distribution visualizations (refer to Section 3.3 and 3.5 for supporting visuals and metrics).
+
+Potential Data Weaknesses
+Despite the controlled design of the synthetic dataset, the following potential weaknesses were identified:
+
+Lack of real-world noise
+Since the data is artificially generated, certain unpredictable human or system behaviors (e.g., typos, encoding issues, multi-language noise) may not be fully captured.
+Mitigation: Consider hybridizing future versions of the dataset with small samples of production data (anonymized) to validate edge cases.
+
+Over-simplified mismatch logic
+The classification logic assumes a clear and isolated reason for each mismatch, whereas in reality, multiple issues may co-occur.
+Mitigation: Extend the data generator to support compound mismatch scenarios, and train multi-label models if needed.
+
+Label confidence is 100% synthetic
+All labels are derived from deterministic rules; no human-in-the-loop validation was done.
+Mitigation: Include a manual validation sample or SMEs (Subject Matter Experts) to review a subset of labeled data for ground truth alignment.
+
+Feature collinearity
+Correlation matrix (see Section 3.6) shows strong correlation between some features (e.g., case-insensitive and case-sensitive scores), which may lead to redundancy or overfitting.
+Mitigation: Use dimensionality reduction or regularization techniques during model development to prevent over-dependence.
 
 
