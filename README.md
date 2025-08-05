@@ -41,48 +41,52 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
-Dependent Variable
-The dependent variable in this model is the type of data mismatch identified between the source and target structured datasets. This is a multiclass classification problem, where the model is trained to predict one of several predefined mismatch categories for each record.
+ Reject Inference
+Is it applicable to your model? → No.
 
-We defined the following mismatch types based on real-world reconciliation scenarios:
+Answer:
 
-Match – No discrepancy between source and target values
+Reject inference is not applicable to this model, as it is not an acquisition risk model or fraud detection model where such inference is typically required. The dataset used in this model is synthetically generated and fully labeled based on predefined mismatch categories (e.g., rounding, formatting, currency symbol, scientific notation, etc.).
 
-Rounding Issue – Minor numerical differences within acceptable thresholds (e.g., due to decimal precision)
+All instances used in training and testing represent known reconciliation outcomes, and there are no “rejected” or “unlabeled” observations requiring inference or sampling strategies.
 
-Format Difference – Differences due to inconsistent formats (e.g., DD-MM-YYYY vs. MM/DD/YYYY)
+Therefore, no reject inference approaches were considered or implemented.
 
-Leading/Trailing Zero – Mismatch caused by padded or truncated zeros
+🔹 Dependent Variable
+What is the dependent variable in your model?
+→ It is a multi-class categorical label representing Mismatch Type
 
-Negative Sign Mismatch – Value direction discrepancy (e.g., -150 vs. 150)
+Answer:
 
-Currency Symbol Mismatch – Differences due to symbols or ISO code inclusion (e.g., $100 vs. USD 100)
+The dependent variable in this model is a categorical variable named Mismatch_Type, which classifies the nature of the reconciliation difference between the source and target records.
 
-Thousand Separator – Misalignment due to comma or space separators (e.g., 1,000 vs. 1000)
+This is not a binary good/bad classification, but rather a multi-class target representing structured mismatch reasons. The classes include:
 
-Scientific Notation – Format difference due to exponential representation (e.g., 1E+03)
+Rounding
 
-Other – Any unclassified mismatch or unexpected pattern
+Leading Zero
 
+Negative Sign Misplacement
 
-Performance Definition
-Unlike traditional credit models (which use Good/Bad/Indeterminate labels), our model uses labeled synthetic data with clearly defined classes. Each class in the dependent variable corresponds to a unique mismatch type, and we maintain balanced class representation to avoid modeling bias.
+Currency Symbol
 
-The classification performance window was immediate — there is no temporal lag between mismatch detection and labeling, as the labels were generated alongside synthetic data creation.
+Scientific Notation
 
- Summary Statistics of the Dependent Variable (DEV, OOT)
+Thousand Separator
 
-| Mismatch Type            | DEV Sample (#/%) | OOT Sample (#/%) |
-| ------------------------ | ---------------- | ---------------- |
-| Match                    | XX / XX%         | XX / XX%         |
-| Rounding Issue           | XX / XX%         | XX / XX%         |
-| Format Difference        | XX / XX%         | XX / XX%         |
-| Leading/Trailing Zero    | XX / XX%         | XX / XX%         |
-| Negative Sign Mismatch   | XX / XX%         | XX / XX%         |
-| Currency Symbol Mismatch | XX / XX%         | XX / XX%         |
-| Thousand Separator       | XX / XX%         | XX / XX%         |
-| Scientific Notation      | XX / XX%         | XX / XX%         |
-| Other                    | XX / XX%         | XX / XX%         |
+No Mismatch (i.e., clean match)
+
+These labels were applied directly to synthetic data through rule-based labeling logic. There were no indeterminate values since every row was explicitly tagged during data generation.
+
+A performance window does not apply in the traditional sense (e.g., credit performance over 12 months) because the labels are immediate and deterministic based on rule violation. However, the model was validated across DEV and OOT sets, ensuring consistency of class distribution and performance.
+📊 Example: Table 5 – Summary Statistics of the Dependent Variable
+
+| Performance        | Performance Definition                       | DEV Sample (#/%) | OOT Sample (#/%) |
+| ------------------ | -------------------------------------------- | ---------------- | ---------------- |
+| Good               | No mismatch identified                       | 600 (50%)        | 300 (50%)        |
+| Indeterminate      | N/A (All rows are clearly labeled)           | 0 (0%)           | 0 (0%)           |
+| Bad                | Mismatch detected (any of the 6 types above) | 600 (50%)        | 300 (50%)        |
+| Performance Window | Not applicable – labels determined at ingest | —                | —                |
 
 
 
