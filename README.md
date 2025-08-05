@@ -40,58 +40,25 @@ These discrepancies are systematically identified and resolved, ensuring your da
 **Advanced Currency Handling:** Supports an array of global currency symbols, enhancing the tool's utility for international financial data operations.
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
+Segmentation Scheme
+This section outlines whether different segments of data were modeled separately (e.g., based on observation groups like mismatch type, data domain, etc.). In our case, a single model was built across all records without separate modeling per segment.
 
- Reject Inference
-Is it applicable to your model? → No.
+🔹 Segmentation Technique
+No explicit segmentation technique was applied in this project. All records (whether matched or mismatched) were treated uniformly under a unified model structure.
 
-Answer:
+However, internally, the dataset included multiple mismatch types (e.g., leading zero, rounding, format mismatch, sign change), but instead of creating separate models per type, a single ensemble classifier (Random Forest, SVM, etc.) was trained across all types. The mismatch type was considered as a categorical feature, not as a segmentation driver.
 
-Reject inference is not applicable to this model, as it is not an acquisition risk model or fraud detection model where such inference is typically required. The dataset used in this model is synthetically generated and fully labeled based on predefined mismatch categories (e.g., rounding, formatting, currency symbol, scientific notation, etc.).
+Thus, segmentation was not used to drive separate modeling equations but was embedded in the feature space to improve model generalization across mismatch classes.
 
-All instances used in training and testing represent known reconciliation outcomes, and there are no “rejected” or “unlabeled” observations requiring inference or sampling strategies.
+🔹 Final Segmentation
+As no disjoint segments were modeled independently, the final segmentation also remains unified. The model was trained on the entire dataset with class labels "Mismatch" vs "NoMismatch", ensuring consistent performance across all mismatch types.
 
-Therefore, no reject inference approaches were considered or implemented.
+🔹 Segmentation Stability
+Since no explicit segmentation was performed, stability analysis by segment was not applicable. However, model performance was tested uniformly across the entire dataset, including both:
 
-🔹 Dependent Variable
-What is the dependent variable in your model?
-→ It is a multi-class categorical label representing Mismatch Type
+DEV (Development Sample)
 
-Answer:
+OOT (Out-of-Time Sample)
 
-The dependent variable in this model is a categorical variable named Mismatch_Type, which classifies the nature of the reconciliation difference between the source and target records.
-
-This is not a binary good/bad classification, but rather a multi-class target representing structured mismatch reasons. The classes include:
-
-Rounding
-
-Leading Zero
-
-Negative Sign Misplacement
-
-Currency Symbol
-
-Scientific Notation
-
-Thousand Separator
-
-No Mismatch (i.e., clean match)
-
-These labels were applied directly to synthetic data through rule-based labeling logic. There were no indeterminate values since every row was explicitly tagged during data generation.
-
-A performance window does not apply in the traditional sense (e.g., credit performance over 12 months) because the labels are immediate and deterministic based on rule violation. However, the model was validated across DEV and OOT sets, ensuring consistency of class distribution and performance.
-📊 Example: Table 5 – Summary Statistics of the Dependent Variable
-
-| Performance        | Performance Definition                       | DEV Sample (#/%) | OOT Sample (#/%) |
-| ------------------ | -------------------------------------------- | ---------------- | ---------------- |
-| Good               | No mismatch identified                       | 600 (50%)        | 300 (50%)        |
-| Indeterminate      | N/A (All rows are clearly labeled)           | 0 (0%)           | 0 (0%)           |
-| Bad                | Mismatch detected (any of the 6 types above) | 600 (50%)        | 300 (50%)        |
-| Performance Window | Not applicable – labels determined at ingest | —                | —                |
-
-
-
-
-
-
-
+This ensured that the model behavior remained stable and generalizable across different types of mismatches present in the synthetic data.
 
