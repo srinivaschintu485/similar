@@ -41,34 +41,97 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
-"Initial Variable Reduction Process" Section:
-In this project, a formal variable reduction process involving statistical techniques (such as low variance filtering, IV check, multicollinearity removal, etc.) was not performed. Instead, feature selection was driven by domain expertise and interpretability considerations.
+Final Model Specification (Detailed — including Independent Variables)
+The final model chosen was an ensemble classifier combining Random Forest, Logistic Regression, and SVM, developed in PySpark. The primary objective of the model was to predict the root cause category of mismatches between source and target data entries — such as formatting issues, case sensitivity, rounding, currency discrepancies, and others — using a structured set of engineered features.
 
-A total of 18 features were selected based on their relevance to the reconciliation logic, including structural text metrics (e.g., Similarity_Percentage, source_len, destination_len), numeric transformations (e.g., Rounded_Off, Scientific_Notation), and formatting differences (e.g., Case_Sensitive_Score, Currency_Diff, Leading_Zero).
+✅ Model Output:
+The model produces a classification label (e.g., Leading Zero, Rounding, Case Sensitivity, Scientific Notation, etc.) which represents the most probable reason for the data mismatch. The output is categorical and interpretable for downstream business and quality teams.
+Independent Variables Used:
+Below is the full list of independent variables included in the model along with a brief description of each:
+| Variable Name             | Description                                                                |
+| ------------------------- | -------------------------------------------------------------------------- |
+| `Perfect_match`           | Binary flag indicating exact match between source and target fields.       |
+| `Leading_Zero`            | Binary indicator if mismatch is due to a leading zero in source/target.    |
+| `Rounded_Off`             | Binary flag capturing mismatches due to numeric rounding.                  |
+| `Currency_Diff`           | Binary flag for currency symbol or code mismatch (e.g., "\$" vs "USD").    |
+| `Case_Sensitive_Score`    | Numeric score measuring case-sensitive similarity.                         |
+| `Case_Insensitive_Score`  | Similarity score ignoring letter casing.                                   |
+| `Case_Sensitivity_Diff`   | Derived difference between sensitive and insensitive scores.               |
+| `Scientific_Notation`     | Flag for mismatch due to scientific notation format (e.g., 1.0E+03).       |
+| `Space_diff`              | Flag for presence of leading/trailing/in-between space mismatches.         |
+| `space_score`             | Numeric measure of string similarity after stripping spaces.               |
+| `Special_Character_Diff`  | Indicator if mismatch is due to special characters (e.g., `@`, `-`, etc.). |
+| `Similarity_Percentage`   | Normalized similarity score using fuzzy string logic.                      |
+| `source_len`              | Length of source string (used for normalization and profiling).            |
+| `destination_len`         | Length of destination string.                                              |
+| `Negative_Sign_Diff`      | Flag for mismatches due to presence or absence of minus sign.              |
+| `Thousand_Separator_Diff` | Flag for formatting mismatch due to commas or separators.                  |
+| `Numeric_Only_Match`      | Flag that checks if numeric values match regardless of formatting.         |
+| `Mismatch_Type_Encoded`   | Encoded value representing category of mismatch (used during training).    |
 
-These features were engineered to capture typical mismatch patterns observed during file comparison and were retained without automated reduction to preserve their explainability and alignment with known reconciliation failure reasons.
+Total independent variables used in the final model: 18
 
-Since the number of features was already small and meaningful, further dimensionality reduction was deemed unnecessary.
+Each of these variables was selected through a combination of domain knowledge, feature importance analysis, and model performance tests. 
 
-“Variable / Model Selection” (Based on your actual work):
-The final set of 18 features used in the model was selected based on domain relevance and interpretability rather than statistical filtering techniques. These features were engineered to capture the types of mismatches that typically occur in structured data reconciliation, such as case sensitivity issues, numeric formatting differences (e.g., scientific notation, rounding), and symbolic differences (e.g., currency symbols, special characters).
+Variable Transformation / Treatment
+This section outlines the transformations applied to raw source and destination data to derive model features. These transformations capture formatting mismatches, representation issues, and semantic differences using a mix of rule-based and statistical techniques. Below is a detailed breakdown of each feature and how it was implemented.
+| Feature                      | Description                                                            | Implementation                                                                     |   |                     |
+| ---------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | - | ------------------- |
+| **Perfect\_match**           | 1 if source and destination are exactly equal                          | `source == destination` (string comparison after stripping spaces)                 |   |                     |
+| **numeric\_check**           | 1 if both values can be parsed as numeric                              | Use `str.isdigit()` or try `float(source)`, `float(destination)` inside try/except |   |                     |
+| **Scientific\_Notation**     | 1 if either value contains exponential notation like `1e3`             | Regex check for `[eE][+-]?\d+` pattern                                             |   |                     |
+| **Thousand\_Separator**      | 1 if one value uses commas or dots as separators and the other doesn't | Check presence of `,` or `.` using regex or string match                           |   |                     |
+| **Rounded\_Off**             | 1 if one value is a rounded version of the other (e.g., 2.99 → 3.00)   | Use `round(float(val1), 2) == round(float(val2), 2)`                               |   |                     |
+| **Leading\_Zero**            | 1 if one value has a leading zero (e.g., `007` vs `7`)                 | Compare stripped integer values and detect if original has prefix `0`              |   |                     |
+| **Currency\_Diff**           | 1 if one value includes currency symbol and the other doesn't          | Regex pattern like \`\$                                                            | ₹ | €\` or string match |
+| **Negative\_Check**          | 1 if one value is negative and the other is not                        | Check for `'-'` presence or `float(val) < 0` mismatch                              |   |                     |
+| **Case\_Sensitivity\_Diff**  | 1 if strings differ only by case                                       | `source.lower() == destination.lower()` but `source != destination`                |   |                     |
+| **Special\_Character\_Diff** | 1 if mismatch caused by symbols like `@`, `#`, `-` etc.                | Clean both with regex `[^a-zA-Z0-9]`, compare result                               |   |                     |
+| **Space\_diff**              | 1 if strings differ due to extra/missing spaces                        | `source.replace(" ", "") == destination.replace(" ", "")`                          |   |                     |
+| Feature                                                              | Description                                      | Implementation                                                                       |
+| -------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| **Similarity\_Percentage**                                           | Fuzzy match score between source and destination | Use `fuzz.ratio(source, destination)` from `fuzzywuzzy` or `difflib.SequenceMatcher` |
+| **source\_len / destination\_len**                                   | Character count of raw fields                    | `len(source)` and `len(destination)`                                                 |
+| **Case\_Sensitive\_Score**                                           | Match score while respecting casing              | `fuzz.ratio(source, destination)` or Levenshtein distance                            |
+| **Case\_Insensitive\_Score**                                         | Match score ignoring case                        | Convert both to `.lower()` before computing similarity                               |
+| **Special\_Character\_Score**                                        | Similarity after removing all symbols            | Clean using regex: `re.sub(r'[^a-zA-Z0-9]', '', val)` before matching                |
+| **space\_score**                                                     | Score after removing or normalizing whitespace   | `val.strip()` or `val.replace(' ', '')` before match                                 |
+| **Special\_Character\_Diff / Space\_diff / Case\_Sensitivity\_Diff** | Binary versions of the above score differences   | Derived by thresholding score difference or pattern detection                        |
+ Technical Steps Applied (How It Was Achieved)
+Initial Parsing & Cleaning
 
-Each feature was manually designed and retained due to its clear linkage to known root causes of mismatches. For example:
+Strings were cleaned using standard Python methods: .strip(), .lower(), .replace().
 
-Similarity_Percentage and space_score capture general textual similarity.
+Regex was heavily used to detect patterns: re.search() and re.sub() for scientific notation, special characters, etc.
 
-Leading_Zero, Rounded_Off, Scientific_Notation, and Currency_Diff handle numeric formatting inconsistencies.
+Feature Engineering Pipeline
 
-Case_Sensitive_Score and Special_Character_Score handle case and character mismatches.
+All features were calculated row-wise for each source-destination pair in a pandas or Spark DataFrame.
 
-No variables were dropped, as all selected features were meaningful from a business logic standpoint. This decision was intentional to preserve model explainability, which is critical in regulated environments like AML or model risk governance.
+Custom Python functions were defined for each transformation, then applied using df.apply() or UDFs.
 
-For model training, we experimented with Random Forest and SVM. Hyperparameters were tuned using grid search on the development (DEV) set:
+Vector Assembly
 
-For Random Forest: number of trees (n_estimators), maximum depth (max_depth), and minimum samples per split were varied.
+The list feature_columns was passed to VectorAssembler from PySpark:
 
-For SVM: kernel type, C, and gamma parameters were tuned.
+python
+Copy
+Edit
+assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
+This created a single feature vector per row used for model training.
 
-The final model was selected based on a balance of performance (AUC, F1-score) and interpretability, with additional review for explainability and alignment with domain expectations.
+Missing Value Handling
+
+Where data was invalid or missing, fallback logic was implemented:
+
+Default to 0 for binary indicators
+
+Use -1 or median for numeric scores
+
+Model Input
+
+Only features listed in the final feature_columns list were passed to the ML model.
+
+Raw fields like source_data and destination_data were excluded from training to prevent leakage.
 
 
