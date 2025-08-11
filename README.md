@@ -53,55 +53,26 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 
 
-Model Framework (Enhanced)
-The Precert–AIML system is an automated pipeline that compares structured data from source and target systems to identify and classify discrepancies. It uses Apache Kafka for metadata ingestion, Apache Spark for processing and feature engineering, and a Random Forest classifier for prediction. The framework is designed for scalability, traceability, and explainability.
+Model Performance – Explanation of Metrics
+The model performance was evaluated using four key metrics:
 
-Step 1 – Parsing and Processing
-The system ingests data from source and target files in formats such as .xlsx, .csv, and .txt. File metadata is captured, and data is normalized for further processing.
+Accuracy – The percentage of total predictions that were correct across all classes. An accuracy of 100% means every record was classified into the correct discrepancy category without error.
 
-Step 2 – Preprocessing and Feature Engineering
-The pipeline applies preprocessing logic to transform raw data into engineered features relevant for classification. This includes:
+Precision – The ratio of correctly predicted positive observations to the total predicted positives. In this context, it measures how often the model’s predicted category was actually correct. A 100% precision means there were no false positives for any category.
 
-Removing extra spaces
+Recall – The ratio of correctly predicted positives to all actual positives. Here, it measures how many of the actual discrepancies in a category were successfully identified by the model. 100% recall means no category instances were missed.
 
-Standardizing number formats
+F1-Score – The harmonic mean of precision and recall. It balances the trade-off between precision and recall, especially important when class distributions are imbalanced. 100% F1-score indicates perfect balance — every category was captured without false positives or false negatives.
 
-Handling thousand separators and currency symbols
+Why Random Forest Was Chosen
+During the model selection phase, three algorithms were evaluated: Random Forest, Logistic Regression, and Linear SVM. While both Random Forest and Logistic Regression achieved perfect scores across all metrics, Random Forest was selected for production due to the following advantages:
 
-Case normalization
+Robustness to Feature Interactions – Random Forest naturally captures non-linear relationships and complex feature interactions without requiring extensive manual feature engineering. This is especially valuable for discrepancy detection, where subtle data format differences may not follow linear patterns.
 
-Extracting indicators for specific known mismatch patterns
+Resistance to Overfitting – By averaging results from multiple decision trees, Random Forest reduces the likelihood of overfitting to the training data, ensuring stable performance across varied input datasets.
 
-Step 3 – Classification
-While several machine learning models (e.g., Linear SVC, Logistic Regression, XGBoost) were evaluated during development, Random Forest was selected for production based on superior accuracy, stability, and interpretability.
-The model predicts one of over 11 predefined discrepancy categories, such as:
+Explainability – The model provides feature importance scores, making it easier to understand which engineered features (e.g., extra space indicators, thousand separator checks) contributed most to the prediction. This aligns with the requirement for explainable AI in regulated environments like Citi.
 
-Leading Zero Issue: 00755275 vs 755275
+Consistent High Performance Across Categories – Random Forest maintained perfect accuracy, precision, recall, and F1-scores across all 11 discrepancy categories, whereas Linear SVM showed slightly lower results (98.3% accuracy).
 
-Rounded-off Numbers: 5501.01 vs 5501
-
-Scientific Notation Difference: 1.2e3 vs 1200
-
-Currency Symbol Difference: $1,000 vs 1,000.00 USD
-
-Negative vs Positive: -123 vs 123
-
-Case Sensitivity Issue: Savings Account vs SAVINGS ACCOUNT
-
-Extra Space Issue: Routing Number:123456789 vs Routing Number: 123456789
-
-Special Character Difference: Password@123 vs Password 123
-
-Matched / No Match for complete agreement or entirely unmatched records
-
-Step 4 – Probability Threshold Check
-If the model outputs a prediction probability lower than a set threshold, the case is flagged as an "Untrained / Unknown Classification". A message is attached stating that the discrepancy type was not part of the training dataset, prompting analysts to review it and potentially include it in future training cycles.
-
-Step 5 – Output and Downstream Integration
-Final predictions (including confidence scores and unknown classification flags) are exported in Excel format. The output layout matches the original input structure, enabling easy traceability. Results integrate with reconciliation workflows, allowing business users and data stewards to:
-
-Quickly address common discrepancies
-
-Prioritize manual review for low-confidence predictions
-
-Feed new discrepancy types back into the model lifecycle
+Scalability in Spark Environment – Random Forest integrates efficiently with Apache Spark ML, enabling large-scale, distributed training and inference, which is critical for enterprise-wide data reconciliation processes.
