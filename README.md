@@ -50,3 +50,58 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 4. Send to LLM     | Send prompt to GPT or Claude via API           | OpenAI/Anthropic       |
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
+
+
+
+Model Framework (Enhanced)
+The Precert–AIML system is an automated pipeline that compares structured data from source and target systems to identify and classify discrepancies. It uses Apache Kafka for metadata ingestion, Apache Spark for processing and feature engineering, and a Random Forest classifier for prediction. The framework is designed for scalability, traceability, and explainability.
+
+Step 1 – Parsing and Processing
+The system ingests data from source and target files in formats such as .xlsx, .csv, and .txt. File metadata is captured, and data is normalized for further processing.
+
+Step 2 – Preprocessing and Feature Engineering
+The pipeline applies preprocessing logic to transform raw data into engineered features relevant for classification. This includes:
+
+Removing extra spaces
+
+Standardizing number formats
+
+Handling thousand separators and currency symbols
+
+Case normalization
+
+Extracting indicators for specific known mismatch patterns
+
+Step 3 – Classification
+While several machine learning models (e.g., Linear SVC, Logistic Regression, XGBoost) were evaluated during development, Random Forest was selected for production based on superior accuracy, stability, and interpretability.
+The model predicts one of over 11 predefined discrepancy categories, such as:
+
+Leading Zero Issue: 00755275 vs 755275
+
+Rounded-off Numbers: 5501.01 vs 5501
+
+Scientific Notation Difference: 1.2e3 vs 1200
+
+Currency Symbol Difference: $1,000 vs 1,000.00 USD
+
+Negative vs Positive: -123 vs 123
+
+Case Sensitivity Issue: Savings Account vs SAVINGS ACCOUNT
+
+Extra Space Issue: Routing Number:123456789 vs Routing Number: 123456789
+
+Special Character Difference: Password@123 vs Password 123
+
+Matched / No Match for complete agreement or entirely unmatched records
+
+Step 4 – Probability Threshold Check
+If the model outputs a prediction probability lower than a set threshold, the case is flagged as an "Untrained / Unknown Classification". A message is attached stating that the discrepancy type was not part of the training dataset, prompting analysts to review it and potentially include it in future training cycles.
+
+Step 5 – Output and Downstream Integration
+Final predictions (including confidence scores and unknown classification flags) are exported in Excel format. The output layout matches the original input structure, enabling easy traceability. Results integrate with reconciliation workflows, allowing business users and data stewards to:
+
+Quickly address common discrepancies
+
+Prioritize manual review for low-confidence predictions
+
+Feed new discrepancy types back into the model lifecycle
