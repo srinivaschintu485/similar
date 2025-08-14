@@ -52,27 +52,11 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-
-Model Performance – Explanation of Metrics
-The model performance was evaluated using four key metrics:
-
-Accuracy – The percentage of total predictions that were correct across all classes. An accuracy of 100% means every record was classified into the correct discrepancy category without error.
-
-Precision – The ratio of correctly predicted positive observations to the total predicted positives. In this context, it measures how often the model’s predicted category was actually correct. A 100% precision means there were no false positives for any category.
-
-Recall – The ratio of correctly predicted positives to all actual positives. Here, it measures how many of the actual discrepancies in a category were successfully identified by the model. 100% recall means no category instances were missed.
-
-F1-Score – The harmonic mean of precision and recall. It balances the trade-off between precision and recall, especially important when class distributions are imbalanced. 100% F1-score indicates perfect balance — every category was captured without false positives or false negatives.
-
-Why Random Forest Was Chosen
-During the model selection phase, three algorithms were evaluated: Random Forest, Logistic Regression, and Linear SVM. While both Random Forest and Logistic Regression achieved perfect scores across all metrics, Random Forest was selected for production due to the following advantages:
-
-Robustness to Feature Interactions – Random Forest naturally captures non-linear relationships and complex feature interactions without requiring extensive manual feature engineering. This is especially valuable for discrepancy detection, where subtle data format differences may not follow linear patterns.
-
-Resistance to Overfitting – By averaging results from multiple decision trees, Random Forest reduces the likelihood of overfitting to the training data, ensuring stable performance across varied input datasets.
-
-Explainability – The model provides feature importance scores, making it easier to understand which engineered features (e.g., extra space indicators, thousand separator checks) contributed most to the prediction. This aligns with the requirement for explainable AI in regulated environments like Citi.
-
-Consistent High Performance Across Categories – Random Forest maintained perfect accuracy, precision, recall, and F1-scores across all 11 discrepancy categories, whereas Linear SVM showed slightly lower results (98.3% accuracy).
-
-Scalability in Spark Environment – Random Forest integrates efficiently with Apache Spark ML, enabling large-scale, distributed training and inference, which is critical for enterprise-wide data reconciliation processes.
+| # | Raised By    | Limitation Type                             | Limitation Description                                                                                              | Proposed Compensating Control                                                                                                                                   | Additional Comments                                                              |
+| - | ------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 1 | Project Team | Label Quality Issues                        | Labels in the training data may contain inaccuracies due to human annotation errors.                                | Maintain a high volume of verified training samples; use automated data validation scripts and periodic manual audits to detect and correct mislabeled entries. | Continuous active learning loop to correct labels over time.                     |
+| 2 | Project Team | Domain-Specific Data Bias                   | Training data is sourced primarily from specific domains/regions, which may reduce generalization to other domains. | Apply domain adaptation techniques; retrain periodically with diversified datasets covering underrepresented scenarios.                                         | Monitor domain drift with evaluation metrics segmented by domain.                |
+| 3 | Project Team | Class Imbalance                             | Some classification categories have fewer examples, leading to potential bias towards dominant classes.             | Use oversampling/undersampling, SMOTE, and class-weighted loss functions during training.                                                                       | Track per-class performance and adjust sampling ratios in retraining.            |
+| 4 | Project Team | Model Drift                                 | Model performance may degrade over time due to changes in data patterns or terminology.                             | Implement continuous monitoring; schedule retraining every X months; compare with challenger models for early drift detection.                                  | Include statistical drift detection tests (KS-test, PSI) in monitoring pipeline. |
+| 5 | Project Team | High False Positive Rate in Certain Classes | Specific categories trigger frequent false positives, increasing manual review workload.                            | Introduce confidence thresholds per class; route low-confidence predictions to human review.                                                                    | Optimize threshold tuning periodically.                                          |
+| 6 | Project Team | Missed Edge Cases                           | Model may underperform in rare or ambiguous scenarios not well-represented in training.                             | Maintain an edge-case repository and augment training data with synthetic or newly collected samples.                                                           | Include edge-case stress tests in evaluation suite.                              |
