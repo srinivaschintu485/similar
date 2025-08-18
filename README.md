@@ -51,16 +51,25 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
-Here’s a shorter, two-paragraph rewrite for your **Problem–Solution** section:
+
+Perfect — thanks for sharing the screenshots and the chat note. I see now that the section you’re drafting ("**Macro-economy and Industry Trend**") needs to capture two dimensions:
+
+1. **Macro-economic context** (general factors such as GDP growth, interest rate changes, unemployment, consumer credit risk, etc.).
+2. **Industry-level trend** (specific to AI/ML adoption within banking/finance and its role in regulatory/compliance processes).
+
+Here’s a concise draft you can use (two strong paragraphs, aligning with your template + the chat note you received):
 
 ---
 
-**Problem:**
-The primary challenge leading to this model’s development was the high rate of misclassifications caused by manual errors and system-driven discrepancies. Traditional rule-based reconciliation methods were unable to handle complex issues such as negative vs. positive values, thousand separator differences, case sensitivity, and extra spaces. As data volumes and system complexity grew, these limitations resulted in frequent mismatches, time-consuming investigations, and inefficient root-cause analysis during audit and reconciliation cycles.
+### Macro-economy and Industry Trend
 
-**Solution:**
-To address these challenges, the **Precert AIML model** was introduced to automate anomaly detection and misclassification explanation at the field-to-field level. By leveraging machine learning, the model identifies the precise source of mismatches (e.g., formatting, notation, or spacing issues) and excludes ambiguous or unstructured data. This approach not only improves accuracy and transparency but also reduces manual intervention, enabling faster and more reliable reconciliation processes.
+The macro-economic environment continues to influence consumer financial behavior and banking operations. Shifts in GDP growth, fluctuating interest rates, unemployment rate changes, and broader global political or economic instability directly affect demand for personal loans, credit cards, and mortgage refinancing. Rising loan defaults and credit risks highlight the need for more resilient and adaptive models that can capture subtle patterns in consumer data. These pressures make it critical for financial institutions to modernize their processes for data reconciliation, anomaly detection, and risk monitoring.
+
+At the industry level, there is a strong push toward the adoption of AI/ML technologies to optimize operations and improve regulatory compliance. Citi, in line with this global trend, is harnessing AI to modernize its data validation and reconciliation processes. By embedding AI-driven anomaly detection and data quality (DQ) validation tools, the firm aims to reduce manual intervention, accelerate reconciliation cycles, and improve transparency in regulatory reporting. This reflects a broader industry-wide shift toward leveraging AI strategies not just for customer-facing innovation but also for back-office automation, ensuring compliance and operational efficiency in a digital era.
 
 ---
 
-Would you like me to also **append a one-line mention of your achieved metrics** (e.g., “model achieved \~98% accuracy with strong precision and recall”) at the end of the solution paragraph for stronger impact?
+Would you like me to also **add a third, short “forward-looking” sentence** (e.g., how future regulatory pressure + AI innovation will continue to converge), so it feels more forward-focused?
+
+
+
