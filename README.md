@@ -52,34 +52,3 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-import os
-import streamlit as st
-import requests
-
-# ---- Configure your server endpoint here ----
-SERVER_URL = os.environ.get("RECEIVER_URL", "http://10.226.144.243:8080/upload")
-AUTH_TOKEN = os.environ.get("RECEIVER_TOKEN", "")  # optional if you added auth
-
-st.title("📤 Upload to Server (Phase 1)")
-st.caption(f"Target: {SERVER_URL}")
-
-uf = st.file_uploader("Choose a file from your machine")
-
-if uf and st.button("Upload"):
-    try:
-        files = {"file": (uf.name, uf.getvalue())}
-        headers = {}
-        if AUTH_TOKEN:
-            headers["Authorization"] = f"Bearer {AUTH_TOKEN}"
-
-        with st.spinner("Uploading..."):
-            r = requests.post(SERVER_URL, files=files, headers=headers, timeout=120)
-
-        if r.ok:
-            st.success("✅ Uploaded successfully")
-            st.code(r.text, language="text")
-        else:
-            st.error(f"❌ Upload failed: HTTP {r.status_code}")
-            st.code(r.text, language="text")
-    except Exception as e:
-        st.error(f"🚨 Error: {e}")
