@@ -51,4 +51,8 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
+The development of this model was driven by the increased manual effort and inefficiency in root-cause analysis of data breaks during reconciliations and audit preparation cycles. As data volumes and system complexity grew, traditional rule-based matching approaches became insufficient to handle anomalies, leading to delays, inconsistent explanations, and higher operational costs.
 
+Solution
+
+To address these limitations, a machine learning–based AIML system was proposed. This system automates anomaly detection and provides transparent explanations, significantly reducing manual interventions. The Precert AIML model is specifically trained to operate at the field level, handling both human-entered and system-generated records. Unlike bulk or file-level transformations, it focuses only on row-level, field-to-field mappings across datasets. The solution excludes unstructured inputs and ambiguous mappings, ensuring higher accuracy, scalability, and efficiency in anomaly detection.
