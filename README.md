@@ -52,14 +52,12 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-Model Purpose
+The model operates within the PreCertification (PreCert) framework, which is part of the regulatory data acquisition process for validating inbound data files from CSIs and products across global systems. The framework follows a 3-stage process:
 
-The purpose of this model is to identify and explain nonmaterial mismatches between structured data from source and target systems within enterprise workflows. Traditionally, such mismatches required 4–6 hours of manual review per reconciliation cycle, depending on dataset size and complexity. This manual process slowed down root-cause analysis, created inefficiencies, and prolonged audit preparation cycles. By embedding machine learning, the model reduces manual intervention, accelerates detection, and provides interpretable results with confidence scores—enabling faster resolution and improved transparency in regulatory reporting.
+Initial File Validation – Inbound files are compared against production copies to identify structural or formatting differences. Only expected differences are allowed for release, while anomalies are flagged for review.
 
-Time Efficiency Statistics
+Difference Remediation – Discrepancies are analyzed by the ML tool, which classifies them into predefined categories (e.g., numeric formatting, special character differences). This enables automated resolution for standard issues and highlights cases requiring human review.
 
-With manual investigation, classifying and resolving mismatches for a typical dataset could take half a working day (4–6 hours), whereas the ML-driven model processes the same volume in under 10 minutes. This dramatic reduction in turnaround time not only improves operational efficiency but also allows analysts to focus on higher-value activities, such as investigating complex edge cases and refining reconciliation strategies.
+Final Certification – Files are revalidated after remediation. The model ensures clean data submission, providing transparency through confidence scoring and documentation for regulatory reporting.
 
-Model Background
-
-The model has been developed as an in-house solution, trained on Citi-specific data and leveraging domain knowledge of reconciliation and data quality processes. Unlike generic vendor solutions, this model is designed to address Citi’s unique operational workflows by targeting field-level mismatches rather than bulk transformations, ensuring higher precision, faster detection, and greater applicability to enterprise needs.
+By embedding AI/ML into this process, PreCert significantly accelerates reconciliation cycles, reduces manual overhead, and strengthens compliance with regulatory standards.
