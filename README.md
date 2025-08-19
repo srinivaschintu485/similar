@@ -52,24 +52,14 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-Perfect — thanks for sharing the screenshots and the chat note. I see now that the section you’re drafting ("**Macro-economy and Industry Trend**") needs to capture two dimensions:
+Model Purpose
 
-1. **Macro-economic context** (general factors such as GDP growth, interest rate changes, unemployment, consumer credit risk, etc.).
-2. **Industry-level trend** (specific to AI/ML adoption within banking/finance and its role in regulatory/compliance processes).
+The purpose of this model is to identify and explain nonmaterial mismatches between structured data from source and target systems within enterprise workflows. Traditionally, such mismatches required 4–6 hours of manual review per reconciliation cycle, depending on dataset size and complexity. This manual process slowed down root-cause analysis, created inefficiencies, and prolonged audit preparation cycles. By embedding machine learning, the model reduces manual intervention, accelerates detection, and provides interpretable results with confidence scores—enabling faster resolution and improved transparency in regulatory reporting.
 
-Here’s a concise draft you can use (two strong paragraphs, aligning with your template + the chat note you received):
+Time Efficiency Statistics
 
----
+With manual investigation, classifying and resolving mismatches for a typical dataset could take half a working day (4–6 hours), whereas the ML-driven model processes the same volume in under 10 minutes. This dramatic reduction in turnaround time not only improves operational efficiency but also allows analysts to focus on higher-value activities, such as investigating complex edge cases and refining reconciliation strategies.
 
-### Macro-economy and Industry Trend
+Model Background
 
-The macro-economic environment continues to influence consumer financial behavior and banking operations. Shifts in GDP growth, fluctuating interest rates, unemployment rate changes, and broader global political or economic instability directly affect demand for personal loans, credit cards, and mortgage refinancing. Rising loan defaults and credit risks highlight the need for more resilient and adaptive models that can capture subtle patterns in consumer data. These pressures make it critical for financial institutions to modernize their processes for data reconciliation, anomaly detection, and risk monitoring.
-
-At the industry level, there is a strong push toward the adoption of AI/ML technologies to optimize operations and improve regulatory compliance. Citi, in line with this global trend, is harnessing AI to modernize its data validation and reconciliation processes. By embedding AI-driven anomaly detection and data quality (DQ) validation tools, the firm aims to reduce manual intervention, accelerate reconciliation cycles, and improve transparency in regulatory reporting. This reflects a broader industry-wide shift toward leveraging AI strategies not just for customer-facing innovation but also for back-office automation, ensuring compliance and operational efficiency in a digital era.
-
----
-
-Would you like me to also **add a third, short “forward-looking” sentence** (e.g., how future regulatory pressure + AI innovation will continue to converge), so it feels more forward-focused?
-
-
-
+The model has been developed as an in-house solution, trained on Citi-specific data and leveraging domain knowledge of reconciliation and data quality processes. Unlike generic vendor solutions, this model is designed to address Citi’s unique operational workflows by targeting field-level mismatches rather than bulk transformations, ensuring higher precision, faster detection, and greater applicability to enterprise needs.
