@@ -49,43 +49,47 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 3. Generate Prompt | Dynamically frame a prompt with the log        | LangChain / Python     |
 | 4. Send to LLM     | Send prompt to GPT or Claude via API           | OpenAI/Anthropic       |
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
-| 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |Absolutely—here’s a ready-to-drop “Data Quality Check & Cleansing” section written for your precert A I / M L mismatch-classification project, tied to the code and evidence you shared (Spark logs, the descriptive_statistics.xlsx sheet, and the feature list in your screenshots).
+| 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
-⸻
-Block 1: Significant Events
-Objective
 
-To identify and document any events or anomalies in the dataset that could compromise data quality during preprocessing and feature engineering. Significant events include data loss, corruption, migration errors, or systematic differences in data capture that might bias the model.
-Evidence from the Dataset
+version: v1
+tasks:
+  - ref: python-build
+    params:
+      - name: test-command
+        value: >
+          -m pytest -q
+          --junitxml=test_results.xml
+          --cov=.
+          --cov-report=xml
+      - name: publish-artifact
+        value: "true"
 
-From the EDA and feature engineering outputs you shared, several issues were observed:
-| **Data Quality Issue**              | **Count of Records Affected** | **% of Total Dataset (122,411 rows)** | **Description / Impact**                                                                                                                  |
-| ----------------------------------- | ----------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **No Match**                        | 24,357                        | 20%                                   | Indicates records where `Source` and `Destination` strings had no similarity. This could represent missing mappings or faulty data joins. |
-| **Negative vs Positive**            | 12,000                        | 10%                                   | Opposite sign values observed, potentially due to polarity reversal in data entry or extraction errors.                                   |
-| **Thousand Separator Difference**   | 11,984                        | 10%                                   | Numeric values with inconsistent separators (`,` vs `.`), pointing to **data migration or localization issues**.                          |
-| **Special Character Differences**   | 11,704                        | 10%                                   | Encoding issues or special character corruption (e.g., currency symbols, Unicode mismatches).                                             |
-| **Extra Space Issues**              | 11,692                        | 10%                                   | Systematic padding or trimming problems during ingestion or migration.                                                                    |
-| **Case Sensitivity Issues**         | 11,604                        | 9%                                    | Differences only in letter case, suggesting inconsistent source system standards.                                                         |
-| **Leading Zero Issues**             | 10,000                        | 8%                                    | Numeric fields losing or gaining leading zeros during migration (e.g., ID `00123` becoming `123`).                                        |
-| **Scientific Notation Differences** | 10,000                        | 8%                                    | Some numeric values stored in exponential form, introducing inconsistency in numerical fields.                                            |
-| **Rounded Off Numbers**             | 8,987                         | 7%                                    | Precision loss identified, possibly due to truncation during ETL.                                                                         |
-| **Matched (Clean Data)**            | 10,083                        | 8%                                    | Records where `Source` and `Destination` aligned correctly with no anomalies.                                                             |
+  - ref: shell
+    name: package-zip
+    params:
+      - name: script
+        value: |
+          bash scripts/make_zip.sh
+          ls -lh ml_stuff.zip
 
-Interpretation
+  - ref: publish-artifact
+    name: upload-zip
+    params:
+      - name: files
+        value: ml_stuff.zip
 
-Roughly 92% of the dataset shows at least one form of inconsistency.
 
-The largest anomaly group is No Match (20%), which may indicate loss of mapping keys during integration between systems. This is a critical event and must be escalated to confirm whether these records represent genuine unmatched values or were introduced during migration.
 
-Locale and encoding differences (thousand separators, special characters, scientific notation) are strong indicators of data transmission or format conversion issues during vendor integration.
 
-Negative vs Positive mismatch suggests that polarity or transaction signs were mishandled (possibly due to different financial system conventions).
 
-Supporting Proofs
+#!/usr/bin/env bash
+set -euo pipefail
+ZIP=ml_stuff.zip
+rm -f "$ZIP"
+zip -r "$ZIP" \
+  spark ML ml_utils models utils kafkas \
+  *.py \
+  -x "*/__pycache__/*" "*/.ipynb_checkpoints/*"
+echo "Created $ZIP"
 
-Distribution plots from your EDA (screenshot of category counts) confirm that the anomalies are not outliers but systematic issues across 7–20% of records.
-
-Correlation heatmap shows that anomalies such as Case Sensitivity, Special Characters, and Extra Space Issues are correlated with mismatches, confirming systemic data quality events.
-
-Association matrix (final screenshot) also demonstrates dependency between Label (target) and issues like Thousand Separator and Case Sensitivity, validating that these events significantly affect model input integrity.
