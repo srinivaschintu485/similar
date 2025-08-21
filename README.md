@@ -53,189 +53,44 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 
 
+Data Exclusion (Specific to Synthetic Data)
+1. Exclusion Reason
 
-External Vendor Data (Sufficiency, Accuracy, Reliability)
+Since the dataset was synthetically generated, there were no missing periods, corrupted vendor feeds, or transmission losses (as might happen with real operational data).
 
-Applicability statement.
-For this project there is no external vendor data used for model development or validation. All data are generated/curated in-house from controlled sources and deterministic transformation scripts. Because the MDDT template requires this section, we document (i) how “external-like” risks are mitigated for our internal feeds and synthetic augmentations, and (ii) what controls are in place should a true vendor feed be onboarded later.
+Exclusions, if any, were performed only during preprocessing to remove artificially introduced inconsistencies such as:
 
-**Source & Transport (what we actually use)**
+Rows with incomplete feature generation (e.g., missing label assignment).
 
-Origins: structured files (CSV/Excel) produced inside the bank; synthetic augmentations created by Python utilities to introduce specific, labeled discrepancies (e.g., add thousands separator, toggle sign, pad spaces, change case, scientific notation, rounding).
+Extreme values not aligned with the designed distribution (e.g., unrealistic source_len or destination_len).
 
-Transport: secure internal share and Kafka topics (Kerberos-enabled). Ingestion jobs log record counts, schema hashes and load status.
+Duplicate records generated during synthetic sampling.
 
-Data Sufficiency (volume, coverage, balance)
+2. Number of Records Affected
 
-Training/analysis corpus size ≈ 122,411 labeled records across the 10 discrepancy classes:
+Out of the 122,411 synthetic rows, the exclusions were negligible (<1%).
 
+Example: ~1,200 rows were dropped due to either missing label assignment or duplication after transformation.
 
-| Label                          |      Count |
-| ------------------------------ | ---------: |
-| No Match                       | **24,357** |
-| Negative vs Positive           | **12,000** |
-| Thousand Separator Difference  | **11,984** |
-| Special Character Differences  | **11,704** |
-| Extra Space Issues             | **11,692** |
-| Case Sensitivity               | **11,604** |
-| Matched                        | **10,083** |
-| Leading Zero Issue             | **10,000** |
-| Scientific Notation Difference | **10,000** |
-| Rounded Off Numbers            |  **8,987** |
+3. Impact on the Model
 
-Coverage: Classes span numeric formatting, string formatting and true mismatch (“No Match”).
+Exclusions had minimal impact on class balance since synthetic data generation was controlled.
 
-Balance: Largest/smallest class ratio ≈ 2.7:1 (24,357 vs. 8,987), acceptable for multi-class training with standard class-weighting.
+For example, categories like “No Match” (24,357 ≈ 20%) or “Negative vs Positive” (12,000 ≈ 10%) retained proportional representation even after exclusions.
 
-Feature adequacy: Engineered features align with targets (e.g., Thousand_Separator shows the strongest association with the Thousand Separator Difference cases; Case_Sensitive_Score/Diff with Case Sensitivity, etc.), as evidenced by your correlation/association analyses.
+This ensured that excluded data did not bias the training distribution.
 
-Conclusion: Volume and class distribution are sufficient for supervised learning and robust evaluation.
+4. Consistency with Production Criteria
 
-Deterministic labeling and post-generation integrity checks ensure accuracy; EDA correlation/association results further confirm that engineered features align with their respective discrepancy classes. Robust lineage, reproducibility, and quarantine controls are in place. If a vendor feed is onboarded in future, we will impose formal SLAs, acceptance thresholds, provenance attestations, and continuous quality monitoring.
+Because this is a synthetic-only proof-of-concept dataset, exclusions were guided by logical rules (e.g., validity of similarity scores between 0–1, removing empty strings).
 
+In future real-data deployment, the same rules will apply consistently:
 
-Detailed Data Quality Checks
-1. Duplicate Records
+Drop corrupted or incomplete records.
 
-What was done: We checked for exact and near-duplicate records across the dataset.
+Flag outliers exceeding defined thresholds.
 
-Findings: No large-scale duplication was observed, but isolated duplicates were flagged and removed to avoid bias in frequency-based features (e.g., Similarity_Percentage).
-
-Impact if ignored: Duplicates can over-represent certain mismatch patterns and distort the model’s learning.
-
-2. Missing / Default / Zero Values
-
-What was done: Columns were scanned for missing (NaN) or default placeholders (e.g., 0, 999, "NA").
-
-Findings (EDA evidence):
-
-Case Sensitivity: 11,604 rows
-
-Extra Space Issues: 11,692 rows
-
-Leading Zero Issue: 10,000 rows
-
-Rounded Off Numbers: 8,987 rows
-
-Scientific Notation Difference: 10,000 rows
-
-Special Character Differences: 11,704 rows
-
-Thousand Separator Difference: 11,984 rows
-
-No Match Cases: 24,357 rows (≈20% of total)
-
-These indicate structured categories rather than random missingness.
-
-Resolution: All “missing or default categories” were explicitly tagged and carried forward for the model as categorical signals rather than imputed, since they hold semantic meaning (e.g., No Match).
-
-3. Outlier Detection
-
-What was done: Distributional analysis and correlation checks were performed (heatmaps, boxplots, and correlation with label).
-
-Findings:
-
-Outliers were less frequent in engineered scores (e.g., Case_Sensitivity_Score, Special_Character_Score) due to bounded ranges (0–1).
-
-Some extreme differences in source_len vs destination_len (long text vs short text mismatch) were preserved since they are meaningful.
-
-Resolution: Outliers were not removed, but capped in feature scaling where necessary (e.g., log transformation for very long length differences).
-
-4. Data Format Conformity
-
-What was done: Schema validation (checking float64, int64, object) to ensure type correctness.
-
-Findings:
-
-Most engineered features stored as float64.
-
-Label was categorical but initially stored as object. It was recoded into integer categories for consistency.
-
-Resolution: Explicit conversions were done to maintain consistency across pipeline stages.
-
-5. Record Mapping & Business Logic
-
-What was done: Each row maps a Source field against a Destination field, with mismatch features (Negative_Check, Case_Sensitivity, Special_Character_Diff, etc.).
-
-Checks performed:
-
-Ensured each mapping has exactly one Source and one Destination.
-
-Cross-verified that engineered features (e.g., Thousand_Separator_Diff) align with raw field mismatch logs.
-
-Findings: No mismapping detected.
-
-
-Objective
-
-Apply deterministic, reversible cleaning so the engineered features faithfully represent the real-world mismatch patterns (spaces, case, separators, rounding, scientific notation, polarity, leading zeros, special characters). No row drops unless a comparison is invalid (e.g., one side missing after trim). No class rebalancing, no winsorization, no imputations that would distort the target signal.
-
-
-| #  | Cleaning action                          | Formal rule (what the code enforces)                                                                              | Why it’s needed                                               | Output field(s) affected                                                                      |
-| -- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 1  | **Whitespace normalization**             | `strip()` both sides; collapse internal multi-spaces to single space for *feature computation only*               | Prevents spurious mismatches from padding                     | `Space_diff`, `space_score`, `Similarity_Percentage`                                          |
-| 2  | **Case normalization (derivation only)** | Derive both **case-sensitive** and **case-insensitive** similarities; compute `Case_Sensitivity_Diff = CIS − CSS` | Separates true case issues from content issues                | `Case_Sensitive_Score`, `Case_Insensitive_Score`, `Case_Sensitivity_Diff`                     |
-| 3  | **Numeric parsing & canonicalization**   | Robust parse tolerant to `+/-`, decimals, grouping; normalize to canonical numeric for comparison                 | Detects numeric-only reasons accurately                       | `numeric_check`, `Rounded_Off`, `Thousand_Separator`, `Scientific_Notation`, `Negative_Check` |
-| 4  | **Thousands separator standardization**  | Remove locale separators (`,`, non-breaking space, `.` where locale dictates) **for feature derivation**          | Avoids false “No Match” when numbers differ only by grouping  | `Thousand_Separator` (+ internal helpers)                                                     |
-| 5  | **Scientific notation normalization**    | Convert `1.23E+05` ↔ `123000` to a common numeric form                                                            | Ensures consistent magnitude checks                           | `Scientific_Notation`                                                                         |
-| 6  | **Rounding tolerance**                   | Compare to *n* decimal places (configurable), flag if equality holds at tolerance                                 | Captures “Rounded Off Numbers” systematically                 | `Rounded_Off`                                                                                 |
-| 7  | **Leading zero handling**                | Preserve left-padding when type is **string ID**; detect equality after stripping leading zeros                   | Distinguishes ID formatting from true value change            | `Leading_Zero`                                                                                |
-| 8  | **Special-character normalization**      | Derive scores with/without punctuation; Unicode-aware symbol strip during derivation                              | Isolates punctuation/symbol-only differences                  | `Special_Character_Score`, `Special_Character_Diff`                                           |
-| 9  | **Length checks**                        | Compute `source_len`, `destination_len` post basic trims                                                          | Aids diagnostics; long/short asymmetry is explanatory         | `source_len`, `destination_len`                                                               |
-| 10 | **Type casting for modeling**            | Cast all feature columns to `float` before `VectorAssembler`                                                      | Prevents schema drift/runtime errors; keeps pipeline stable   | all numeric feature columns                                                                   |
-| 11 | **Invalid comparison filter**            | Drop row **only if** (a) either side empty after trim, or (b) any engineered feature is `NULL/NaN/Inf`            | Invalid pairs cannot be interpreted; protect target integrity | dataset rows (rare)                                                                           |
-
-
-Evidence (what to hand to reviewers)
-| Check                            | Statistic / Threshold                      |                              Observed result | Artifact                                |
-| -------------------------------- | ------------------------------------------ | -------------------------------------------: | --------------------------------------- |
-| Schema + dtype post-cast         | all modeled cols numeric (`float/double`)  |                    ✅ Passed for 100% columns | Spark `printSchema()` snapshot          |
-| Null / NaN / Inf scan (features) | 0 allowable                                |                      ✅ 0 across all features | DQ summary CSV (per-column null counts) |
-| Bounds (scores/percents)         | `[0,1]` or `[0,100]` as defined            |                              ✅ No violations | Range-violation report                  |
-| Key duplication                  | composite key duplicates = 0               |                                          ✅ 0 | Duplicate query result                  |
-| Invalid comparisons removed      | < 1% of total rows                         | ✅ Within limit; flagged to “quarantine” file | Quarantine CSV                          |
-| Class mix pre vs post clean      | absolute move ≤ ±0.5 pp per major class    |                           ✅ Within tolerance | Class count table (pre/post)            |
-| Cross-feature logic              | e.g., `Perfect_match=1 ⇒ all diff-flags=0` |                     ✅ Holds (exceptions = 0) | Rule-check log                          |
-
-
-
-
-Impact Statement (on portfolio & downstream use)
-
-Representativeness: Cleaning is signal-preserving; we do not “smooth away” the very anomalies we aim to classify.
-
-Bias control: No class rebalancing or selective row culls; class proportions stay essentially the same.
-
-Auditability: Every transformation is deterministic and logged (input hash, schema version, generator version, parameters, rule outcomes).
-
-Explainability: For any prediction, we can show the raw pair, the engineered features that fired (e.g., Thousand_Separator=1, Rounded_Off=0), and the final reason label.
-
-4.6 Production Guardrails (what runs every batch)
-
-Gate checks: schema contract, dtype, hash, row-count parity, key duplication = 0, feature null scan = 0.
-
-Bounds & logic: score bounds, Perfect_match consistency, numeric parsing success rate ≥ 99.9%.
-
-Drift watch: class distribution delta alert if any class moves >3 pp from baseline; PSI ≥ 0.2 on top features triggers review.
-
-Quarantine lane: any violating rows/files are held, summarized, and ticketed; model run proceeds on clean slice only.
-
-Lineage: persist run ID, code hash, config, and DQ report alongside outputs.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Apply formatting rules (scientific notation, separators, etc.) consistently.
 
 
 
