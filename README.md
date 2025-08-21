@@ -52,48 +52,97 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
+Perfect 👍 — here are **10 GenAI use cases tailored for the Citi / financial sector** that could be highly useful and practical for requesting experiment access. I’ve grouped them by **business domain** so you can pick depending on whether you want TechOps, Risk, Compliance, or Customer-facing experiments.
 
-Data Exclusion (Specific to Synthetic Data)
-1. Exclusion Reason
+---
 
-Since the dataset was synthetically generated, there were no missing periods, corrupted vendor feeds, or transmission losses (as might happen with real operational data).
+## 🔹 **10 GenAI Use Cases in Citi Sector**
 
-Exclusions, if any, were performed only during preprocessing to remove artificially introduced inconsistencies such as:
+### 1. **AI-powered Regulatory Document Summarization**
 
-Rows with incomplete feature generation (e.g., missing label assignment).
+* Automatically summarize lengthy regulatory circulars (e.g., FED/SEC/FINRA updates).
+* Extract key obligations and action points for compliance teams.
+* Saves time for compliance officers and reduces missed regulatory requirements.
 
-Extreme values not aligned with the designed distribution (e.g., unrealistic source_len or destination_len).
+---
 
-Duplicate records generated during synthetic sampling.
+### 2. **GenAI-driven Risk Report Analysis**
 
-2. Number of Records Affected
+* Parse and summarize quarterly risk & control reports.
+* Highlight anomalies, overdue items, and priority risks.
+* Provide natural language insights to senior stakeholders.
 
-Out of the 122,411 synthetic rows, the exclusions were negligible (<1%).
+---
 
-Example: ~1,200 rows were dropped due to either missing label assignment or duplication after transformation.
+### 3. **AI-assisted KYC (Know Your Customer) Review**
 
-3. Impact on the Model
+* Use GenAI to analyze KYC documents and transaction histories.
+* Flag inconsistencies, missing information, or high-risk patterns.
+* Help analysts focus on escalations instead of routine checks.
 
-Exclusions had minimal impact on class balance since synthetic data generation was controlled.
+---
 
-For example, categories like “No Match” (24,357 ≈ 20%) or “Negative vs Positive” (12,000 ≈ 10%) retained proportional representation even after exclusions.
+### 4. **Automated Incident Ticket Triage (TechOps/Infra)**
 
-This ensured that excluded data did not bias the training distribution.
+* Analyze ServiceNow/JIRA incidents using GenAI.
+* Suggest routing to correct teams, extract root cause patterns, and propose resolution steps.
+* Reduces Mean Time To Resolution (MTTR).
 
-4. Consistency with Production Criteria
+---
 
-Because this is a synthetic-only proof-of-concept dataset, exclusions were guided by logical rules (e.g., validity of similarity scores between 0–1, removing empty strings).
+### 5. **AI-powered Fraud Detection Explanation**
 
-In future real-data deployment, the same rules will apply consistently:
+* Fraud engines raise alerts but are often “black-box.”
+* Use GenAI to explain in plain English why a transaction was flagged as suspicious (e.g., unusual merchant, time, location).
+* Helps investigators prioritize real fraud vs false positives.
 
-Drop corrupted or incomplete records.
+---
 
-Flag outliers exceeding defined thresholds.
+### 6. **AI-driven Test Case Generation for Finance Apps**
 
-Apply formatting rules (scientific notation, separators, etc.) consistently.
+* Generate unit/integration test cases for complex Citi apps (trading, payments, compliance systems).
+* Ensure coverage of edge cases like leap years, settlement delays, or high-volume spikes.
+* Cuts manual QA effort.
 
+---
 
+### 7. **AI-enhanced Policy & Procedure Q\&A Assistant**
 
+* Employees can query GenAI with “What’s the approval process for X?”
+* AI fetches and answers from internal policy documents.
+* Reduces dependency on manual reading of long PDF policies.
+
+---
+
+### 8. **AI-powered AML (Anti-Money Laundering) Pattern Summarizer**
+
+* Given transaction data, GenAI summarizes suspicious movement of funds across accounts.
+* Generates investigator-ready narratives for AML case files.
+* Reduces manual summarization time by analysts.
+
+---
+
+### 9. **Financial Data Validation & Reconciliation**
+
+* Automate comparison of large reconciliations (e.g., between internal books vs clearing houses).
+* Use GenAI to explain mismatches in plain text.
+* Speeds up EOD (End of Day) financial reporting.
+
+---
+
+### 10. **Client Communication Drafting (Regulatory & Markets)**
+
+* GenAI helps relationship managers draft tailored client updates.
+* Example: Summarize Fed rate changes → draft a client-friendly update on impact to bond portfolio.
+* Ensures consistent, compliant communication.
+
+---
+
+✅ These use cases are **safe for pilots** (no direct customer-facing deployment yet), but **high-value for Citi** in Ops, Risk, Compliance, Tech, and Client coverage.
+
+---
+
+Do you want me to **format them in the “Request Form” style** (like the screenshot you shared earlier — title, objective, requester, etc.) so you can directly submit one or more?
 
 
 
