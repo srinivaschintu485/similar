@@ -52,44 +52,55 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-version: v1
-tasks:
-  - ref: python-build
-    params:
-      - name: test-command
-        value: >
-          -m pytest -q
-          --junitxml=test_results.xml
-          --cov=.
-          --cov-report=xml
-      - name: publish-artifact
-        value: "true"
 
-  - ref: shell
-    name: package-zip
-    params:
-      - name: script
-        value: |
-          bash scripts/make_zip.sh
-          ls -lh ml_stuff.zip
+1. Correlation Heatmap (Numerical Dependencies)
 
-  - ref: publish-artifact
-    name: upload-zip
-    params:
-      - name: files
-        value: ml_stuff.zip
+The correlation heatmap you provided (blue–red matrix) measures Pearson correlation between numerical features such as Scientific_Notation, Thousand_Separator, Rounded_Off, Case_Sensitive_Score, etc.
 
+Key Observations
 
+High positive correlation:
 
+Case_Sensitive_Score ↔ Case_Insensitive_Score (~0.80): indicates these two features capture highly related transformations of string similarity.
 
+Special_Character_Score ↔ Special_Character_Diff (~0.79): confirms strong dependency between the presence and the difference count of special characters.
 
-#!/usr/bin/env bash
-set -euo pipefail
-ZIP=ml_stuff.zip
-rm -f "$ZIP"
-zip -r "$ZIP" \
-  spark ML ml_utils models utils kafkas \
-  *.py \
-  -x "*/__pycache__/*" "*/.ipynb_checkpoints/*"
-echo "Created $ZIP"
+Rounded_Off ↔ Thousand_Separator (~0.56): suggests systematic formatting differences are often accompanied by rounding errors — typical of migration from one number system to another.
 
+Moderate negative correlation:
+
+Case_Sensitivity_Diff ↔ Case_Sensitive_Score (≈ -0.43): as expected, higher differences reduce similarity scores.
+
+Negative_Check ↔ Case_Sensitive_Score (≈ -0.41): polarity mismatches are often tied to broader formatting issues.
+
+Interpretation
+
+The systematic clusters in the heatmap (e.g., case-related features grouping together, special character features aligning) confirm that anomalies are not random.
+
+This supports the hypothesis of systemic data quality events (e.g., vendor systems encoding differently, or ETL pipelines mishandling number formats).
+
+For Block 1’s "significant events", this validates that case, spacing, special characters, and numeric formatting issues stem from consistent patterns across the dataset, not isolated errors.
+
+2. Association Matrix (Categorical Dependencies)
+
+The association matrix you provided (blue squares + circle overlay) goes beyond correlations to measure categorical associations (uncertainty coefficient & correlation ratio).
+
+Key Observations
+
+High association with Label:
+
+Perfect_match and No_Match categories show the strongest associations (as expected).
+
+Thousand_Separator, Rounded_Off, and Scientific_Notation show medium-level associations with Label, proving that formatting inconsistencies directly influence classification outcomes.
+
+Cross-feature associations:
+
+source_len ↔ destination_len shows significant dependency: mismatched string lengths often explain No_Match or formatting-related differences.
+
+Space_diff ↔ Case_Sensitivity_Diff: whitespace issues frequently co-occur with capitalization mismatches.
+
+Interpretation
+
+The association matrix strengthens the causal link: anomalies like separators, case sensitivity, and spaces don’t just exist in isolation — they explain target label mismatches.
+
+This proves that data loss/corruption events in migration directly influence the ability to classify correctly, and must be cleansed before modeling.
