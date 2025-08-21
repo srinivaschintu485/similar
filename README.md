@@ -52,6 +52,27 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
+
+Step 1: Request Access to Gen AI Experiment Use Case
+
+Use case title
+AI-powered log analytics and anomaly detection
+
+Use Case Objective
+Modern enterprise systems generate terabytes of logs across applications, infrastructure, and security platforms. Manually analyzing these logs to detect anomalies, performance bottlenecks, or security events is time-consuming and error-prone.
+
+The objective of this use case is to leverage GenAI capabilities to build an intelligent log analysis assistant that can:
+
+Parse and summarize large volumes of application, infrastructure, and security logs.
+
+Identify anomalies and patterns (e.g., unusual spikes in errors, failed jobs, unauthorized access attempts).
+
+Provide natural-language explanations of the detected issues.
+
+Suggest possible remediation steps based on historical incidents and system knowledge.
+
+This accelerates root-cause analysis, improves system reliability, and helps teams proactively address issues before they escalate.
+
 Perfect 👍 — here are **10 GenAI use cases tailored for the Citi / financial sector** that could be highly useful and practical for requesting experiment access. I’ve grouped them by **business domain** so you can pick depending on whether you want TechOps, Risk, Compliance, or Customer-facing experiments.
 
 ---
