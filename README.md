@@ -53,64 +53,57 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 
 
-Random Forest (Finalized)
+After evaluating multiple algorithms (Random Forest, Support Vector Machine (SVM – One vs Rest), and Logistic Regression) across different hyperparameter configurations, the following final specifications were determined:
 
-Hyperparameters Tuned:
+Random Forest
 
-Number of Trees (n_estimators): 50, 100, 150, 200
-
-Maximum Depth (maxDepth): 5, 10, 15, 20
-
-Criterion: gini, entropy
-
-Finalized Selection:
-
-Best Model: Random Forest
-
-Best Parameters: (50, 15, 'gini', 1) → meaning 50 trees, depth 15, gini criterion
+Final Hyperparameters: Number of Trees = 50, Maximum Depth = 15, Criterion = Gini
 
 Performance: Accuracy = 1.000, Precision = 1.000, Recall = 1.000, F1 Score = 1.000
 
-🔹 SVM (One-vs-Rest)
+Rationale: Random Forest achieved perfect classification on the synthetic dataset, consistently separating mismatch categories without overfitting. Its ensemble nature provided robustness and stability.
 
-Hyperparameters Tuned:
+Support Vector Machine (OVR)
 
-Regularization (C): 0.0001, 0.001, 0.01, 0.1, 1.0
-
-Kernel coefficient (gamma): 1e-05, 0.0001, 0.001, 0.01
-
-Maximum Iterations (max_iter): 50, 100, 200
-
-Finalized Selection:
-
-Best Model: SVM (OVR)
-
-Best Parameters: (200, 0.0001, 0.0001) → meaning max_iter=200, C=0.0001, gamma=0.0001
+Final Hyperparameters: Iterations = 200, C = 0.0001, Gamma = 0.0001
 
 Performance: Accuracy = 0.983, Precision = 0.984, Recall = 0.983, F1 Score = 0.983
 
-🔹 Logistic Regression
+Rationale: SVM OVR showed strong performance but slightly lower than Random Forest and Logistic Regression. It provided additional validation of data separability, though sensitivity to hyperparameter scaling was observed.
 
-Hyperparameters Tuned:
+Logistic Regression
 
-Regularization strength (C): 0.0001, 0.001, 0.01, 0.1, 1.0
-
-Penalty: L2
-
-Solver: LBFGS (default)
-
-Maximum Iterations (max_iter): 50, 100, 150, 200
-
-Finalized Selection:
-
-Best Model: Logistic Regression
-
-Best Parameters: (200, 0.0001, 1.0) → meaning max_iter=200, C=0.0001, L2 penalty
+Final Hyperparameters: Iterations = 200, Regularization Strength (C) = 0.0001, Penalty = L2
 
 Performance: Accuracy = 1.000, Precision = 1.000, Recall = 1.000, F1 Score = 1.000
 
-| Algorithm               | Hyperparameters Tuned                              | Finalized Parameters       | Accuracy |
-| ----------------------- | -------------------------------------------------- | -------------------------- | -------- |
-| **Random Forest**       | n\_estimators (50–200), depth (5–20), gini/entropy | (50 trees, depth 15, gini) | 1.000    |
-| **SVM (OVR)**           | C (1e-4–1.0), gamma (1e-5–1e-2), iter (50–200)     | (200, 0.0001, 0.0001)      | 0.983    |
-| **Logistic Regression** | C (1e-4–1.0), penalty L2, iter (50–200)            | (200, 0.0001, 1.0)         | 1.000    |
+Rationale: Logistic Regression also achieved perfect performance on the dataset. Its interpretability and simplicity make it useful as a benchmark alongside Random Forest.
+
+Final Variable Set (independent variables):
+
+No Match, Negative vs Positive, Thousand Separator Difference, Special Character Differences, Extra Space Issues, Case Sensitivity, Matched, Leading Zero Issue, Scientific Notation Difference, Rounded Off Numbers
+
+These variables represent structured categories of mismatches, ensuring interpretability, reproducibility, and regulatory alignment.
+
+
+4.6.2 Variable Transformation / Treatment
+
+The following transformations and treatments were applied to input data before modeling:
+
+Missing and Invalid Values: Synthetic dataset ensured no nulls; checks confirmed all inputs valid. Any invalid entries were excluded during preprocessing.
+
+Categorical Encoding: Mismatch categories were numerically encoded for model compatibility.
+
+Scaling and Normalization: Standard scaling was applied for SVM and Logistic Regression models to avoid bias due to feature magnitude. Random Forest, being scale-invariant, did not require normalization.
+
+Data Consistency Treatments:
+
+Case normalization (e.g., upper vs lower case treated consistently).
+
+Trimming of whitespace.
+
+Standardizing numeric formatting (e.g., thousand separators, decimal notation).
+
+Functional Transformations: None applied in this iteration, though the framework is ready to handle log, 1/x, flooring, capping, or outlier treatments if required in future real-world deployment.
+
+These steps ensured that all models received consistent, high-quality inputs. The transformations also supported interpretability of results and compliance with MRM expectations for transparency and auditability.
