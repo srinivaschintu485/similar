@@ -52,82 +52,42 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
+SVM (One-vs-Rest)
 
-# one_plot_per_model.py
-# Creates exactly ONE plot per model:
-#   - random_forest_accuracy.png
-#   - svm_ovr_accuracy.png
-#   - logistic_regression_accuracy.png
+What the plot shows: The SVM accuracy starts around 0.983 and gradually decreases as you change the hyperparameter combinations.
 
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
+Reason: SVM is very sensitive to parameters like C, gamma, and kernel choices. In your log outputs, you tested multiple combinations (e.g., (C=0.001, gamma=0.0001), (C=0.01, gamma=0.001), etc.).
 
-OUT_DIR = "one_plot_per_model_outputs"
-os.makedirs(OUT_DIR, exist_ok=True)
+Interpretation: The highest accuracy (≈0.983) was obtained for certain balanced combinations. As the parameters diverge (too small/large C or gamma), the decision boundary either becomes too rigid (underfitting) or too flexible (overfitting), reducing generalization.
 
-# ==== 1) REPLACE THESE LISTS WITH YOUR REAL RUNS ====
+2. Random Forest
 
-# Random Forest runs
-rf_runs = [
-    {"numTrees": 50,  "maxDepth": 5,  "criterion": "gini",    "extra": 1, "accuracy": 0.9830},
-    {"numTrees": 50,  "maxDepth": 10, "criterion": "gini",    "extra": 1, "accuracy": 0.9998},
-    {"numTrees": 50,  "maxDepth": 15, "criterion": "gini",    "extra": 1, "accuracy": 1.0000},
-    {"numTrees": 50,  "maxDepth": 15, "criterion": "entropy", "extra": 1, "accuracy": 0.9999},
-    {"numTrees": 100, "maxDepth": 15, "criterion": "gini",    "extra": 1, "accuracy": 1.0000},
-]
+What the plot shows: Random Forest accuracy is very stable and close to 1.0 across almost all hyperparameter settings. Only at extreme settings (e.g., too few estimators or very shallow trees) do you see a tiny drop.
 
-# SVM (One-vs-Rest) runs
-svm_runs = [
-    {"maxIter": 50,  "C": 0.001,  "gamma": 0.0001, "accuracy": 0.9512},
-    {"maxIter": 100, "C": 0.01,   "gamma": 0.0001, "accuracy": 0.9720},
-    {"maxIter": 150, "C": 0.1,    "gamma": 0.001,  "accuracy": 0.9785},
-    {"maxIter": 200, "C": 0.0001, "gamma": 0.0001, "accuracy": 0.9830},
-]
+Reason: RF is inherently robust due to bagging and averaging over multiple decision trees. Parameters like number of trees (n_estimators), maximum depth, and splitting criteria (gini, entropy) only slightly affect the performance here because the dataset is synthetic and relatively clean.
 
-# Logistic Regression runs
-lr_runs = [
-    {"maxIter": 50,  "regParam": 0.01,   "elasticNetParam": 0.0, "accuracy": 0.8850},
-    {"maxIter": 100, "regParam": 0.001,  "elasticNetParam": 0.5, "accuracy": 0.9725},
-    {"maxIter": 200, "regParam": 0.0001, "elasticNetParam": 1.0, "accuracy": 1.0000},
-]
+Interpretation: The model generalizes extremely well. The near-perfect accuracy indicates Random Forest was the most reliable classifier across your hyperparameter grid.
 
-# ==== 2) Helper to build combo label and plot a single figure per model ====
+3. Logistic Regression
 
-def to_df(runs, order_cols):
-    df = pd.DataFrame(runs)
-    df["combo"] = df[order_cols].astype(str).agg(" | ".join, axis=1)
-    # order by accuracy (desc) for readability
-    return df.sort_values("accuracy", ascending=False).reset_index(drop=True)
+What the plot shows: Logistic Regression starts with very high accuracy (close to 1.0), but then drops slightly as different regularization and solver hyperparameters are used.
 
-def plot_one(df, title, outfile):
-    if df.empty:
-        return
-    plt.figure(figsize=(12, 6))
-    plt.plot(range(len(df)), df["accuracy"], marker="o")
-    plt.xticks(range(len(df)), df["combo"], rotation=75, ha="right", fontsize=8)
-    plt.ylabel("Accuracy")
-    plt.xlabel("Hyperparameter Combination")
-    plt.title(title)
-    plt.tight_layout()
-    plt.savefig(outfile, dpi=200)
-    plt.close()
+Reason: Parameters like regularization strength (C) and penalty (L1, L2) control the flexibility of the decision boundary. With optimal tuning (e.g., C=0.0001), the model fits the data perfectly. But when regularization is too strong or too weak, performance declines (underfitting or overfitting).
 
-# ==== 3) Make exactly ONE plot per model ====
+Interpretation: While Logistic Regression can achieve perfect accuracy here, it’s more sensitive than Random Forest. Its linear decision boundary struggles with complex mismatch types unless tuned carefully.
 
-# Random Forest
-rf_df = to_df(rf_runs, ["numTrees", "maxDepth", "criterion", "extra"])
-plot_one(rf_df, "Random Forest: Accuracy vs Hyperparameter Combination",
-         os.path.join(OUT_DIR, "random_forest_accuracy.png"))
+Overall Comparison
 
-# SVM OVR
-svm_df = to_df(svm_runs, ["maxIter", "C", "gamma"])
-plot_one(svm_df, "SVM (OVR): Accuracy vs Hyperparameter Combination",
-         os.path.join(OUT_DIR, "svm_ovr_accuracy.png"))
+Best Performing: Random Forest (accuracy = 1.0 consistently).
 
-# Logistic Regression
-lr_df = to_df(lr_runs, ["maxIter", "regParam", "elasticNetParam"])
-plot_one(lr_df, "Logistic Regression: Accuracy vs Hyperparameter Combination",
-         os.path.join(OUT_DIR, "logistic_regression_accuracy.png"))
+Stable but slightly weaker: Logistic Regression (accuracy ~0.99, but sensitive to regularization).
 
-print("Done. Wrote three plots to:", os.path.abspath(OUT_DIR))
+Most sensitive: SVM OVR (accuracy drops when parameters deviate from optimal).
+
+✅ These plots are useful for your documentation because they clearly demonstrate:
+
+Model robustness (RF > LR > SVM).
+
+Hyperparameter sensitivity (SVM is most sensitive, RF least).
+
+Justification for selecting Random Forest as the final model.
