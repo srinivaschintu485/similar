@@ -51,30 +51,58 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
-Definition:
-The dependent variable for this model is the classification outcome of structured data comparisons between source and target systems. Each record pair is assigned to one of several predefined categories that indicate whether the fields match exactly (Good) or differ due to a specific type of discrepancy (Bad).
 
-Good: Records classified as Matched (i.e., no differences identified across compared fields).
+Overview.
+The final feature set for the mismatch‐classification model was selected using a combined statistical + business interpretability approach. We retained engineered variables that (i) measurably contributed signal to the dependent variable (Label) during EDA and (ii) map directly to explainable reconciliation root causes (e.g., thousand separator, rounding, case sensitivity, special characters, spacing, leading zeros, scientific notation). Because the model is deployed in a regulated environment, explainability and root-cause traceability were prioritized over aggressive statistical pruning.
 
-Bad: Records with mismatches across predefined discrepancy categories, including No Match, Negative vs Positive, Thousand Separator Difference, Special Character Differences, Case Sensitivity, Extra Space Issues, Leading Zero Issue, Scientific Notation Difference, and Rounded Off Numbers.
+A. Evidence-Based Feature Assessment
 
-Indeterminate: Not applicable for this development dataset, as all synthetic samples were labeled deterministically.
+During EDA we evaluated each engineered feature against the target using correlation/association analyses and class-wise diagnostics. The Pearson correlation with the target (absolute values shown where helpful) indicated the following strength of association:
 
-Performance Window:
-The development (DEV) dataset is based on synthetically generated samples created in June 2025 to simulate reconciliation mismatches across typical operational scenarios. The out-of-time (OOT) dataset was generated separately in August 2025 to validate model stability and generalization.
+Thousand_Separator r ≈ +0.529
 
-Summary Statistics of the Dependent Variable
+Rounded_Off r ≈ +0.209
 
-| Performance Definition        | DEV Sample (#/%)                                                       | OOT Sample (#/%)                 |
-| ----------------------------- | ---------------------------------------------------------------------- | -------------------------------- |
-| Good (Matched)                | 10,083 (≈8%)                                                           | \[To be filled with OOT results] |
-| Bad (All mismatch categories) | 112,328 (≈92%)                                                         | \[To be filled with OOT results] |
-| Indeterminate                 | 0 (0%)                                                                 | N/A                              |
-| Performance Window            | DEV: Synthetic data (Jun 2025)<br>OOT: Synthetic validation (Aug 2025) | —                                |
+Scientific_Notation r ≈ +0.192
 
+Special_Character_Diff r ≈ +0.188
 
-Justification
+numeric_check r ≈ +0.156
 
-The chosen dependent variable is directly aligned with the model’s objective: to detect and explain field-level mismatches between structured datasets. By consolidating “Good” as matched records and “Bad” as all categories of mismatches, the dependent variable provides a clear binary framework while still supporting multi-class analysis at the category level.
+Perfect_match r ≈ +0.101
 
-The distribution demonstrates that the dataset is imbalance-prone (8% Good vs. 92% Bad), which justifies the use of ensemble ML techniques and weighted evaluation metrics. This ensures the model does not become biased toward the majority (mismatch) classes and maintains interpretability across all mismatch types.
+Special_Character_Score r ≈ +0.082
+
+Case_Sensitive_Score r ≈ +0.066
+
+space_score r ≈ +0.057
+
+Negative_Check r ≈ −0.085
+
+source_len r ≈ −0.065; destination_len r ≈ −0.104
+
+Case_Insensitive_Score r ≈ −0.203
+
+Leading_Zero r ≈ −0.274
+
+Space_diff r ≈ −0.278
+
+Case_Sensitivity_Diff r ≈ −0.416
+
+Interpretation: positive correlations align with “mismatch” evidence (e.g., Thousand_Separator, Rounded_Off), while negative correlations indicate “non-mismatch” evidence or complementary signals that help the classifier distinguish borderline cases (e.g., Case_Sensitivity_Diff, Space_diff).
+
+We also reviewed an association matrix (uncertainty coefficient / correlation ratio) to capture non-linear relations and co-occurrence between features (e.g., special characters often co-occur with spacing issues; case features are partially orthogonal to numeric-format features). This supported keeping features with modest univariate correlations that add combinatorial signal in the multivariate model.
+
+B. Inclusion / Exclusion Rationale
+
+Included (all engineered variables).
+No features were dropped. Rationale:
+
+Root-cause traceability: Each feature corresponds to a real, auditable discrepancy type (thousand separator, rounding, scientific notation, case, special characters, spaces, leading zeros, numeric validity, length context). Retaining them enables clear reason codes in outputs.
+
+Complementarity: Features with lower standalone correlation (e.g., space_score, Case_Sensitive_Score) improved separation when combined with similarity/formatting indicators; SHAP/feature importance confirmed additive value.
+
+Governance/Explainability: In AML/CVM contexts, interpretability is required; sparse or opaque feature sets would reduce reviewability and hinder issue remediation by operations.
+
+Not included.
+No additional derived interactions or latent embeddings were introduced to avoid reducing transparency. Feature space remains schema-agnostic yet interpretable.
