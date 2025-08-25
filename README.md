@@ -52,42 +52,65 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-SVM (One-vs-Rest)
 
-What the plot shows: The SVM accuracy starts around 0.983 and gradually decreases as you change the hyperparameter combinations.
+Random Forest (Finalized)
 
-Reason: SVM is very sensitive to parameters like C, gamma, and kernel choices. In your log outputs, you tested multiple combinations (e.g., (C=0.001, gamma=0.0001), (C=0.01, gamma=0.001), etc.).
+Hyperparameters Tuned:
 
-Interpretation: The highest accuracy (≈0.983) was obtained for certain balanced combinations. As the parameters diverge (too small/large C or gamma), the decision boundary either becomes too rigid (underfitting) or too flexible (overfitting), reducing generalization.
+Number of Trees (n_estimators): 50, 100, 150, 200
 
-2. Random Forest
+Maximum Depth (maxDepth): 5, 10, 15, 20
 
-What the plot shows: Random Forest accuracy is very stable and close to 1.0 across almost all hyperparameter settings. Only at extreme settings (e.g., too few estimators or very shallow trees) do you see a tiny drop.
+Criterion: gini, entropy
 
-Reason: RF is inherently robust due to bagging and averaging over multiple decision trees. Parameters like number of trees (n_estimators), maximum depth, and splitting criteria (gini, entropy) only slightly affect the performance here because the dataset is synthetic and relatively clean.
+Finalized Selection:
 
-Interpretation: The model generalizes extremely well. The near-perfect accuracy indicates Random Forest was the most reliable classifier across your hyperparameter grid.
+Best Model: Random Forest
 
-3. Logistic Regression
+Best Parameters: (50, 15, 'gini', 1) → meaning 50 trees, depth 15, gini criterion
 
-What the plot shows: Logistic Regression starts with very high accuracy (close to 1.0), but then drops slightly as different regularization and solver hyperparameters are used.
+Performance: Accuracy = 1.000, Precision = 1.000, Recall = 1.000, F1 Score = 1.000
 
-Reason: Parameters like regularization strength (C) and penalty (L1, L2) control the flexibility of the decision boundary. With optimal tuning (e.g., C=0.0001), the model fits the data perfectly. But when regularization is too strong or too weak, performance declines (underfitting or overfitting).
+🔹 SVM (One-vs-Rest)
 
-Interpretation: While Logistic Regression can achieve perfect accuracy here, it’s more sensitive than Random Forest. Its linear decision boundary struggles with complex mismatch types unless tuned carefully.
+Hyperparameters Tuned:
 
-Overall Comparison
+Regularization (C): 0.0001, 0.001, 0.01, 0.1, 1.0
 
-Best Performing: Random Forest (accuracy = 1.0 consistently).
+Kernel coefficient (gamma): 1e-05, 0.0001, 0.001, 0.01
 
-Stable but slightly weaker: Logistic Regression (accuracy ~0.99, but sensitive to regularization).
+Maximum Iterations (max_iter): 50, 100, 200
 
-Most sensitive: SVM OVR (accuracy drops when parameters deviate from optimal).
+Finalized Selection:
 
-✅ These plots are useful for your documentation because they clearly demonstrate:
+Best Model: SVM (OVR)
 
-Model robustness (RF > LR > SVM).
+Best Parameters: (200, 0.0001, 0.0001) → meaning max_iter=200, C=0.0001, gamma=0.0001
 
-Hyperparameter sensitivity (SVM is most sensitive, RF least).
+Performance: Accuracy = 0.983, Precision = 0.984, Recall = 0.983, F1 Score = 0.983
 
-Justification for selecting Random Forest as the final model.
+🔹 Logistic Regression
+
+Hyperparameters Tuned:
+
+Regularization strength (C): 0.0001, 0.001, 0.01, 0.1, 1.0
+
+Penalty: L2
+
+Solver: LBFGS (default)
+
+Maximum Iterations (max_iter): 50, 100, 150, 200
+
+Finalized Selection:
+
+Best Model: Logistic Regression
+
+Best Parameters: (200, 0.0001, 1.0) → meaning max_iter=200, C=0.0001, L2 penalty
+
+Performance: Accuracy = 1.000, Precision = 1.000, Recall = 1.000, F1 Score = 1.000
+
+| Algorithm               | Hyperparameters Tuned                              | Finalized Parameters       | Accuracy |
+| ----------------------- | -------------------------------------------------- | -------------------------- | -------- |
+| **Random Forest**       | n\_estimators (50–200), depth (5–20), gini/entropy | (50 trees, depth 15, gini) | 1.000    |
+| **SVM (OVR)**           | C (1e-4–1.0), gamma (1e-5–1e-2), iter (50–200)     | (200, 0.0001, 0.0001)      | 0.983    |
+| **Logistic Regression** | C (1e-4–1.0), penalty L2, iter (50–200)            | (200, 0.0001, 1.0)         | 1.000    |
