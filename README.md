@@ -51,46 +51,30 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
-Purpose. These assumptions describe the business context and operating boundaries under which the PreCert Diff multi-class classifier (Random Forest in prod; SVM/LogReg used during testing) is intended to run so that outputs remain reliable for operations and audit.
+Definition:
+The dependent variable for this model is the classification outcome of structured data comparisons between source and target systems. Each record pair is assigned to one of several predefined categories that indicate whether the fields match exactly (Good) or differ due to a specific type of discrepancy (Bad).
 
-A. Scope & Data-Generation
+Good: Records classified as Matched (i.e., no differences identified across compared fields).
 
-Record-level scope. Model explains record-level mismatches between two structured files (CSV/Excel/TXT) in the Pre-Certification DQ process. It is not designed for file-level bulk transforms or unstructured text.
+Bad: Records with mismatches across predefined discrepancy categories, including No Match, Negative vs Positive, Thousand Separator Difference, Special Character Differences, Case Sensitivity, Extra Space Issues, Leading Zero Issue, Scientific Notation Difference, and Rounded Off Numbers.
 
-Stable label taxonomy. The 10 business classes are fixed and operationally meaningful:
-{No Match, Negative vs Positive, Thousand Separator Difference, Special Character Differences, Extra Space Issues, Case Sensitivity, Matched, Leading Zero Issue, Scientific Notation Difference, Rounded Off Numbers}.
-Any add/remove requires retrain and refreshed documentation.
+Indeterminate: Not applicable for this development dataset, as all synthetic samples were labeled deterministically.
 
-Synthetic data representativeness. Training used synthetically generated records based on business rules (sign flips, separators, spaces, rounding, leading zeros, scientific notation). We assume these rules faithfully approximate production patterns; this is checked against live samples during monitoring.
+Performance Window:
+The development (DEV) dataset is based on synthetically generated samples created in June 2025 to simulate reconciliation mismatches across typical operational scenarios. The out-of-time (OOT) dataset was generated separately in August 2025 to validate model stability and generalization.
 
-Record independence. Row-pairs (source vs target) are treated as conditionally independent once features are engineered; residual batch effects are assumed negligible for classification.
+Summary Statistics of the Dependent Variable
 
-Field/schema stability. Input fields keep consistent semantics (e.g., balance_amount remains numeric with the same business meaning). Breaking schema changes must be announced and validated prior to scoring.
+| Performance Definition        | DEV Sample (#/%)                                                       | OOT Sample (#/%)                 |
+| ----------------------------- | ---------------------------------------------------------------------- | -------------------------------- |
+| Good (Matched)                | 10,083 (≈8%)                                                           | \[To be filled with OOT results] |
+| Bad (All mismatch categories) | 112,328 (≈92%)                                                         | \[To be filled with OOT results] |
+| Indeterminate                 | 0 (0%)                                                                 | N/A                              |
+| Performance Window            | DEV: Synthetic data (Jun 2025)<br>OOT: Synthetic validation (Aug 2025) | —                                |
 
-B. Operations & SLA
 
-Throughput/latency. End-to-end scoring fits operational SLAs (minutes per batch) via Kafka/Spark pipelines and automated feature assembly.
+Justification
 
-Human-in-the-loop. Low-confidence or novel patterns are queued for analyst review; outcomes are logged and fed into the retraining backlog.
+The chosen dependent variable is directly aligned with the model’s objective: to detect and explain field-level mismatches between structured datasets. By consolidating “Good” as matched records and “Bad” as all categories of mismatches, the dependent variable provides a clear binary framework while still supporting multi-class analysis at the category level.
 
-Versioning & change control. Model, features, thresholds, and label dictionaries are version-controlled; any threshold change uses a ticket and release note.
-
-C. Data Quality Preconditions
-
-Input conformance. Files must pass DQ gates (types, encodings, delimiter integrity, row counts). Failed gates quarantine the file; the model does not attempt to repair corrupted structure.
-
-Cost of error is asymmetric. Operationally costly classes (e.g., sign, separator, space issues) prioritize recall over precision in routing policies (confidence bands) to avoid missed actionable mismatches.
-
-D. Adoption & Explainability
-
-Record-level explanations suffice. Users require the predicted class plus top contributing feature flags (e.g., sign mismatch present, separator mismatch true). Global model-agnostic explanations are not required for routine audit provided class semantics are clear.
-
-Confidence is for triage. Confidence/probability supports routing into auto-resolve / analyst queue / escalate; not a single hard cutoff.
-
-E. Monitoring Commitments
-
-Incidence mix tracking. Compare production class shares to training baselines monthly; review if any class shifts by >±30% relative.
-
-Feature drift checks. Track PSI and basic stats for key features (e.g., space_diff, Case_Sensitivity_Diff, Thousand_Separator).
-
-Performance sampling. Adjudicate a stratified sample monthly; compute class-wise precision/recall against business thresholds; initiate retrain if breaches persist 2 consecutive cycles.
+The distribution demonstrates that the dataset is imbalance-prone (8% Good vs. 92% Bad), which justifies the use of ensemble ML techniques and weighted evaluation metrics. This ensures the model does not become biased toward the majority (mismatch) classes and maintains interpretability across all mismatch types.
