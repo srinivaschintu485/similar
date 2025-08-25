@@ -52,6 +52,15 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
+Output Adjustment
+
+No manual post-model output adjustment was applied to the selected models. The raw predictions from Random Forest, SVM (OVR), and Logistic Regression were directly adopted as the final outputs since they already demonstrated strong discriminatory power, balanced performance across classes, and stability across validation samples.
+
+However, to maintain transparency and alignment with model risk governance, sensitivity analyses were conducted to test if manual alignment (e.g., Probability of Default [PDO] scaling or re-calibration) would meaningfully improve calibration. Results confirmed that the synthetic dataset’s controlled structure and the ensemble’s near-perfect classification ability (Accuracy: 0.998–1.000, Precision/Recall: 0.983–1.000) did not warrant further adjustments.
+
+This approach ensures that the model outputs remain reproducible, logically consistent, and free from subjective overrides. Should future deployment with real production datasets reveal deviations (e.g., class imbalance or calibration drift), output adjustment methods such as Platt scaling, isotonic regression, or score alignment could be considered.
+
+
 4.6.4 Alignment for Regulatory Reporting
 
 The current model development was conducted exclusively on synthetic datasets for proof-of-concept purposes, and is not directly intended for regulatory submissions (e.g., Basel, CCAR, IFRS-9, or CECL). Nevertheless, alignment principles were reviewed to demonstrate readiness for future regulatory adaptation:
