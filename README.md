@@ -53,30 +53,81 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 
 
+# one_plot_per_model.py
+# Creates exactly ONE plot per model:
+#   - random_forest_accuracy.png
+#   - svm_ovr_accuracy.png
+#   - logistic_regression_accuracy.png
 
-The final set of variables was chosen to balance both domain interpretability and predictive performance. Variables were engineered to directly capture known sources of reconciliation mismatches such as:
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
 
-textual differences (e.g., extra spaces, case sensitivity, special characters),
+OUT_DIR = "one_plot_per_model_outputs"
+os.makedirs(OUT_DIR, exist_ok=True)
 
-numeric formatting discrepancies (e.g., leading zero, rounding, scientific notation),
+# ==== 1) REPLACE THESE LISTS WITH YOUR REAL RUNS ====
 
-and semantic differences (e.g., negative vs. positive sign mismatches, thousand separator inconsistencies).
+# Random Forest runs
+rf_runs = [
+    {"numTrees": 50,  "maxDepth": 5,  "criterion": "gini",    "extra": 1, "accuracy": 0.9830},
+    {"numTrees": 50,  "maxDepth": 10, "criterion": "gini",    "extra": 1, "accuracy": 0.9998},
+    {"numTrees": 50,  "maxDepth": 15, "criterion": "gini",    "extra": 1, "accuracy": 1.0000},
+    {"numTrees": 50,  "maxDepth": 15, "criterion": "entropy", "extra": 1, "accuracy": 0.9999},
+    {"numTrees": 100, "maxDepth": 15, "criterion": "gini",    "extra": 1, "accuracy": 1.0000},
+]
 
-During feature evaluation, three model families were benchmarked: Random Forest, Support Vector Machines (SVM-OVR), and Logistic Regression. Each algorithm was tested under a wide range of hyperparameter settings (iterations, depth, criterion, learning rates, etc.), with metrics recorded for every configuration.
+# SVM (One-vs-Rest) runs
+svm_runs = [
+    {"maxIter": 50,  "C": 0.001,  "gamma": 0.0001, "accuracy": 0.9512},
+    {"maxIter": 100, "C": 0.01,   "gamma": 0.0001, "accuracy": 0.9720},
+    {"maxIter": 150, "C": 0.1,    "gamma": 0.001,  "accuracy": 0.9785},
+    {"maxIter": 200, "C": 0.0001, "gamma": 0.0001, "accuracy": 0.9830},
+]
 
-Random Forest: Delivered the strongest performance with peak accuracy 1.000 at configuration (nTrees=50, depth=15, criterion=gini). Across multiple runs, accuracy consistently remained above 0.995, demonstrating robustness to parameter variation. Confusion matrices indicated near-perfect classification of all mismatch categories, with precision, recall, and F1 all equal to 1.0 at best configuration.
+# Logistic Regression runs
+lr_runs = [
+    {"maxIter": 50,  "regParam": 0.01,   "elasticNetParam": 0.0, "accuracy": 0.8850},
+    {"maxIter": 100, "regParam": 0.001,  "elasticNetParam": 0.5, "accuracy": 0.9725},
+    {"maxIter": 200, "regParam": 0.0001, "elasticNetParam": 1.0, "accuracy": 1.0000},
+]
 
-SVM-OVR: Achieved competitive results with best accuracy 0.983, precision 0.984, recall 0.983, and F1 score 0.983 at (C=200, gamma=0.0001, kernel=rbf). While slightly weaker than Random Forest, SVM maintained interpretability for margin-based separation across mismatch types.
+# ==== 2) Helper to build combo label and plot a single figure per model ====
 
-Logistic Regression: Also performed strongly, reaching 1.000 accuracy, precision, recall, and F1 at (maxIter=200, regParam=0.0001, elasticNet=1.0). This highlighted the linear separability of many engineered features, although it risked overfitting without regularization.
+def to_df(runs, order_cols):
+    df = pd.DataFrame(runs)
+    df["combo"] = df[order_cols].astype(str).agg(" | ".join, axis=1)
+    # order by accuracy (desc) for readability
+    return df.sort_values("accuracy", ascending=False).reset_index(drop=True)
 
-Model selection rationale:
-While all three models performed exceptionally well on synthetic data, the Random Forest model was chosen as the final specification due to:
+def plot_one(df, title, outfile):
+    if df.empty:
+        return
+    plt.figure(figsize=(12, 6))
+    plt.plot(range(len(df)), df["accuracy"], marker="o")
+    plt.xticks(range(len(df)), df["combo"], rotation=75, ha="right", fontsize=8)
+    plt.ylabel("Accuracy")
+    plt.xlabel("Hyperparameter Combination")
+    plt.title(title)
+    plt.tight_layout()
+    plt.savefig(outfile, dpi=200)
+    plt.close()
 
-Consistency across hyperparameter settings, showing less sensitivity to tuning.
+# ==== 3) Make exactly ONE plot per model ====
 
-Better generalization to nonlinear feature interactions (e.g., multiple mismatch causes in a single record).
+# Random Forest
+rf_df = to_df(rf_runs, ["numTrees", "maxDepth", "criterion", "extra"])
+plot_one(rf_df, "Random Forest: Accuracy vs Hyperparameter Combination",
+         os.path.join(OUT_DIR, "random_forest_accuracy.png"))
 
-Interpretability at the categorical level, as feature importance rankings align with known mismatch drivers (leading zeros, rounding, etc.).
+# SVM OVR
+svm_df = to_df(svm_runs, ["maxIter", "C", "gamma"])
+plot_one(svm_df, "SVM (OVR): Accuracy vs Hyperparameter Combination",
+         os.path.join(OUT_DIR, "svm_ovr_accuracy.png"))
 
-Thus, the final Random Forest specification was adopted with parameters (50 trees, depth=15, criterion=gini). Logistic Regression and SVM results are preserved as benchmarks and serve as secondary validation that model outputs remain stable across different algorithmic classes.
+# Logistic Regression
+lr_df = to_df(lr_runs, ["maxIter", "regParam", "elasticNetParam"])
+plot_one(lr_df, "Logistic Regression: Accuracy vs Hyperparameter Combination",
+         os.path.join(OUT_DIR, "logistic_regression_accuracy.png"))
+
+print("Done. Wrote three plots to:", os.path.abspath(OUT_DIR))
