@@ -52,96 +52,31 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-Overview.
-The final feature set for the mismatch‐classification model was selected using a combined statistical + business interpretability approach. We retained engineered variables that (i) measurably contributed signal to the dependent variable (Label) during EDA and (ii) map directly to explainable reconciliation root causes (e.g., thousand separator, rounding, case sensitivity, special characters, spacing, leading zeros, scientific notation). Because the model is deployed in a regulated environment, explainability and root-cause traceability were prioritized over aggressive statistical pruning.
-
-A. Evidence-Based Feature Assessment
-
-During EDA we evaluated each engineered feature against the target using correlation/association analyses and class-wise diagnostics. The Pearson correlation with the target (absolute values shown where helpful) indicated the following strength of association:
-
-Thousand_Separator r ≈ +0.529
-
-Rounded_Off r ≈ +0.209
-
-Scientific_Notation r ≈ +0.192
-
-Special_Character_Diff r ≈ +0.188
-
-numeric_check r ≈ +0.156
-
-Perfect_match r ≈ +0.101
-
-Special_Character_Score r ≈ +0.082
-
-Case_Sensitive_Score r ≈ +0.066
-
-space_score r ≈ +0.057
-
-Negative_Check r ≈ −0.085
-
-source_len r ≈ −0.065; destination_len r ≈ −0.104
-
-Case_Insensitive_Score r ≈ −0.203
-
-Leading_Zero r ≈ −0.274
-
-Space_diff r ≈ −0.278
-
-Case_Sensitivity_Diff r ≈ −0.416
-
-Interpretation: positive correlations align with “mismatch” evidence (e.g., Thousand_Separator, Rounded_Off), while negative correlations indicate “non-mismatch” evidence or complementary signals that help the classifier distinguish borderline cases (e.g., Case_Sensitivity_Diff, Space_diff).
-
-We also reviewed an association matrix (uncertainty coefficient / correlation ratio) to capture non-linear relations and co-occurrence between features (e.g., special characters often co-occur with spacing issues; case features are partially orthogonal to numeric-format features). This supported keeping features with modest univariate correlations that add combinatorial signal in the multivariate model.
-
-B. Inclusion / Exclusion Rationale
-
-Included (all engineered variables).
-No features were dropped. Rationale:
-
-Root-cause traceability: Each feature corresponds to a real, auditable discrepancy type (thousand separator, rounding, scientific notation, case, special characters, spaces, leading zeros, numeric validity, length context). Retaining them enables clear reason codes in outputs.
-
-Complementarity: Features with lower standalone correlation (e.g., space_score, Case_Sensitive_Score) improved separation when combined with similarity/formatting indicators; SHAP/feature importance confirmed additive value.
-
-Governance/Explainability: In AML/CVM contexts, interpretability is required; sparse or opaque feature sets would reduce reviewability and hinder issue remediation by operations.
-
-Not included.
-No additional derived interactions or latent embeddings were introduced to avoid reducing transparency. Feature space remains schema-agnostic yet interpretable.
 
 
-C. Final Feature Set by Role (examples)
+The final set of variables was chosen to balance both domain interpretability and predictive performance. Variables were engineered to directly capture known sources of reconciliation mismatches such as:
 
-| Category              | Representative Variables (non-exhaustive)                                                                                      | Purpose                                                           |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| **Numeric Format**    | Thousand\_Separator, Rounded\_Off, Scientific\_Notation, numeric\_check                                                        | Detects formatting mismatches and numeric coercion/precision loss |
-| **Text / Similarity** | Perfect\_match, space\_score, Space\_diff                                                                                      | Captures token similarity and whitespace anomalies                |
-| **Case & Symbols**    | Case\_Sensitive\_Score, Case\_Insensitive\_Score, Case\_Sensitivity\_Diff, Special\_Character\_Score, Special\_Character\_Diff | Identifies case and symbol deviations                             |
-| **Length / Context**  | source\_len, destination\_len                                                                                                  | Provides structural context for unexpected truncation/padding     |
-| **Sanity / Polarity** | Negative\_Check                                                                                                                | Catches sign inversions                                           |
+textual differences (e.g., extra spaces, case sensitivity, special characters),
 
-D. Model Choice & Hyperparameter Selection
+numeric formatting discrepancies (e.g., leading zero, rounding, scientific notation),
 
-We benchmarked linear (Logistic Regression), margin-based (SVM-OVR), and ensemble methods. The Random Forest ensemble was selected for the final specification due to its balanced F1, robustness to feature scale, non-linear capture, and transparent feature importance.
+and semantic differences (e.g., negative vs. positive sign mismatches, thousand separator inconsistencies).
 
-Tuning methodology.
+During feature evaluation, three model families were benchmarked: Random Forest, Support Vector Machines (SVM-OVR), and Logistic Regression. Each algorithm was tested under a wide range of hyperparameter settings (iterations, depth, criterion, learning rates, etc.), with metrics recorded for every configuration.
 
-Search: stratified 5-fold cross-validation grid over n_estimators, max_depth, min_samples_split, min_samples_leaf, and class_weight.
+Random Forest: Delivered the strongest performance with peak accuracy 1.000 at configuration (nTrees=50, depth=15, criterion=gini). Across multiple runs, accuracy consistently remained above 0.995, demonstrating robustness to parameter variation. Confusion matrices indicated near-perfect classification of all mismatch categories, with precision, recall, and F1 all equal to 1.0 at best configuration.
 
-Objective: maximize macro-F1 and balanced accuracy to mitigate class imbalance.
+SVM-OVR: Achieved competitive results with best accuracy 0.983, precision 0.984, recall 0.983, and F1 score 0.983 at (C=200, gamma=0.0001, kernel=rbf). While slightly weaker than Random Forest, SVM maintained interpretability for margin-based separation across mismatch types.
 
-Controls: early stopping by OOB/per-fold plateau; shallow to medium max_depth to prevent overfit to dominant classes (e.g., No Match).
+Logistic Regression: Also performed strongly, reaching 1.000 accuracy, precision, recall, and F1 at (maxIter=200, regParam=0.0001, elasticNet=1.0). This highlighted the linear separability of many engineered features, although it risked overfitting without regularization.
 
-Weights: class_weight=balanced (or calibrated custom weights) to improve recall for minority types (Leading Zero, Scientific Notation).
+Model selection rationale:
+While all three models performed exceptionally well on synthetic data, the Random Forest model was chosen as the final specification due to:
 
-Resulting model characteristics (illustrative):
+Consistency across hyperparameter settings, showing less sensitivity to tuning.
 
-n_estimators = 300–500; max_depth = 8–14; min_samples_leaf = 2–5; class_weight = balanced.
+Better generalization to nonlinear feature interactions (e.g., multiple mismatch causes in a single record).
 
-Top global importances consistently included Thousand_Separator, Similarity/Spacing features, Rounded_Off, and Scientific_Notation, with case/special-character features providing secondary but explainable lift.
+Interpretability at the categorical level, as feature importance rankings align with known mismatch drivers (leading zeros, rounding, etc.).
 
-E. Judgment & Governance Justification
-
-Why keep lower-correlation features? They map to distinct operational causes and improve reason code fidelity; their interactions with high-signal variables increased macro-F1 in CV.
-
-Why not add/retain only statistically strongest variables? A purely statistical subset reduced transparency and under-performed on minority mismatch categories; the full interpretable set achieved better balanced performance and auditability.
-
-Regulatory alignment: Choices favor interpretability, reproducibility, and stability (no fragile feature engineering or opaque embeddings), consistent with MRM expectations.
+Thus, the final Random Forest specification was adopted with parameters (50 trees, depth=15, criterion=gini). Logistic Regression and SVM results are preserved as benchmarks and serve as secondary validation that model outputs remain stable across different algorithmic classes.
