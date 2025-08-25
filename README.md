@@ -106,3 +106,42 @@ Governance/Explainability: In AML/CVM contexts, interpretability is required; sp
 
 Not included.
 No additional derived interactions or latent embeddings were introduced to avoid reducing transparency. Feature space remains schema-agnostic yet interpretable.
+
+
+C. Final Feature Set by Role (examples)
+
+| Category              | Representative Variables (non-exhaustive)                                                                                      | Purpose                                                           |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| **Numeric Format**    | Thousand\_Separator, Rounded\_Off, Scientific\_Notation, numeric\_check                                                        | Detects formatting mismatches and numeric coercion/precision loss |
+| **Text / Similarity** | Perfect\_match, space\_score, Space\_diff                                                                                      | Captures token similarity and whitespace anomalies                |
+| **Case & Symbols**    | Case\_Sensitive\_Score, Case\_Insensitive\_Score, Case\_Sensitivity\_Diff, Special\_Character\_Score, Special\_Character\_Diff | Identifies case and symbol deviations                             |
+| **Length / Context**  | source\_len, destination\_len                                                                                                  | Provides structural context for unexpected truncation/padding     |
+| **Sanity / Polarity** | Negative\_Check                                                                                                                | Catches sign inversions                                           |
+
+D. Model Choice & Hyperparameter Selection
+
+We benchmarked linear (Logistic Regression), margin-based (SVM-OVR), and ensemble methods. The Random Forest ensemble was selected for the final specification due to its balanced F1, robustness to feature scale, non-linear capture, and transparent feature importance.
+
+Tuning methodology.
+
+Search: stratified 5-fold cross-validation grid over n_estimators, max_depth, min_samples_split, min_samples_leaf, and class_weight.
+
+Objective: maximize macro-F1 and balanced accuracy to mitigate class imbalance.
+
+Controls: early stopping by OOB/per-fold plateau; shallow to medium max_depth to prevent overfit to dominant classes (e.g., No Match).
+
+Weights: class_weight=balanced (or calibrated custom weights) to improve recall for minority types (Leading Zero, Scientific Notation).
+
+Resulting model characteristics (illustrative):
+
+n_estimators = 300–500; max_depth = 8–14; min_samples_leaf = 2–5; class_weight = balanced.
+
+Top global importances consistently included Thousand_Separator, Similarity/Spacing features, Rounded_Off, and Scientific_Notation, with case/special-character features providing secondary but explainable lift.
+
+E. Judgment & Governance Justification
+
+Why keep lower-correlation features? They map to distinct operational causes and improve reason code fidelity; their interactions with high-signal variables increased macro-F1 in CV.
+
+Why not add/retain only statistically strongest variables? A purely statistical subset reduced transparency and under-performed on minority mismatch categories; the full interpretable set achieved better balanced performance and auditability.
+
+Regulatory alignment: Choices favor interpretability, reproducibility, and stability (no fragile feature engineering or opaque embeddings), consistent with MRM expectations.
