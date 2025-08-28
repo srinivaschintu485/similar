@@ -49,59 +49,50 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 3. Generate Prompt | Dynamically frame a prompt with the log        | LangChain / Python     |
 | 4. Send to LLM     | Send prompt to GPT or Claude via API           | OpenAI/Anthropic       |
 | 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
-| 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |# tests/test_smoke.py
-# Lightweight smoke tests to prove the repo layout and imports work.
-# These tests intentionally avoid starting Spark to stay fast and CI-friendly.
+| 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
+
+# tests/test_smoke.py
 from pathlib import Path
 import importlib
 import sys
 import types
 import pytest
 
-# --- Resolve repo root and make sure it's on sys.path so imports work in CI ---
+# --- Resolve repo root ---
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-# --- Paths we expect to exist (adjust if you rename/move things) ---
 CONFIG_PATH = REPO_ROOT / "spark" / "config" / "config.json"
-CSV_SAMPLE  = REPO_ROOT / "spark" / "data" / "Test_12.csv"   # optional
+CSV_SAMPLE  = REPO_ROOT / "spark" / "data" / "Test_12.csv"
 
 def _safe_import(module_name: str) -> types.ModuleType:
-    """Import a module and return it; raise a clear error if it fails."""
+    """Import a module and return it; fail fast with clear error."""
     try:
         return importlib.import_module(module_name)
-    except Exception as exc:  # noqa: BLE001 (it's a smoke test)
-        raise AssertionError(f"Failed to import '{module_name}': {exc}") from exc
+    except Exception as exc:
+        raise AssertionError(f"Failed to import {module_name}: {exc}") from exc
 
 def test_repo_root_present():
-    assert REPO_ROOT.exists(), f"Repo root not found at {REPO_ROOT}"
+    assert REPO_ROOT.exists()
 
 def test_config_exists():
-    assert CONFIG_PATH.exists(), f"Missing config file at {CONFIG_PATH}"
+    assert CONFIG_PATH.exists(), f"Missing {CONFIG_PATH}"
 
 def test_imports_ok():
-    """
-    Import a couple of project modules so lines execute at import-time.
-    This guarantees non-zero coverage for SonarQube without heavy work.
-    """
     for mod in ("model_training", "Models"):
         _safe_import(mod)
 
 def test_models_has_expected_symbols():
-    """
-    Validate that 'Models' exposes symbols we rely on at runtime, without running them.
-    """
     models = _safe_import("Models")
-    # Only check presence; do not execute Spark code
     expected = ["train_main", "ml_Training"]
     missing = [name for name in expected if not hasattr(models, name)]
-    assert not missing, f"'Models' is missing expected symbols: {missing}"
+    assert not missing, f"Models.py missing {missing}"
 
-@pytest.mark.skipif(not CSV_SAMPLE.exists(), reason="sample CSV not present; skipping")
+@pytest.mark.skipif(not CSV_SAMPLE.exists(), reason="CSV not committed")
 def test_sample_csv_present_and_nonempty():
-    # Optional: proves data wiring is correct when the file is provided
-    size = CSV_SAMPLE.stat().st_size
-    assert size > 0, f"Sample CSV is empty: {CSV_SAMPLE}"
+    assert CSV_SAMPLE.stat().st_size > 0
+
+
 
