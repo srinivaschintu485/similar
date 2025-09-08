@@ -92,7 +92,45 @@ def test_models_has_expected_symbols():
 
 @pytest.mark.skipif(not CSV_SAMPLE.exists(), reason="CSV not committed")
 def test_sample_csv_present_and_nonempty():
-    assert CSV_SAMPLE.stat().st_size > 0
+    assert CSV_SAMPLE.stat().st_size > # ---- Base: Citi-approved Miniconda (has conda preinstalled) ----
+FROM docker-enterprise-prod-local.artifactrepository.citigroup.net/developersvcs-python-ai/miniconda-rhel8/23.5-py3.12:latest
 
+# ---- App paths & pip config (same spirit as the template) ----
+ENV APP_HOME=/app \
+    VIRTUALENV_HOME=/app/pyenv \
+    PIP_CONFIG_FILE=/app/pip.conf \
+    PIP_TRUSTED_HOST=www.artifactrepository.citigroup.net
 
+WORKDIR ${APP_HOME}
+
+# ---- Create a non-root user (best practice) ----
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser \
+ && mkdir -p ${APP_HOME} ${VIRTUALENV_HOME} \
+ && chown -R appuser:appgroup ${APP_HOME}
+
+# ---- Java via conda (works on this base image) ----
+# This solves the "conda: command not found" / "yum: no package" problems.
+RUN conda install -y -c conda-forge openjdk=11 && conda clean -afy
+ENV JAVA_HOME=/opt/conda
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# ---- Python deps (layered for better cache) ----
+# (Keep a pip.conf beside requirements.txt if you need internal indexes)
+COPY requirements.txt ./
+RUN python -m pip install --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
+
+# ---- App code ----
+COPY . ${APP_HOME}
+
+# ---- Security posture: drop root ----
+RUN chown -R appuser:appgroup ${APP_HOME}
+USER appuser
+
+# ---- Make your src importable (optional but handy) ----
+ENV PYTHONPATH=${APP_HOME}/app/src
+
+# ---- Default: run Spark job ----
+# If you need args, add them after model_training.py or pass at runtime.
+CMD ["spark-submit", "model_training.py"]
 
