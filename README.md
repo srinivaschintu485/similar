@@ -1,5 +1,4 @@
-**PySpark Multi-Dataset Discrepancy Categorization**
-
+**PySpark Multi-Dataset Discrepancy curl.exe -s -X POST "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict" -H "Content-Type: application/json" -d "{\"rows\":[{\"f1\":1.23}]}"
 **Overview**
 
 Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization tool, a pinnacle of data integrity and discrepancy resolution technology. This innovative project leverages the power of Apache Spark to sift through complex, multi-format datasets, pinpointing and classifying a diverse array of discrepancies that can undermine data reliability and accuracy. Our tool explores beyond the surface to address deep-rooted data inconsistencies originating from diverse sources and formats, including CSV and Excel, through a meticulously designed analytical engine.
