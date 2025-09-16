@@ -1,3 +1,18 @@
+curl.exe --noproxy "*" -X POST "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict" `
+  -H "Content-Type: application/json" `
+  --data '{"f1": 1.23}'
+
+
+  $uri  = "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict"
+$body = @{ f1 = 1.23 } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri $uri -ContentType "application/json" -Body $body
+
+curl.exe --noproxy "*" -I "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/docs"
+curl.exe --noproxy "*" -s "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/openapi.json" | % { $_.Substring(0,200) }
+
+
+
+
 **PySpark Multi-Dataset Discrepancy curl.exe -s -X POST "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict" -H "Content-Type: application/json" -d "{\"rows\":[{\"f1\":1.23}]}"
 **Overview**
 
