@@ -1,19 +1,3 @@
-curl.exe --noproxy "*" -X POST "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict" `
-  -H "Content-Type: application/json" `
-  --data '{"f1": 1.23}'
-
-
-  $uri  = "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict"
-$body = @{ f1 = 1.23 } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri $uri -ContentType "application/json" -Body $body
-
-curl.exe --noproxy "*" -I "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/docs"
-curl.exe --noproxy "*" -s "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/openapi.json" | % { $_.Substring(0,200) }
-
-
-
-
-**PySpark Multi-Dataset Discrepancy curl.exe -s -X POST "https://jedi-ml-dev.apps.namoseswd22d.ecs.dyn.nsroot.net/predict" -H "Content-Type: application/json" -d "{\"rows\":[{\"f1\":1.23}]}"
 **Overview**
 
 Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization tool, a pinnacle of data integrity and discrepancy resolution technology. This innovative project leverages the power of Apache Spark to sift through complex, multi-format datasets, pinpointing and classifying a diverse array of discrepancies that can undermine data reliability and accuracy. Our tool explores beyond the surface to address deep-rooted data inconsistencies originating from diverse sources and formats, including CSV and Excel, through a meticulously designed analytical engine.
@@ -66,85 +50,127 @@ These discrepancies are systematically identified and resolved, ensuring your da
 | 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
 
-# tests/test_smoke.py
-from pathlib import Path
-import importlib
-import sys
-import types
-import pytest
 
-# --- Resolve repo root ---
-REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
+. Process: Input & Context
 
-CONFIG_PATH = REPO_ROOT / "spark" / "config" / "config.json"
-CSV_SAMPLE  = REPO_ROOT / "spark" / "data" / "Test_12.csv"
+User Input: Natural language question.
 
-def _safe_import(module_name: str) -> types.ModuleType:
-    """Import a module and return it; fail fast with clear error."""
-    try:
-        return importlib.import_module(module_name)
-    except Exception as exc:
-        raise AssertionError(f"Failed to import {module_name}: {exc}") from exc
+Database Schema Input: Provided in DDL (SQL create statements) or JSON format.
 
-def test_repo_root_present():
-    assert REPO_ROOT.exists()
+Context: Optional user role or business rules.
 
-def test_config_exists():
-    assert CONFIG_PATH.exists(), f"Missing {CONFIG_PATH}"
+Requirements:
 
-def test_imports_ok():
-    for mod in ("model_training", "Models"):
-        _safe_import(mod)
+Parser to normalize schema into machine-readable format.
 
-def test_models_has_expected_symbols():
-    models = _safe_import("Models")
-    expected = ["train_main", "ml_Training"]
-    missing = [name for name in expected if not hasattr(models, name)]
-    assert not missing, f"Models.py missing {missing}"
+Storage for schema “cards” (tables, columns, relations).
 
-@pytest.mark.skipif(not CSV_SAMPLE.exists(), reason="CSV not committed")
-def test_sample_csv_present_and_nonempty():
-    assert CSV_SAMPLE.stat().st_size > # ---- Base: Citi-approved Miniconda (has conda preinstalled) ----
-FROM docker-enterprise-prod-local.artifactrepository.citigroup.net/developersvcs-python-ai/miniconda-rhel8/23.5-py3.12:latest
+Tech Stack:
 
-# ---- App paths & pip config (same spirit as the template) ----
-ENV APP_HOME=/app \
-    VIRTUALENV_HOME=/app/pyenv \
-    PIP_CONFIG_FILE=/app/pip.conf \
-    PIP_TRUSTED_HOST=www.artifactrepository.citigroup.net
+Python 3.11
 
-WORKDIR ${APP_HOME}
+Libraries: sqlparse or sqlglot for schema parsing.
 
-# ---- Create a non-root user (best practice) ----
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser \
- && mkdir -p ${APP_HOME} ${VIRTUALENV_HOME} \
- && chown -R appuser:appgroup ${APP_HOME}
+Storage: JSONL files or a lightweight DB (SQLite, DuckDB).
 
-# ---- Java via conda (works on this base image) ----
-# This solves the "conda: command not found" / "yum: no package" problems.
-RUN conda install -y -c conda-forge openjdk=11 && conda clean -afy
-ENV JAVA_HOME=/opt/conda
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
+2. Process: Retrieval (R in RAG)
 
-# ---- Python deps (layered for better cache) ----
-# (Keep a pip.conf beside requirements.txt if you need internal indexes)
-COPY requirements.txt ./
-RUN python -m pip install --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt
+Goal: Fetch relevant schema pieces based on the natural question.
 
-# ---- App code ----
-COPY . ${APP_HOME}
+Requirements:
 
-# ---- Security posture: drop root ----
-RUN chown -R appuser:appgroup ${APP_HOME}
-USER appuser
+Embedding model for schema + query.
 
-# ---- Make your src importable (optional but handy) ----
-ENV PYTHONPATH=${APP_HOME}/app/src
+Vector store for similarity search.
 
-# ---- Default: run Spark job ----
-# If you need args, add them after model_training.py or pass at runtime.
-CMD ["spark-submit", "model_training.py"]
+Optional hybrid retrieval (BM25 + dense).
 
+Tech Stack:
+
+Embedding: sentence-transformers (e.g., all-MiniLM-L6-v2).
+
+Vector DB: FAISS (fast, local), or alternatives like Weaviate / Pinecone if scaling.
+
+Hybrid retrieval: rank_bm25 (Python).
+
+3. Process: SQL Generation (Generation in RAG)
+
+Goal: Use retrieved schema context + question to generate SQL.
+
+Requirements:
+
+Prompt template combining schema + instructions.
+
+LLM trained/fine-tuned for SQL generation.
+
+Guardrails to enforce read-only SQL.
+
+Tech Stack:
+
+Model:
+
+Lightweight → Salesforce/codet5p-770m-sql
+
+Stronger → defog/sqlcoder-7b
+
+Frameworks: HuggingFace Transformers / vLLM.
+
+Guardrails: sqlglot (parse & enforce SELECT-only, add LIMIT).
+
+4. Process: Post-Processing & Execution
+
+Goal: Validate, normalize, and (optionally) run SQL.
+
+Requirements:
+
+Syntax validation and normalization.
+
+Security layer (block DROP/INSERT/UPDATE).
+
+DB connector for execution.
+
+Tech Stack:
+
+SQL parsing: sqlglot.
+
+DB connectors: psycopg2 (Postgres), pyodbc (SQL Server), duckdb (testing).
+
+Result return: Pandas DataFrame or JSON.
+
+5. Process: API & Service Layer
+
+Goal: Expose the pipeline as an API.
+
+Requirements:
+
+Endpoint /sql to accept {question, schema, execute_flag}.
+
+Return {sql_query, explanation, (optional results)}.
+
+Logging + error handling.
+
+Tech Stack:
+
+Backend: FastAPI (Python).
+
+Testing: Pytest + Postman.
+
+Deployment: Docker, Kubernetes/Openshift.
+
+6. Process: Evaluation & Metrics
+
+Goal: Measure quality and improve.
+
+Requirements:
+
+Benchmark dataset (Spider).
+
+Metrics: SQL accuracy, execution accuracy, latency.
+
+Continuous retraining/improvement loop.
+
+Tech Stack:
+
+Dataset: Spider (academic benchmark).
+
+Logging + evaluation framework: custom Python scripts.
