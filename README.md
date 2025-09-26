@@ -174,3 +174,6 @@ Tech Stack:
 Dataset: Spider (academic benchmark).
 
 Logging + evaluation framework: custom Python scripts.
+
+
+https://learn.nvidia.com/certificates?id
