@@ -96,3 +96,21 @@ spec:
     - name: code
       persistentVolumeClaim:
         claimName: <YOUR-PVC-NAME>   # << replace with the PVC that already has the files
+
+
+
+
+Subject: Urgent: Request for Resolution on Helix Access/Login Failure (INC0013547770)
+
+Hi Team,
+
+I have been facing this Helix access/login issue since September 16th, 2025, and despite multiple attempts it is still unresolved. The incident INC0013547770 was raised on the same date, and since then I have followed up on September 16th, 24th, and 29th through tickets, emails, and chats, but the issue continues. The case has also been reassigned across multiple support groups, yet no resolution has been provided.
+
+This access is experimental and time-bounded, which makes the resolution extremely critical. Every day lost further reduces the available time to test and validate, and I am unable to proceed with my work. Given the importance of this setup and the limited window we have, I request that this be treated with the highest level of urgency and resolved at the earliest.
+
+From my side, I have already tried the suggested troubleshooting steps (including proxy variable checks), but the login error still persists. Please escalate this further and assign it to the appropriate team to avoid any further delays.
+
+Thanks for your support and prompt action on this.
+
+Regards,
+Srinivas Pendotagaya
