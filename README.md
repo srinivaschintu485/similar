@@ -40,77 +40,14 @@ These discrepancies are systematically identified and resolved, ensuring your da
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
 
-| Step               | Task                                           | Tool                   |
-| ------------------ | ---------------------------------------------- | ---------------------- |
-| 1. Collect Logs    | Pull logs from test executions (Infinity logs) | Logstash, Python       |
-| 2. Slice Logs      | Segment logs by error case or test ID          | Custom scripts         |
-| 3. Generate Prompt | Dynamically frame a prompt with the log        | LangChain / Python     |
-| 4. Send to LLM     | Send prompt to GPT or Claude via API           | OpenAI/Anthropic       |
-| 5. Parse Output    | Extract structured info (tag, cause, fix)      | Regex or JSON mode     |
-| 6. Display         | Show in UI, Slack bot, or dashboard            | Streamlit, Teams, etc. |
 
-
-
-
-
-
-apiVersion: tekton.dev/v1
-kind: Pipeline
-metadata:
-  name: spark-train-min
-spec:
-  workspaces:
-    - name: code
-  tasks:
-    - name: train
-      taskSpec:
-        workspaces:
-          - name: code
-        steps:
-          - name: run-spark
-            image: apache/spark-py:v3.4.1
-            workingDir: $(workspaces.code.path)
-            script: |
-              #!/usr/bin/env bash
-              set -e
-              spark3-submit \
-                --jars /data1/gfrrsn/bin/precert_aiml/lib/ojdbc8.jar \
-                --py-files ml_stuff.zip \
-                recon_main.py | tee -a /home/sp58868/spark_logs.txt
-      workspaces:
-        - name: code
-          workspace: code
-
-
-
-
-
-apiVersion: tekton.dev/v1
-kind: PipelineRun
-metadata:
-  generateName: spark-train-min-run-
-spec:
-  pipelineRef:
-    name: spark-train-min
-  workspaces:
-    - name: code
-      persistentVolumeClaim:
-        claimName: <YOUR-PVC-NAME>   # << replace with the PVC that already has the files
-
-
-
-
-Subject: Urgent: Request for Resolution on Helix Access/Login Failure (INC0013547770)
-
-Hi Team,
-
-I have been facing this Helix access/login issue since September 16th, 2025, and despite multiple attempts it is still unresolved. The incident INC0013547770 was raised on the same date, and since then I have followed up on September 16th, 24th, and 29th through tickets, emails, and chats, but the issue continues. The case has also been reassigned across multiple support groups, yet no resolution has been provided.
-
-This access is experimental and time-bounded, which makes the resolution extremely critical. Every day lost further reduces the available time to test and validate, and I am unable to proceed with my work. Given the importance of this setup and the limited window we have, I request that this be treated with the highest level of urgency and resolved at the earliest.
-
-From my side, I have already tried the suggested troubleshooting steps (including proxy variable checks), but the login error still persists. Please escalate this further and assign it to the appropriate team to avoid any further delays.
-
-Thanks for your support and prompt action on this.
-
-Regards,
-Srinivas Pendotagaya
+Manual navigation through multiple Jira screens: Users have to click through several different Jira tabs or screens to find all the information they need, which is tedious.
+	2.	Field-by-field manual verification for each feed: Every individual field has to be checked one by one manually, which takes a lot of time.
+	3.	Time-consuming validation of certification statuses: Users need to manually confirm whether each field or feed is certified, which is a repetitive task.
+	4.	Checking multiple tables manually for each Jira item: They have to look into different tables or data sources to verify that everything matches up, which adds extra steps.
+	5.	Cross-referencing data from different screens to confirm accuracy: They need to compare information from various screens to make sure it all lines up, which can be a hassle.
+	6.	Manually identifying and interpreting errors or exceptions: If there’s an error or an exception, users have to figure out what it means on their own, which can be confusing.
+	7.	Repeating the process for multiple feeds or projects: They have to do all of this over and over again for each project or feed, which adds up.
+	8.	Limited ability to quickly answer questions without digging through documentation: If they have a question, they have to go look through documents or multiple screens instead of just getting a quick answer.
+	9.	Difficulty in tracking changes over time across different Jira items: It’s hard to see how things have changed over time because they have to piece it together manually.
+	10.	Lack of a centralized or quick way to get answers: There’s no single place to quickly get the info they need, so it takes longer to find answers.
