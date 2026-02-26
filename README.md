@@ -51,3 +51,13 @@ Manual navigation through multiple Jira screens: Users have to click through sev
 	8.	Limited ability to quickly answer questions without digging through documentation: If they have a question, they have to go look through documents or multiple screens instead of just getting a quick answer.
 	9.	Difficulty in tracking changes over time across different Jira items: It’s hard to see how things have changed over time because they have to piece it together manually.
 	10.	Lack of a centralized or quick way to get answers: There’s no single place to quickly get the info they need, so it takes longer to find answers.
+
+	Hi Rohit,
+
+Earlier, I was testing and training the models on the server, but that setup is no longer available. To continue the work, I started using containers to build the logic and convert it into Spark-based implementations for testing. However, this approach was taking a considerable amount of time for making changes and validating them.
+
+I then attempted to set up the environment locally, but encountered multiple issues with Hadoop, mainly related to version compatibility. Even after several attempts, it remained difficult to properly load and test the models in the local setup.
+
+At that point, I realized that my immediate goal was to validate the behavior of the feature functions rather than testing the full models. So, I shifted my focus and set up a simplified environment specifically to test the feature function behavior.
+
+Currently, I have completed the setup required to validate the base feature function behavior. The next step is to convert each function into a Spark-based implementation and compare the outputs against the base feature functions to ensure consistency.
