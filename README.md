@@ -40,30 +40,33 @@ These discrepancies are systematically identified and resolved, ensuring your da
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
 
-Enhance Model Accuracy and Explainability
+1. Does the object/tool/system use techniques that emulate human intelligence via computer programs to make estimates, predictions, recommendations, or decisions (Static AI, Dynamic AI, Auto AI or Cognitive AI)?
 
-Comment:
+Answer: Yes
 
-Improved model training pipelines by implementing prompt engineering techniques and optimizing fine-tuning strategies. Achieved measurable improvement in model accuracy and precision compared to baseline results. Additionally implemented explainability mechanisms to provide better transparency into model predictions, enabling business stakeholders to understand the reasoning behind generated responses.
+Rationale:
+The system uses machine learning algorithms implemented through the PySpark ML library to perform classification of data records. From the code, models such as RandomForestClassifier, Logistic Regression, and SVM (LinearSVC with OneVsRest) are used to generate predictions based on engineered features derived from the input data. These algorithms learn patterns from historical data and apply them to new observations to produce predictions such as identifying whether values match or detecting specific types of differences (for example currency differences, scientific notation differences, or separator differences). Since the system uses machine learning models to automatically infer patterns and generate predictions, it falls under Static AI / Machine Learning techniques as defined by the Model Risk Management framework.
 
-4. Optimize MLOps & CI/CD for AI Pipelines
+2. Does the object/tool/system developer influence selection of inputs (vs prescribed inputs)?
 
-Comment:
+Answer: Yes
 
-Implemented CI/CD workflows to streamline model deployment and reduce manual intervention in the deployment process. Contributed to containerization of AI services using Docker and improved pipeline efficiency to support faster build-to-deployment cycles. Established automation practices that improved reliability and reduced operational overhead for model updates and retraining.
+Rationale:
+The developer determines and engineers the input features used by the models. In the code, several features are generated through custom logic and user-defined functions, such as fuzzy matching scores, n-gram similarity, currency detection, scientific notation checks, thousand separator differences, negative number checks, and string similarity measures. These features are assembled into a feature vector using VectorAssembler before being passed to the machine learning models. Since these input variables are designed and selected by the developer rather than being fixed by a predefined regulatory or mathematical specification, the developer clearly influences the selection and transformation of model inputs.
 
-5. Research & Innovation in GenAI
+3. Does the object/tool/system developer influence selection of methodology (vs prescribed specifications)?
 
-Comment:
+Answer: Yes
 
-Explored and implemented advanced GenAI techniques including Retrieval-Augmented Generation (RAG) and optimized prompt engineering approaches to improve response quality and system efficiency. Developed proof-of-concept solutions that enhanced query reliability and demonstrated improvements in performance and infrastructure cost optimization.
+Rationale:
+The methodology used by the system is determined by the developer during the model design process. The code shows that multiple machine learning algorithms are used, including Random Forest, Logistic Regression, and Support Vector Machines, and the predictions are executed sequentially for stability. Additionally, the developer configures the modeling pipeline, performs feature engineering, prepares the dataset, and defines how predictions are mapped into business labels such as “Material change” or “No material change”. These modeling choices, including the selection of algorithms and feature engineering strategy, are not dictated by a prescribed formula but are part of the model development and optimization process. Therefore, the developer influences the model methodology and architecture.
 
-6. Compliance & Responsible AI
+4. Is the output an estimate of something about which there is uncertainty? The ultimate output can be either quantitative or qualitative but is based upon quantitative methods.
 
-Comment:
+Answer: Yes
 
-Ensured AI systems and data pipelines adhere to organizational policies related to data privacy, access control, and responsible AI usage. Conducted model validation and risk assessment reviews to minimize compliance risks and ensure fairness and transparency in model outputs.
-
+Rationale:
+The system produces predictions based on probabilistic outputs generated by machine learning models. For example, the Random Forest model generates prediction probabilities, and the code processes these probabilities to determine the most likely classification outcome. Since these predictions are derived from statistical learning on historical data, the output inherently contains uncertainty and probabilistic interpretation. The model estimates whether records match or whether differences exist (such as rounding differences, special character differences, or currency differences) based on learned patterns rather than deterministic rules. Therefore, the output represents an estimate derived from quantitative statistical methods, which satisfies the Model Risk Management definition of model output with uncertainty.
 
 
 
