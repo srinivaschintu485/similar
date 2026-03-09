@@ -40,126 +40,31 @@ These discrepancies are systematically identified and resolved, ensuring your da
 **Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
 
 
+Enhance Model Accuracy and Explainability
 
-Convert alpha_check and are_numbers_equal to Spark-based Implementation
+Comment:
 
-Description:
-Convert existing alpha_check and are_numbers_equal Python utility functions into Spark-based implementations (UDF or native Spark functions).
+Improved model training pipelines by implementing prompt engineering techniques and optimizing fine-tuning strategies. Achieved measurable improvement in model accuracy and precision compared to baseline results. Additionally implemented explainability mechanisms to provide better transparency into model predictions, enabling business stakeholders to understand the reasoning behind generated responses.
 
-Scope:
+4. Optimize MLOps & CI/CD for AI Pipelines
 
-Re-implement both functions using Spark
+Comment:
 
-Validate logic equivalence with existing implementation
+Implemented CI/CD workflows to streamline model deployment and reduce manual intervention in the deployment process. Contributed to containerization of AI services using Docker and improved pipeline efficiency to support faster build-to-deployment cycles. Established automation practices that improved reliability and reduced operational overhead for model updates and retraining.
 
-Test against previous dataset to ensure same behaviour/output
+5. Research & Innovation in GenAI
 
-Add unit tests for Spark version
+Comment:
 
-Acceptance Criteria:
+Explored and implemented advanced GenAI techniques including Retrieval-Augmented Generation (RAG) and optimized prompt engineering approaches to improve response quality and system efficiency. Developed proof-of-concept solutions that enhanced query reliability and demonstrated improvements in performance and infrastructure cost optimization.
 
-Spark implementation returns identical results as current logic
+6. Compliance & Responsible AI
 
-Validated with historical data
+Comment:
 
-Unit tests added and passing
-
-Estimate: 1 Day
-
-
-Convert alpha_check and are_numbers_equal to Spark-based Implementation
-
-Description:
-Convert existing alpha_check and are_numbers_equal Python utility functions into Spark-based implementations (UDF or native Spark functions).
-
-Scope:
-
-Re-implement both functions using Spark
-
-Validate logic equivalence with existing implementation
-
-Test against previous dataset to ensure same behaviour/output
-
-Add unit tests for Spark version
-
-Acceptance Criteria:
-
-Spark implementation returns identical results as current logic
-
-Validated with historical data
-
-Unit tests added and passing
-
-Estimate: 1 Day
-
-JIRA Story: Convert perfect_match and scientific_notation to Spark
-
-Description:
-Migrate existing perfect_match and scientific_notation logic to Spark-based implementation (UDF or native Spark functions).
-
-Acceptance Criteria:
-
-Spark implementation matches current Python behavior
-
-Handles nulls and edge cases correctly
-
-Validated against previous dataset
-
-Unit tests added and passing
-
-Estimate: 2 Points
-
-
-JIRA Story: Convert currency_check to Spark
-
-Description:
-Migrate existing currency_check logic to Spark-based implementation (UDF or native Spark function).
-
-Acceptance Criteria:
-
-Spark implementation matches current Python logic
-
-Handles nulls and edge cases
-
-Validated against previous dataset
-
-Unit tests added and passing
-
-Estimate: 1 Point
-
-
-JIRA Story: Convert currency_check to Spark
-
-Description:
-Migrate existing currency_check logic to Spark-based implementation (UDF or native Spark function).
-
-Acceptance Criteria:
-
-Spark implementation matches current Python logic
-
-Handles nulls and edge cases
-
-Validated against previous dataset
-
-Unit tests added and passing
-
-Estimate: 1 Point
+Ensured AI systems and data pipelines adhere to organizational policies related to data privacy, access control, and responsible AI usage. Conducted model validation and risk assessment reviews to minimize compliance risks and ensure fairness and transparency in model outputs.
 
 
 
-JIRA Story: Convert get_fuzzy_score to Spark
 
-Description:
-Migrate existing get_fuzzy_score logic to Spark-based implementation.
 
-Acceptance Criteria:
-
-Spark implementation matches current behavior
-
-Handles nulls and edge cases
-
-Validated with historical data
-
-Unit tests added and passing
-
-Estimate: 1 Point
