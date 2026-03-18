@@ -27,94 +27,68 @@ Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization too
 
 These discrepancies are systematically identified and resolved, ensuring your data remains pristine and reflective of its true value.
 
-**Innovative Features**
 
-**Comprehensive Discrepancy Detection:** Utilizes advanced algorithms to detect and resolve a wide spectrum of data discrepancies.
 
-**Scalable Data Transformation:** Employs PySpark’s robust processing capabilities to manage vast datasets efficiently.
 
-**Multi-format and Multi-sheet Compatibility:** Seamlessly integrates with both CSV and Excel formats, processing multiple sheets within Excel files to ensure comprehensive coverage.
+**Title:** Integrate LangChain to Ingest Data from URLs and Confluence for Knowledge Retrieval
 
-**Advanced Currency Handling:** Supports an array of global currency symbols, enhancing the tool's utility for international financial data operations.
+---
 
-**Dual Processing Capabilities:** Equally adept at handling both numeric and textual data discrepancies, providing a versatile solution for diverse data challenges.
+**Description:**
+As a developer, I want to use **LangChain** to fetch and process data from external URLs and Confluence so that we can build a centralized knowledge retrieval system (RAG-based) for answering user queries.
 
-**Title:** Implement Parallel LLM Routing Based on Action Complexity
-
-**Type:** Story / Technical Task
-
-**Summary:**
-Implement a routing mechanism that dynamically selects between a lightweight LLM and a large LLM based on the complexity of the action being executed by agents. The goal is to optimize performance, cost, and latency by using the lightweight model for simple routing/decision tasks while reserving the larger model for complex reasoning tasks.
-
-**Background / Context:**
-The system currently utilizes multiple agents to perform different actions. Some agents perform simple tasks such as deciding which agent to invoke or performing lightweight reasoning, while others require deeper reasoning and complex processing. Running all actions on the larger LLM is inefficient in terms of latency and cost.
-
-To improve efficiency, we need to introduce a parallel LLM routing layer that determines which model should handle a given action.
-
-**Objectives:**
-
-* Route simple decision-making tasks to the lightweight LLM.
-* Route complex reasoning or generation tasks to the large LLM.
-* Support parallel execution where applicable.
-* Maintain a flexible architecture to extend routing rules in the future.
-
-**Scope of Work:**
-
-1. **Action Classification**
-
-   * Define categories for agent actions:
-
-     * Simple routing/decision actions
-     * Moderate reasoning tasks
-     * Complex reasoning/generation tasks
-   * Map these categories to the appropriate LLM.
-
-2. **LLM Router Implementation**
-
-   * Create an LLM routing layer that:
-
-     * Receives agent action requests
-     * Determines complexity level
-     * Selects the appropriate LLM
-   * Implement routing rules or heuristics.
-
-3. **Parallel Routing Support**
-
-   * Allow parallel invocation where multiple agents may require LLM calls simultaneously.
-   * Ensure thread-safe or async execution.
-
-4. **Configuration Layer**
-
-   * Add configuration for:
-
-     * Model selection rules
-     * Action → model mapping
-     * Fallback model configuration.
-
-5. **Fallback Handling**
-
-   * If the lightweight model fails or confidence is low, reroute the request to the larger model.
-
-6. **Logging and Monitoring**
-
-   * Log which model handled each request.
-   * Track latency, token usage, and failure cases.
+---
 
 **Acceptance Criteria:**
 
-* System routes simple decision tasks to the lightweight LLM.
-* Complex reasoning tasks are executed using the large LLM.
-* Routing logic supports parallel execution.
-* Fallback to the larger model works correctly.
-* Logs clearly indicate which model handled each action.
-* No regression in existing agent functionality.
+1. The system should be able to fetch and parse content from public URLs using LangChain loaders.
+2. The system should be able to connect to Confluence and retrieve pages using API credentials.
+3. Retrieved data should be cleaned and split into manageable chunks.
+4. Data should be converted into embeddings and stored in a vector database (e.g., FAISS).
+5. The system should support querying the stored data and return relevant results.
+6. Proper error handling should be implemented for failed API calls or inaccessible pages.
+7. Configuration (URLs, Confluence credentials, space keys) should be externalized (e.g., env/config file).
+
+---
 
 **Technical Notes:**
 
-* Ensure routing logic is modular and extensible.
-* Consider async execution for parallel agent calls.
-* Maintain backward compatibility with existing agent workflows.
+* Use LangChain `WebBaseLoader` for URL ingestion
+* Use LangChain `ConfluenceLoader` for Confluence integration
+* Use a text splitter (e.g., `CharacterTextSplitter`) for chunking
+* Use embedding model (e.g., OpenAI Embeddings)
+* Use vector store (e.g., FAISS or similar)
+* Ensure secure handling of Confluence API tokens
 
-**Priority:** High
+---
 
-**Estimated Effort:** 3–5 days
+**Tasks:**
+
+* [ ] Implement URL ingestion module
+* [ ] Implement Confluence ingestion module
+* [ ] Add authentication for Confluence (API token-based)
+* [ ] Implement document preprocessing and chunking
+* [ ] Integrate embedding generation
+* [ ] Store embeddings in vector database
+* [ ] Implement retrieval/query interface
+* [ ] Add logging and error handling
+* [ ] Write unit tests
+
+---
+
+**Definition of Done:**
+
+* Code is implemented and reviewed
+* Data can be successfully fetched from both URL and Confluence
+* Queries return relevant results from ingested data
+* Documentation is updated
+* Unit tests pass
+
+---
+
+**Priority:** Medium
+**Story Points:** 5–8
+**Type:** Story
+
+
+
