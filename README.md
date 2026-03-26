@@ -29,66 +29,22 @@ These discrepancies are systematically identified and resolved, ensuring your da
 
 
 
+Q1: What is a brief description of the project work completed during the assessment year? (in no less than 50 words)
 
-**Title:** Integrate LangChain to Ingest Data from URLs and Confluence for Knowledge Retrieval
+Q2: What technical expertise or functional capabilities were applied in the project, and what specific improvements or outcomes were achieved as a result?
 
----
+Q3: What key features, functions, or automation tasks were built, enhanced, or delivered during the project?
 
-**Description:**
-As a developer, I want to use **LangChain** to fetch and process data from external URLs and Confluence so that we can build a centralized knowledge retrieval system (RAG-based) for answering user queries.
+Q4: What technical challenges did the team face, what research or validation activities were performed to address them, and what new solutions were developed beyond standard practice?
 
----
+Q5: What major technological design choices, architectural decisions, or trade-offs were made during the project?
 
-**Acceptance Criteria:**
+Q6: What measurable outcomes or benefits were delivered by the project, such as efficiency gains, cost savings, user experience improvements, or business process optimizations?
 
-1. The system should be able to fetch and parse content from public URLs using LangChain loaders.
-2. The system should be able to connect to Confluence and retrieve pages using API credentials.
-3. Retrieved data should be cleaned and split into manageable chunks.
-4. Data should be converted into embeddings and stored in a vector database (e.g., FAISS).
-5. The system should support querying the stored data and return relevant results.
-6. Proper error handling should be implemented for failed API calls or inaccessible pages.
-7. Configuration (URLs, Confluence credentials, space keys) should be externalized (e.g., env/config file).
+Q7: What reusable technical knowledge, methods, frameworks, or best practices were created during the project?
 
----
+Q8: Is there any additional technical information you would like to highlight about this project?
 
-**Technical Notes:**
-
-* Use LangChain `WebBaseLoader` for URL ingestion
-* Use LangChain `ConfluenceLoader` for Confluence integration
-* Use a text splitter (e.g., `CharacterTextSplitter`) for chunking
-* Use embedding model (e.g., OpenAI Embeddings)
-* Use vector store (e.g., FAISS or similar)
-* Ensure secure handling of Confluence API tokens
-
----
-
-**Tasks:**
-
-* [ ] Implement URL ingestion module
-* [ ] Implement Confluence ingestion module
-* [ ] Add authentication for Confluence (API token-based)
-* [ ] Implement document preprocessing and chunking
-* [ ] Integrate embedding generation
-* [ ] Store embeddings in vector database
-* [ ] Implement retrieval/query interface
-* [ ] Add logging and error handling
-* [ ] Write unit tests
-
----
-
-**Definition of Done:**
-
-* Code is implemented and reviewed
-* Data can be successfully fetched from both URL and Confluence
-* Queries return relevant results from ingested data
-* Documentation is updated
-* Unit tests pass
-
----
-
-**Priority:** Medium
-**Story Points:** 5–8
-**Type:** Story
-
+Q9: Any additional information you could provide regarding the project?
 
 
