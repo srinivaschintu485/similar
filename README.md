@@ -27,24 +27,12 @@ Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization too
 
 These discrepancies are systematically identified and resolved, ensuring your data remains pristine and reflective of its true value.
 
+Hello Team,
 
+As discussed earlier, I demonstrated the search using embeddings, and I am now working on a full implementation for it.
 
-Q1: What is a brief description of the project work completed during the assessment year? (in no less than 50 words)
+I identified all the unique abbreviated words from the table schema column. There is also a column named TYPE; by selecting Abbreviated, we can retrieve all unique abbreviated words. I am currently looking for the expanded forms of those abbreviations.
 
-Q2: What technical expertise or functional capabilities were applied in the project, and what specific improvements or outcomes were achieved as a result?
+I had a call with Irshad, and he shared Jeeva’s contact with me so I can get more details. I will also check Confluence to see if I can find any related information.
 
-Q3: What key features, functions, or automation tasks were built, enhanced, or delivered during the project?
-
-Q4: What technical challenges did the team face, what research or validation activities were performed to address them, and what new solutions were developed beyond standard practice?
-
-Q5: What major technological design choices, architectural decisions, or trade-offs were made during the project?
-
-Q6: What measurable outcomes or benefits were delivered by the project, such as efficiency gains, cost savings, user experience improvements, or business process optimizations?
-
-Q7: What reusable technical knowledge, methods, frameworks, or best practices were created during the project?
-
-Q8: Is there any additional technical information you would like to highlight about this project?
-
-Q9: Any additional information you could provide regarding the project?
-
-
+If you have any additional details that could help me identify those expanded forms, that would be greatly appreciated.
