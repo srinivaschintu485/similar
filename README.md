@@ -36,3 +36,38 @@ I identified all the unique abbreviated words from the table schema column. Ther
 I had a call with Irshad, and he shared Jeeva’s contact with me so I can get more details. I will also check Confluence to see if I can find any related information.
 
 If you have any additional details that could help me identify those expanded forms, that would be greatly appreciated.
+
+
+Discussed the absence of measurable metrics to evaluate AI-driven efficiency and the need for a centralized, data-driven dashboard.
+Highlighted inefficiencies caused by manual reporting, fragmented data sources, and lack of real-time insights.
+Identified gaps in automation across issue tracking, classification, monitoring, and response handling.
+Noted challenges in linking operational data (e.g., Jira, AI outputs) to business impact and strategic outcomes.
+Emphasized the lack of leadership-level visibility and actionable insights for decision-making.
+Addressed issues with manual tracking systems, misclassification of tickets, and perception gaps in issue reporting.
+Recognized the need for robust monitoring and alerting systems to proactively detect failures.
+Discussed shortcomings in release tracking, pre-certification processes, and data pipeline visibility.
+Highlighted the absence of product-level insights and structured exception impact analysis.
+Identified communication gaps, unclear ownership, and collaboration inefficiencies across teams.
+Agreed on the need for automation, standardization, and improved reporting to enhance efficiency and transparency.
+
+Hi Srini,
+
+I’m sharing the summary of our recent discussion along with the compiled problem statements (attached for your reference).
+
+Minutes of Meeting (MoM):
+
+Discussed the lack of measurable, data-driven metrics to evaluate the impact of AI disposition and the need for a centralized dashboard.
+Highlighted inefficiencies due to manual and fragmented reporting processes, leading to delays and inconsistencies.
+Identified gaps in automation across issue tracking, classification, monitoring, and response handling.
+Noted challenges in linking operational outputs (e.g., Jira data, AI tools) to meaningful business impact.
+Emphasized the lack of contextual, actionable insights available for leadership decision-making.
+Reviewed issues related to manual tracking systems, misclassification of tickets, and resulting perception challenges.
+Recognized the absence of robust monitoring and alerting systems for proactive issue detection.
+Discussed gaps in release tracking, pre-certification visibility, and overall data pipeline transparency.
+Highlighted the lack of product-level visibility and structured exception/impact tracking.
+Identified communication gaps, unclear ownership, and opportunities to improve collaboration and resource utilization.
+
+The attached document provides a detailed breakdown of the problem statements discussed above.
+
+Please let me know your thoughts or if you’d like to connect to discuss the next steps.
+
