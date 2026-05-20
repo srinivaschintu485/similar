@@ -27,47 +27,235 @@ Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization too
 
 These discrepancies are systematically identified and resolved, ensuring your data remains pristine and reflective of its true value.
 
-Hello Team,
-
-As discussed earlier, I demonstrated the search using embeddings, and I am now working on a full implementation for it.
-
-I identified all the unique abbreviated words from the table schema column. There is also a column named TYPE; by selecting Abbreviated, we can retrieve all unique abbreviated words. I am currently looking for the expanded forms of those abbreviations.
-
-I had a call with Irshad, and he shared Jeeva’s contact with me so I can get more details. I will also check Confluence to see if I can find any related information.
-
-If you have any additional details that could help me identify those expanded forms, that would be greatly appreciated.
 
 
-Discussed the absence of measurable metrics to evaluate AI-driven efficiency and the need for a centralized, data-driven dashboard.
-Highlighted inefficiencies caused by manual reporting, fragmented data sources, and lack of real-time insights.
-Identified gaps in automation across issue tracking, classification, monitoring, and response handling.
-Noted challenges in linking operational data (e.g., Jira, AI outputs) to business impact and strategic outcomes.
-Emphasized the lack of leadership-level visibility and actionable insights for decision-making.
-Addressed issues with manual tracking systems, misclassification of tickets, and perception gaps in issue reporting.
-Recognized the need for robust monitoring and alerting systems to proactively detect failures.
-Discussed shortcomings in release tracking, pre-certification processes, and data pipeline visibility.
-Highlighted the absence of product-level insights and structured exception impact analysis.
-Identified communication gaps, unclear ownership, and collaboration inefficiencies across teams.
-Agreed on the need for automation, standardization, and improved reporting to enhance efficiency and transparency.
+Jira Story 1: Automate Olympus File Movement from Inbound Path to Olympus Landing Bulk Remote
 
-Hi Srini,
+Story Title:
+Automate file movement for Olympus products from inbound path to Olympus landing bulk remote path
 
-I’m sharing the summary of our recent discussion along with the compiled problem statements (attached for your reference).
+Description:
+Currently, source teams upload files into the UAT inbound path:
 
-Minutes of Meeting (MoM):
+/var/app/inbound/GENEIS/uat2
 
-Discussed the lack of measurable, data-driven metrics to evaluate the impact of AI disposition and the need for a centralized dashboard.
-Highlighted inefficiencies due to manual and fragmented reporting processes, leading to delays and inconsistencies.
-Identified gaps in automation across issue tracking, classification, monitoring, and response handling.
-Noted challenges in linking operational outputs (e.g., Jira data, AI tools) to meaningful business impact.
-Emphasized the lack of contextual, actionable insights available for leadership decision-making.
-Reviewed issues related to manual tracking systems, misclassification of tickets, and resulting perception challenges.
-Recognized the absence of robust monitoring and alerting systems for proactive issue detection.
-Discussed gaps in release tracking, pre-certification visibility, and overall data pipeline transparency.
-Highlighted the lack of product-level visibility and structured exception/impact tracking.
-Identified communication gaps, unclear ownership, and opportunities to improve collaboration and resource utilization.
+For BAU processing, an existing CC job automatically moves files into the bulk remote path. However, Olympus-related products do not have similar automation.
 
-The attached document provides a detailed breakdown of the problem statements discussed above.
+Currently for Olympus products:
 
-Please let me know your thoughts or if you’d like to connect to discuss the next steps.
+CAT
+LNS
+DEP
 
+files are manually identified and copied to:
+
+/var/app/precert/uat/live/olypct/landing/bulk_remote
+
+For SFT and TCS, physical files do not exist and raw source files are expected from Olympus teams.
+
+The process currently requires manual intervention where users identify relevant files and move them to Olympus landing locations. This creates operational overhead and increases the possibility of missed or duplicate files.
+
+Automation should be implemented to identify only Olympus-specific files and move them automatically.
+
+Acceptance Criteria:
+
+AC1:
+System monitors:
+
+/var/app/inbound/GENEIS/uat2
+
+for incoming files.
+
+AC2:
+Only Olympus product files:
+
+CAT
+LNS
+DEP
+
+are identified.
+
+AC3:
+Identified files are automatically copied into:
+
+/var/app/precert/uat/live/olypct/landing/bulk_remote
+
+AC4:
+Existing BAU processing remains unchanged.
+
+AC5:
+Logging mechanism captures:
+
+file name
+timestamp
+movement status
+failures
+
+Business Value:
+
+Removes manual activity
+Reduces operational risk
+Prevents missed files
+Improves scalability
+Jira Story 2: Automate Attestation Requirement Updates Across Database Tables
+
+Story Title:
+Automate attestation metadata updates across dependent database tables
+
+Description:
+
+During feed onboarding, users select:
+
+Attestation Required
+Attestation Not Required
+
+Business users may later request changes to attestation requirements for an existing feed/Jira ID.
+
+Currently, changing this status requires manual updates across multiple database tables:
+
+Tables impacted:
+
+dsval_release_config
+dsval_dataset_def
+dsdiff_proc_status
+genval_proc_status_ai
+genval_workflow_details
+genval_workflow_status
+
+Manual updates create inconsistencies and can cause UI and workflow failures.
+
+Automation should identify changes and update all impacted tables consistently.
+
+Acceptance Criteria:
+
+AC1:
+System identifies Jira IDs impacted by attestation label changes.
+
+AC2:
+Related records are identified automatically.
+
+AC3:
+Updates are applied to all dependent tables.
+
+AC4:
+Both scenarios are supported:
+
+Not Required → Required
+Required → Not Required
+
+AC5:
+UI reflects correct state:
+
+Example:
+
+GO
+
+changes correctly to:
+
+Initiate Attestation
+
+AC6:
+Audit logs capture:
+
+Jira ID
+old value
+new value
+timestamp
+
+Business Value:
+
+Eliminates manual DB updates
+Reduces production issues
+Maintains UI consistency
+Reduces operational effort
+Jira Story 3: Automate SGL Certified Feed Movement to S3
+
+Story Title:
+Automate movement of SGL-certified feeds into S3
+
+Description:
+
+Currently SGL-certified feeds require manual movement into S3 before downstream processing can continue.
+
+Manual handling causes:
+
+delays
+dependency on operations teams
+risk of missing uploads
+
+Automation should move certified feeds to S3 upon generation.
+
+Acceptance Criteria:
+
+AC1:
+System identifies completed SGL-certified feeds.
+
+AC2:
+Files are automatically transferred to S3.
+
+AC3:
+Transfer failures are logged.
+
+AC4:
+Retry mechanism exists for failures.
+
+AC5:
+Processing continues after successful upload.
+
+Business Value:
+
+Removes repetitive manual work
+Reduces delays
+Improves reliability
+Jira Story 4: Enhance Cleanup Scripts for Ab Initio Space Management
+
+Story Title:
+Enhance cleanup scripts to remove obsolete files and prevent storage issues
+
+Description:
+
+Existing cleanup scripts:
+
+Serial Cleanup:
+
+/abinitio/home/mp64514/serial_cleanup
+
+MFS Cleanup:
+
+/abinitio/home/mp64514/mfs_cleanup
+
+Current scripts are executing but not removing all required files, causing space issues in:
+
+/abinitio/data
+
+Cleanup logic requires enhancement to ensure obsolete files are removed appropriately.
+
+Acceptance Criteria:
+
+AC1:
+Cleanup scripts identify obsolete files correctly.
+
+AC2:
+Unnecessary files are removed automatically.
+
+AC3:
+Required active files remain untouched.
+
+AC4:
+Cleanup logs are generated:
+
+files deleted
+execution time
+failures
+
+AC5:
+Storage utilization remains within acceptable limits.
+
+Business Value:
+
+Prevents storage exhaustion
+Reduces manual cleanup
+Improves job stability
+Improves system performance
+
+These are ready to directly create Jira stories in your backlog.
