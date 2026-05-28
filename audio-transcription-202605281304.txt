@@ -1,0 +1,92 @@
+[00:00] Speaker 1: The one service, right? So, which has the, uh, common properties like this, uh, any common related thing. But the, like, this is for dev, ut, ut1. Environment spec- specific, you need to add, uh, uh, things here. I think it's, if it's a common, it's already added, right? The config-related things. This will be application property where there are all global application property level thing for preset, it comes from here. So these things already there. So whichever is already there, you just le- le- eliminate it, and for the environment specific, you can just add a specific thing, okay?
+
+[00:32] Speaker 2: Okay.
+
+[00:32] Speaker 1: So for (voice cuts out) here, this, these things are, uh, common, uh, for preset, shared, not shared. No, shared would be inside this. So for preset, we have the environment dev, ut, ut1. So for that, we have a common thing. In application level, we have one common application property where you can add anything specific to the preset. For example, the URL will be common, the TV URL, server URL, those things. So that will be common, but we are already have preset data.
+
+[01:05] Speaker 2: Okay.
+
+[01:05] Speaker 1: And specific to the environment, so here, it's, they are entered, uh, ut, ut1. Uh, so most of the thing will be added. DB level, we already did. We already good. And, uh, any other thing apart from we have for specific service, you can update here. The pro- property file things needs to be done here. Okay? Under preset data.
+
+[01:26] Speaker 2: Nice.
+
+[01:26] Speaker 1: And, uh, gateway send, uh, for, uh, application property, you need to add a gateway. And what else? Uh, in the common service, you need to add, uh, secrets as well as, uh, what else? Tell me...
+
+[01:47] Speaker 3: On your screen, on-
+
+[01:47] Speaker 1: Health-related things has been updated. Uh, 10:24-
+
+[01:51] Speaker 2: So, Karthik, are you saying that I need to add a folder, uh, in my service that was allocated me, the same properties and everything, all that stuff?
+
+[02:01] Speaker 1: No, no. Why folder? Where folder? There isn't any folder, right? See, you need to add in a property file. So for preset data, it's common, right? Under dev, ut, ut1, you might have a lot of properties.
+
+[02:14] Speaker 2: Mm-hmm.
+
+[02:14] Speaker 1: Whichever there in your property file, move it to here for environment specific. For example, admin, if you have a specific property, just move to this environments, dev, ut, ut1. Okay, then, uh, in the common service, you can add a secrets, because that's the only thing we are doing, uh, as of now. See, we are not adding much, uh, because gateway and every- thing is there. And even in the config, one more thing. In the gateway service, you need to add a similar way for, uh, service whichever you're working. So this is for dev. If you're working for admin, take as a reference, copy, paste, change it to admin. That's it. It's a small thing.
+
+[02:49] Speaker 2: Oh.
+
+[02:49] Speaker 1: And what else? Uh-
+
+[02:51] Speaker 2: Okay.
+
+[02:51] Speaker 1: ... difservice code there. Okay. Take a feature branch. This is difservice code. Similar way you, you have created admin, right?
+
+[02:59] Speaker 2: Mm-hmm.
+
+[03:00] Speaker 1: See the fo- folders there and configuration and everything? It needs to be similar kind of thing. And the pom XML, you need to update accordingly.
+
+[03:08] Speaker 2: Okay.
+
+[03:09] Speaker 1: These three only thing you need to refer. Refer and do it. That's it.
+
+[03:13] Speaker 2: So-
+
+[03:13] Speaker 1: If you have any doubt, you can connect on.
+
+[03:15] Speaker 2: Yeah, yeah, Karthik. My understanding is that these are the three services where I need to appli- update regarding my service information in those, uh, files.
+
+[03:23] Speaker 1: Yeah, yeah. Th- see, these are main service you created, right?
+
+[03:26] Speaker 2: Right.
+
+[03:26] Speaker 1: Whichever code we, we need to remove, remove those part. Like, uh, uh, what is the thing? Like, uh, property files, we known, don't... i- I mean, probably it's not required. Only you need to keep bootstrap.yml, application.yml. Bootstrap.yml is the main file where, uh, it route based on the environment and it go for config here.
+
+[03:46] Speaker 2: Right.
+
+[03:46] Speaker 1: It connects to configs.
+
+[03:47] Speaker 2: Right.
+
+[03:48] Speaker 1: So based on the config service, it, it will connect and it will fetch all the configs. Already we have, uh, applied, uh, the, uh, package in the pom file. So it will try to connect that, uh, URI.
+
+[04:01] Speaker 2: Mm-hmm.
+
+[04:01] Speaker 3: So it will connect to that, sir?
+
+[04:03] Speaker 1: And it take the, all the information and fill it-
+
+[04:06] Speaker 2: Oh.
+
+[04:06] Speaker 1: ... according to the system. That's how the, the config, where we are using the config, all the config. So in the DB folder, right? Source, config, uh, preset DB config. So here what we are using. So here we are ge- getting derived, right? So this is coming from configuration class.
+
+[04:25] Speaker 2: Right.
+
+[04:25] Speaker 1: So that config is nothing but, uh, bootstrap.yml. Bootstrap.yml, it will try to read and it will go for, uh, global DB and, uh, again, the configuration go for, uh, uh, China DB based on the conditional. So that goes to your config and read the information.
+
+[04:41] Speaker 2: Right, right.
+
+[04:41] Speaker 1: So it goes here, it goes to preset data, and then it goes here and read, if you see here, China DB. So all those things, it will be there, re- read from here.
+
+[04:52] Speaker 2: Got you.
+
+[04:52] Speaker 1: Yeah. Try this and let me know. We can connect tomorrow. Okay?
+
+[04:55] Speaker 2: Sure, karthik.
+
+[04:55] Speaker 1: Anything else?
+
+[04:56] Speaker 2: No, no, that's it. I'll, I'll go through these things. I'll update things. Yeah.
+
+---
+Generated by AudioConvert.ai | Free, accurate audio transcription. (Watermark removable.)
