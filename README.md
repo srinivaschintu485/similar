@@ -54,3 +54,6 @@ Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization too
           │
           ▼
  Root Cause Report
+ 
+ <img width="431" height="691" alt="image" src="https://github.com/user-attachments/assets/e0f169e5-889c-409f-b2be-5dedc6c05339" />
+
