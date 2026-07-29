@@ -47,3 +47,123 @@ Um, the input 2 agent should be rule ID. Just put it rule ID. Okay, okay. And it
 We, uh, best 3 location, diff engine, source reviews. And it goes back to the Olympus ATL path. Mm, no process. Okay. Okay. This, and then their raw airloads and DQ processing happens and then pre-sert validation report we are taking from this DQ processing. Okay. Okay. Now there is one more flow. Okay, which we need to integrate into this is Even if, if it is yes or no. Okay? What, what, uh, what will go to this load? Okay. Okay like a parallel process. Yeah, yeah. If no means additional crossing is that is not required. This is like yes or no, right? Right, right. And yeah, condition. In that way, if it is, yes, it goes this and then we set back the file here. Okay. If it is, the 2nd floor is, even if there is a yes or no, it goes to Olympus and there is no communication between us here. Okay. Got it. Okay. And the communication only happens here. Okay. Okay. So this communication in the 2nd floor, and here it is not just yes or no, it is yes, it is not just no, it is yes or no. Okay. Step 3, right? Okay. Okay, and these steps numbers we need to remove, it doesn't look nice. Mm-hmm. Okay, so yeah, just this, let me know. We can connect back whenever you're done. That is dotted lines, right? After go ahead for Olympus, after that, that is a, that is the only one dotted, right? Yes, this is dotted, and this will become yes slash no for the 2nd case. Oh, you want 2 diagrams? Not exactly. That is what, how can we integrate both in one is what I'm thinking. Or what we do is, we can do that. We can do that flow. Just, uh, in the 1st floor, can you tell me, um, what should be in the 1st floor? Exactly this. Exactly this one. In the 2nd floor, that should become the dotted, right? This one and this one will change. The 2nd it will become step 3 becomes yes or no, and that will become dotted line instead, say scenario 2. No, if it becomes yes or no, then there is no line here at all. Uh, you tell me in a perspective of scenario one and then scenario 2 that accordingly that I that we can do. Scenario one is this, exactly, scenario 2 is yes and no, and this line is not available. Okay, makes sense. Yeah, we can look it. Okay. Just one thing, uh, instead of the wordings, we later we can, I'll let you know, we can correct it them as well. Sure. Okay, sure. whenever you're done, I will be available. Okay, okay. Yeah. Yeah, thanks.
 
 
+AI Agent – Root Cause Analysis for Data Quality (DQ) Exception
+Objective
+
+Build an AI agent that performs an automated Root Cause Analysis (RCA) for a given Rule ID. The agent should analyze historical execution data, validate against the source data, identify patterns, and generate a polished investigation report.
+
+Input
+Rule ID
+User Prompt
+
+"Give me the root cause analysis for the exception on Rule ID <Rule_ID>."
+
+Functional Requirements
+1. Historical Change Analysis
+
+The agent should:
+
+Analyze historical data for the specified Rule ID.
+Compare the current failed record with previous successful records.
+Identify:
+What values existed before.
+What changed that caused the exception.
+The point in time when the change first occurred.
+2. Pattern Recognition
+
+The agent should analyze historical executions and identify patterns such as:
+
+Similar records that passed the rule.
+Similar records that failed the rule.
+Common attributes or characteristics among successful records.
+Common attributes or characteristics among failed records.
+
+The analysis should help explain why the current record failed while similar records passed.
+
+3. Source Data Validation
+
+For exceptions such as:
+
+"Attribute cannot be null"
+
+the agent should:
+
+Locate the corresponding source record.
+Validate whether the attribute is actually NULL in the source.
+Confirm whether the issue originated from:
+the upstream source file,
+data ingestion,
+or downstream processing.
+4. Source File Verification
+
+Since the upstream system provides data as files:
+
+Create a mock source file (stored in a UNIX location accessible to the agent) that mirrors the original source data.
+The agent should:
+Open the source file.
+Locate the exact transaction/record.
+Validate that the value in the file matches the database record.
+Mention the file location used for validation.
+5. 30-Day Trend Analysis
+
+The agent should analyze approximately the last 30 days of historical data and determine:
+
+When the issue first started occurring.
+Whether the NULL value (or other issue) appeared after a specific date.
+Whether a recent data change introduced the problem.
+Trends in failures over time.
+Testing Requirements
+Use the historical Oracle table containing all records for testing.
+Use the mock source file to validate file-based scenarios.
+Verify that all three major capabilities work together:
+Historical analysis
+Pattern recognition
+Source validation
+Output Requirements
+
+The agent should generate a polished, business-friendly investigation report (or email) that includes:
+
+Executive Summary
+Rule ID
+Exception encountered
+Root cause identified
+Historical Analysis
+Previous value(s)
+Current value(s)
+What changed
+When the change first occurred
+Pattern Analysis
+Examples of successful records
+Examples of failed records
+Common characteristics observed
+Identified failure patterns
+Source Validation
+Source file examined
+File location
+Record validated
+Whether the source contains the same issue
+30-Day Observation
+Trend of failures
+Date when the issue first appeared
+Whether it is due to a recent change
+Conclusion
+
+A clear, actionable conclusion summarizing:
+
+Root cause
+Supporting evidence
+Whether the issue originated upstream or downstream
+Recommended next steps
+Expected Deliverable
+
+The final output should resemble a professional investigation report or email that allows stakeholders to quickly understand:
+
+What failed
+Why it failed
+When it started
+Historical evidence
+Pattern analysis
+Source validation results
+Final root cause and recommended action
+
+The report should be self-explanatory so that someone reviewing it can understand the complete investigation without needing additional analysis.
