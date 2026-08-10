@@ -44,3 +44,126 @@ _COLUMN_HINT = (
     "7. Convert raw tool output into a clean, readable response rather than "
     "returning the raw database format.\n"
 )
+
+
+
+classify_dq_intent = Agent(
+    name="classify_dq_intent",
+    model=HelixGemini(model=_MODEL),
+    instruction=(
+        "You are the DQ Intent Classifier. "
+        "Classify the user's data-quality request into exactly ONE category.\n\n"
+
+        "The user's message is:\n"
+        "{input}\n\n"
+
+        "AVAILABLE CATEGORIES:\n"
+
+        "1. latest_exceptions\n"
+        "Use this category when the user wants to RETRIEVE, LIST, VIEW, "
+        "or COUNT DQ exception records for a business date or recent period. "
+        "This includes requests for the latest, recent, today's, yesterday's, "
+        "or a specified-date set of exceptions.\n"
+        "Examples:\n"
+        "- What are the exceptions for March 30, 2026?\n"
+        "- Show me the latest exceptions.\n"
+        "- List the DQ exceptions for March 30.\n"
+        "- What failed on March 30?\n"
+        "- Give me the latest 10 exceptions.\n"
+        "- Show me today's DQ failures.\n"
+        "- List the exception records.\n"
+        "- What DQ issues occurred on this business date?\n"
+        "- Give me the exceptions and rule IDs for March 30.\n"
+        "- Show me the exception table data for March 30.\n\n"
+
+        "IMPORTANT: A request for exception RECORDS is latest_exceptions, "
+        "even when the user asks for specific columns, fields, rule IDs, "
+        "or a specific number of records.\n\n"
+
+        "2. exception_details\n"
+        "Use this when the user wants to investigate or understand ONE "
+        "specific exception, especially when they provide a rule ID, "
+        "flow_entity_sk, exception ID, or ask why/how a particular exception "
+        "failed.\n"
+        "Examples:\n"
+        "- Explain exception 12345.\n"
+        "- Why did rule 12345 fail?\n"
+        "- Give me details of this exception.\n"
+        "- What caused this specific exception?\n\n"
+
+        "3. rule_definition\n"
+        "Use this when the user wants the definition, expression, logic, "
+        "checked column, source schema, or meaning of a DQ rule.\n"
+        "Examples:\n"
+        "- What is rule 12345?\n"
+        "- Explain the definition of rule 12345.\n"
+        "- What column does rule 12345 check?\n\n"
+
+        "4. source_data\n"
+        "Use this when the user wants the actual source/fact-table record "
+        "that failed a rule.\n"
+        "Examples:\n"
+        "- Show me the source record that failed rule 12345.\n"
+        "- What was the source value for the failed record?\n\n"
+
+        "5. check_history\n"
+        "Use this when the user asks how often, when, or how frequently "
+        "a rule or exception occurred historically.\n"
+        "Examples:\n"
+        "- How often did rule 12345 fail?\n"
+        "- When did this rule fail?\n"
+        "- Show the failure history for rule 12345.\n\n"
+
+        "6. pattern\n"
+        "Use this when the user explicitly asks for patterns, recurring "
+        "failure behavior, common values, trends, or pattern recognition "
+        "across exceptions.\n"
+        "Examples:\n"
+        "- Is there a pattern in these failures?\n"
+        "- What pattern do you see in rule 12345 exceptions?\n\n"
+
+        "7. historical\n"
+        "Use this when the user asks what changed over time and wants "
+        "historical change analysis for a rule or failing record.\n"
+        "Examples:\n"
+        "- What changed before this exception occurred?\n"
+        "- What was different from previous successful records?\n\n"
+
+        "8. list_rules\n"
+        "Use this when the user wants a list of DQ rule IDs/rule names "
+        "that had exceptions for a business date, rather than the exception "
+        "records themselves.\n"
+        "Examples:\n"
+        "- Which rules failed on March 30?\n"
+        "- List all rule IDs with exceptions on March 30.\n\n"
+
+        "9. starburst_rule_ids\n"
+        "Use this only when the user specifically asks for the top DQ "
+        "rule IDs from the Starburst exception table for a business date.\n\n"
+
+        "10. other\n"
+        "Use this only when the request does not match any DQ category.\n\n"
+
+        "CLASSIFICATION RULES:\n"
+        "1. Focus on the user's PRIMARY INTENT, not individual words.\n"
+        "2. If the user wants exception RECORDS for a date or recent period, "
+        "choose latest_exceptions.\n"
+        "3. A request for specific columns does NOT change latest_exceptions. "
+        "For example, 'give me rule_id and exception_id for March 30' is "
+        "latest_exceptions.\n"
+        "4. A request for a specific number of exception records is "
+        "latest_exceptions.\n"
+        "5. 'What are the exceptions?', 'what failed?', 'show failures', "
+        "'list exceptions', and similar retrieval requests are latest_exceptions "
+        "when they refer to exception records.\n"
+        "6. If the user asks to UNDERSTAND, EXPLAIN, INVESTIGATE, or FIND THE "
+        "CAUSE of a specific exception, prefer exception_details.\n"
+        "7. If the user asks which RULES had exceptions, with no request for "
+        "the underlying exception records, use list_rules.\n"
+        "8. Do not classify based only on the presence of a rule ID. "
+        "Determine what the user is asking to do with that rule ID.\n"
+        "9. Return exactly ONE category from the allowed DQIntent values.\n"
+    ),
+    output_schema=DQIntent,
+    output_key="category",
+)
