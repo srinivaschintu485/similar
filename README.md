@@ -24,146 +24,252 @@ Welcome to the cutting-edge PySpark Multi-Dataset Discrepancy Categorization too
 **Extra Space Issues:** Cleansing data of superfluous spacing for precision.
 
 **Special Character Differences:** Unifying textual data that includes diverse character sets.
-BSK? This particular develop from the fact table that is mattered to no ID idea, and influented ESK. So using that, you can refer the factory. So you need that that's right? Right, right. as the, which tape, uh, which table name I have? It has... The information, the meta did, uh, details would be there at this table. So you need to check it on another table, uh, one who's meta data. So, like, you could... So exception, of course, in that table. take. Yeah. And with you, I can access the same information, right? Yeah, yeah, it's you where you can do the same. Okay. We need to take, uh, we need to check the query, like, so this particular column from the fan table that is mapped from entity ID and and flu entity ESK. So using that, you can prefer the fat table. So you need that preerence, right? So check it out. Yeah, this meter does it as the, which tip, which table name, man, call it? It has, let's see, that. So really, I have that the information, the metadata, the details would be there, it's stable. You need to check in another table, or most metadata. Okay. This is the eager kind of city. Yeah And with you I can access the same information right? Yeah, yeah, the tube, you can. I will get to stop. But the schema of fact table, so that to be there, then another date, which is a detailed, which has a detailed information about the rules. What does the second table has? What does the third table has? The second table, it has a table name, and... Okay. So, it has more cable information, that this is what you are taking provides. So these two are like this. DQ won't stay. And then the 3rd cable, the ski morning, the schema, the sad day, the right? So, So, you have some pieces that check in, may impact this atlete very, for this, so, tidy. So this is the take you call them, the physical attribute. English, the restaurant, and EQ data entity. So this is a fact. Okay. Okay. schemo it's factable that be there the So, here, you can see... So, the VQ room lady, too, cute lady. the blood is captured. Here we have fluidity ID and fluid DSK. Okay. very, like, so, this particular, or call up, from the fact table, it is mandated from entity, ID, and, and fluent, ESK. So, using that, you can refer the fact table. So you need that preference, right? Right, right. So... Yeah, this matter does it, as the, which day, or which, uh, table name. It has... So, this will not have that information. The metadata details would be there this table. We need to check in another table, uh, one host metadata. Okay. This is a equal bread and also... So, exception, of course, in that table. Yeah And did you access the same information, right? Yeah, yeah, it's you, you can go the same.. And the, uh, the room is running right. So it just will have that same vision. But the schema of a fat table, so that will be there, and then another table, which is a detailed, which has a detailed information about the rooms. Okay. What does the 2nd table have? What does the 3rd table have? The 2nd table, it has a table name, and the physical attribute. Okay. So it has more cripple information, but this is what you are looking for rights with these 2 locations, are they in this? And if you don't stay. And then the 3rd table the in morning. Schema, what is the fact table, right? So, see, yeah, so this is the 2nd. I ran the 2nd query for this new ID. So this is the take you column, the physical attribute. And if you data entity, So this is a fact table. Okay. Okay. And the scheme of this fact table will be there. No, no. Yeah, yes, I need another one also, like, in the, uh, that source that, uh, there that the record is that have corrected, that the issue has corrected, that, uh, particular table or the idea. So in the 2nd table we are fighting that table lay, physical activity, right? So I need another, so I need to access that table name as well as stone. The, you need to, uh, run a very contact table. that's what you're saying. Right right. I mean, that's active, affecting. Yeah, affecting. I need to have John. So, in one way, I can join that Ford Island, uh, the 7th flight. You don't need to join this and this, right, the fact table. So do you have the flow entity, flow entity information in the exception date? So that is what you really join with the facting. Can I show 1st chance of what I need to join? Okay. Yes. So for them, we don't have any information like, which column of the fact table is considered as a flu entity ID, or the full entity escape. So that data we don't. So you even check the rule explanation. Okay. So the rule expression, so this query hit, I ran this DQ most detailed table and this is an output for that. So here, as I said, we can find the ski money. Speak to my name. It's there and the data source name cola. It's the call of care and data source. But it is there in this... They will actually have to put their time to actually go... Colonic right now. Yeah this is a ski. Okay, so this is how you will be able to access that fact tape. It's just a acting. This is how you can access the pacting. Okay. But, uh, you won't know, which problem from this fact table is considered as a fluent TI. So that you can do, it's information from the rule expression. So, I... Only in that you pay. So, this is a new ID. So, these information are from, so this is the wrong expression, the sequel. Of the... So, you can see the fact it will be. So, it will be there in this food expression. And that'll be particular, um, No NDTID, um, we need to check, like, which column from this, uh, route expression is mapped into the, through NDTID. So, you are saying that... So, most unique idea is not as an fluent DID, but, uh, we want a unique key, right, from the fact that, so, that is, that might be fluent, ESK. Yeah, so arrangement is. Arrangement is K. Will it be the unique integer column from this? In fact, it, so morning, we, like, exception from this table. How did this take you? Can you do map the fluent DSK? The arrangement is... DSK. And they will have it here. And date. Uh, so the FAT table, uh, date call ups, all those information we don't have it anyway. You need to check the table and get that, get those information. DW Western State. One more exception date. Correct. Siri, I'm gonna make you host and drop up, okay? Yeah. So, multiple exception tates. So, technology, let's do birthday. I'll go with the 1st floor. And then, if that is done, I'll get back to you, then they will take with the list of the things as, so let's. Yeah. Yeah. Can I go to the 1st few ones? Yeah good So the only expression is too big in this exception, right? So this is somewhat a tedious one. And if you want a simpler book expression, so they used to might... Look, it gets dark, simpler, and then from there, we can keep on wending. I need to check that they will leave once, because on its data, then, upon my data, it's like, so. Something in the table name. So, shall I go with the 1st option in the 1st room? Yeah, so you can go ahead with the 1st one. Meanwhile, I'll check the table name and I'll contact you. Yeah, can I give you the 1st floor? I, it's something just for to recorrect with you or three. So in the 1st line, we're really getting the extension from the area. Yeah, in the 1st line, we are getting the exception table, in which we are getting the rule ID, taking the rule ID in the 4th table, 4th row, we are getting the table name and physical attribute. So, uh, 58, we are getting schema, I think schema is not required. I don't think it could be useful. But the right and the 1st line, yeah, join a bit, are expected to get that. John, part of a bit, not sure, and uh, we know that we need to go to the SQ and we need to find the, uh, that uh, mapping, joining key something. So that part, if you could give me clarity, that is what I got stuff. Okay, sorry. So, uh, different things are, uh, guiding the roots. So, the no have some standard proposals, like, which column is used? They accept fluent DID or uh, for integers? So some rules, they are using it, flu entity, I. Okay. And someone those has fluent ES there are unique hiding. Okay Okay. So, uh, one only thing, how we can, uh, figure out this is by moving to the, uh, new expression. So you need to check them in your expiration, which call of the sleep, so that's about, they will come to them. Which column assumes as a foreign engineering and prevented the escape. Indian boat talking about arrangement is KR. So, uh, so for each table, we have some meat, identify, right? So for a fab table, arrangement. So this particular fact table, arrangement, is the unique negative here. So if you wanted to say, uh, represent or if you wanted to pick one particular uh, entry from this fact table, that will be denoted by this arrangement escape. So there are multiple factables, and for each fact table, the polar may be different. And so the exception, EOE, or any other exception table, they have a 2 identity phase, low entity ID, or flow into EST. Okay, so, uh, the flow entity, ESK, can hold the unique identifier of the fat tape, but that it's not. Sometimes they are in, in the ESD and some grounds, they are using connected ID. So say, for example, In this rule, 200, right? So we saw the load expibion. What they devoted, right? So only after conforming that, which column is used, I can say that fluentity ESK is used in this. Okay. No entity is gay. they are the arrangement testing. Okay, so arrangement is then identified. Anything with underscore ESK, right? So that is a celebrity unique identifier. So for flowing the DIT, they are using source unique. So this is not an indicated fear. So, this dummy, I mean, maybe, maybe we know that, uh, You are experienced when you were able to say that, which is unique, differ, which is not. Yeah, so you can say, yes, okay. school. Okay. So say, for example, I'll take some other example, some other booked ID. So in that, a flow NTDID might have the SKNP. So it is based on the rule and the team code. They don't use the flow entity, ideas, identity fair, and some people have used the flow entity, ESK, as they unique identifier. So from this, uh, how to join the exception and the fact table is, this is the unique identifier, and this, Henry, you can find it at the fact table. The value from your entity, ESK, you can map it with a sack table unicated side. So that column is arrangement. So that's solid again. Okay. The possibilities are too only, right? either could be fluent or fl fluity escape or goes are possible. Okay. Yes. And underneath, if please under scale, underscore is scale, only that attribute, multiculture, essay, and matching, or, really equal, right? Yeah, anything. So, for entity, ID or? So, we did ESK. or a terfluidity, SK, which is ended with underscore SK, that will be unique identifier. Yes, yes, yeah, saying about this content, right? Yeah. And that's cool. Yeah, mostly this is the case. Okay. And one last question. From where should I get that square? How should I pay in AI? And this rules table will have that information. So I'll give you the column name as well. Okay. So for table name, the column is, DQ data. So this is the colony. And for physical attribute, the cue column is the colony. Rule expression. The rule expression is the sequel. Yeah, I think that they stand for scheme money, the data source net. So, this is the, all the name in the state. Either this or this, for the DID or SK, can be a unique identity. Also facted. Got it. Please share this information. Yeah, sure.
 
 
 
-_COLUMN_HINT = (
-    "The tool result contains the actual database column names.\n"
-    "Treat the user's request as the source of truth for deciding which columns "
-    "to display.\n\n"
+# Generic Banking Data Quality Validation Prompt
 
-    "COLUMN SELECTION RULES:\n"
-    "1. If the user explicitly requests specific columns, display ONLY those columns.\n"
-    "2. If the user uses 'only' or 'just', treat this as a strict requirement.\n"
-    "3. If the user explicitly excludes information, never display that information.\n"
-    "4. If the user does not specify columns, select only the 3-6 most relevant "
-    "columns needed to answer the question.\n"
-    "5. Never display every column simply because the tool returned every column.\n"
-    "6. Never invent columns or values.\n"
-    "7. Convert raw tool output into a clean, readable response rather than "
-    "returning the raw database format.\n"
-)
+You are an expert Banking Data Quality and Data Validation Analyst.
 
+I will provide an Excel or CSV file containing banking-related data. Analyze the file systematically and identify potential data-quality, consistency, formatting, and business-rule issues.
 
+Your objective is to identify issues that a banking organization would reasonably want to detect during data-quality validation. Do not assume that a specific column such as "Amount", "Balance", or "Percentage" is the only important field. The validation must be as generic and attribute-independent as possible.
 
-classify_dq_intent = Agent(
-    name="classify_dq_intent",
-    model=HelixGemini(model=_MODEL),
-    instruction=(
-        "You are the DQ Intent Classifier. "
-        "Classify the user's data-quality request into exactly ONE category.\n\n"
+## 1. Understand the File
 
-        "The user's message is:\n"
-        "{input}\n\n"
+First inspect:
 
-        "AVAILABLE CATEGORIES:\n"
+* Sheet names
+* Column names
+* Number of rows and columns
+* Data types
+* Unique values
+* Null/blank patterns
+* Duplicate patterns
+* Repeated groups or corresponding records
+* Relationships between columns
+* Relationships between rows
+* Potential business keys
+* Potential identifiers
+* Potential amount, currency, date, percentage, status, account, transaction, and reference fields
 
-        "1. latest_exceptions\n"
-        "Use this category when the user wants to RETRIEVE, LIST, VIEW, "
-        "or COUNT DQ exception records for a business date or recent period. "
-        "This includes requests for the latest, recent, today's, yesterday's, "
-        "or a specified-date set of exceptions.\n"
-        "Examples:\n"
-        "- What are the exceptions for March 30, 2026?\n"
-        "- Show me the latest exceptions.\n"
-        "- List the DQ exceptions for March 30.\n"
-        "- What failed on March 30?\n"
-        "- Give me the latest 10 exceptions.\n"
-        "- Show me today's DQ failures.\n"
-        "- List the exception records.\n"
-        "- What DQ issues occurred on this business date?\n"
-        "- Give me the exceptions and rule IDs for March 30.\n"
-        "- Show me the exception table data for March 30.\n\n"
+Do not modify the original data.
 
-        "IMPORTANT: A request for exception RECORDS is latest_exceptions, "
-        "even when the user asks for specific columns, fields, rule IDs, "
-        "or a specific number of records.\n\n"
+## 2. Perform Data Quality Checks
 
-        "2. exception_details\n"
-        "Use this when the user wants to investigate or understand ONE "
-        "specific exception, especially when they provide a rule ID, "
-        "flow_entity_sk, exception ID, or ask why/how a particular exception "
-        "failed.\n"
-        "Examples:\n"
-        "- Explain exception 12345.\n"
-        "- Why did rule 12345 fail?\n"
-        "- Give me details of this exception.\n"
-        "- What caused this specific exception?\n\n"
+Check the data for the following categories.
 
-        "3. rule_definition\n"
-        "Use this when the user wants the definition, expression, logic, "
-        "checked column, source schema, or meaning of a DQ rule.\n"
-        "Examples:\n"
-        "- What is rule 12345?\n"
-        "- Explain the definition of rule 12345.\n"
-        "- What column does rule 12345 check?\n\n"
+### A. Missing / Blank Values
 
-        "4. source_data\n"
-        "Use this when the user wants the actual source/fact-table record "
-        "that failed a rule.\n"
-        "Examples:\n"
-        "- Show me the source record that failed rule 12345.\n"
-        "- What was the source value for the failed record?\n\n"
+Identify:
 
-        "5. check_history\n"
-        "Use this when the user asks how often, when, or how frequently "
-        "a rule or exception occurred historically.\n"
-        "Examples:\n"
-        "- How often did rule 12345 fail?\n"
-        "- When did this rule fail?\n"
-        "- Show the failure history for rule 12345.\n\n"
+* Blank/null values
+* Unexpectedly missing values
+* Columns with unusually high null percentages
+* Important attributes that are partially populated
 
-        "6. pattern\n"
-        "Use this when the user explicitly asks for patterns, recurring "
-        "failure behavior, common values, trends, or pattern recognition "
-        "across exceptions.\n"
-        "Examples:\n"
-        "- Is there a pattern in these failures?\n"
-        "- What pattern do you see in rule 12345 exceptions?\n\n"
+Do not automatically classify every blank as an error. Determine whether the blank appears anomalous based on the surrounding data.
 
-        "7. historical\n"
-        "Use this when the user asks what changed over time and wants "
-        "historical change analysis for a rule or failing record.\n"
-        "Examples:\n"
-        "- What changed before this exception occurred?\n"
-        "- What was different from previous successful records?\n\n"
+### B. Partial Population Across Corresponding Records
 
-        "8. list_rules\n"
-        "Use this when the user wants a list of DQ rule IDs/rule names "
-        "that had exceptions for a business date, rather than the exception "
-        "records themselves.\n"
-        "Examples:\n"
-        "- Which rules failed on March 30?\n"
-        "- List all rule IDs with exceptions on March 30.\n\n"
+For each attribute, identify cases where:
 
-        "9. starburst_rule_ids\n"
-        "Use this only when the user specifically asks for the top DQ "
-        "rule IDs from the Starburst exception table for a business date.\n\n"
+* The attribute is populated in one corresponding row/type/record
+* But the same attribute is blank/null in another corresponding row/type/record
+* The records belong to the same logical group
 
-        "10. other\n"
-        "Use this only when the request does not match any DQ category.\n\n"
+Example:
 
-        "CLASSIFICATION RULES:\n"
-        "1. Focus on the user's PRIMARY INTENT, not individual words.\n"
-        "2. If the user wants exception RECORDS for a date or recent period, "
-        "choose latest_exceptions.\n"
-        "3. A request for specific columns does NOT change latest_exceptions. "
-        "For example, 'give me rule_id and exception_id for March 30' is "
-        "latest_exceptions.\n"
-        "4. A request for a specific number of exception records is "
-        "latest_exceptions.\n"
-        "5. 'What are the exceptions?', 'what failed?', 'show failures', "
-        "'list exceptions', and similar retrieval requests are latest_exceptions "
-        "when they refer to exception records.\n"
-        "6. If the user asks to UNDERSTAND, EXPLAIN, INVESTIGATE, or FIND THE "
-        "CAUSE of a specific exception, prefer exception_details.\n"
-        "7. If the user asks which RULES had exceptions, with no request for "
-        "the underlying exception records, use list_rules.\n"
-        "8. Do not classify based only on the presence of a rule ID. "
-        "Determine what the user is asking to do with that rule ID.\n"
-        "9. Return exactly ONE category from the allowed DQIntent values.\n"
-    ),
-    output_schema=DQIntent,
-    output_key="category",
-)
+Record A → Customer Type = ABC, Amount = 100
+Record B → Customer Type = ABC, Amount = blank
+
+Highlight this as a "Partial Population / Cross-Record Inconsistency" issue.
+
+If all corresponding records are populated, do not flag it.
+
+If all corresponding records are blank, do not flag it under this rule.
+
+This rule must work generically for ANY attribute. Do not limit it to Amount, Balance, Percentage, etc.
+
+### C. Duplicate Data
+
+Identify:
+
+* Exact duplicate rows
+* Duplicate business keys
+* Duplicate transaction/reference identifiers
+* Unexpected repeated records
+
+Distinguish between legitimate repeated records and suspicious duplicates when possible.
+
+### D. Data Type and Format Validation
+
+Identify:
+
+* Numeric fields containing unexpected text
+* Date fields with invalid formats
+* Inconsistent date formats
+* Unexpected characters
+* Leading/trailing spaces
+* Hidden/special characters
+* Inconsistent capitalization
+* Unexpected symbols
+
+### E. Numeric and Amount Validation
+
+For numeric/financial fields check:
+
+* Invalid numeric values
+* Unexpected negative values
+* Unexpected zero values
+* Excessive decimal precision
+* Inconsistent decimal precision
+* Scientific notation such as E-10 when inappropriate
+* Unexpected rounding
+* Values outside the apparent business range
+* Extremely small or extremely large values
+* Inconsistent numeric formatting
+
+Do not automatically consider a negative number invalid. Determine whether negative values appear legitimate based on the attribute and surrounding data.
+
+### F. Currency Validation
+
+For currency-related attributes check:
+
+* Missing currency
+* Invalid currency codes
+* Inconsistent currency representation
+* Currency symbols mixed with numeric values
+* Inconsistent currency across corresponding records
+* Currency/amount mismatches
+
+Recognize that representations such as `$24.36`, `24.36 USD`, and `USD 24.36` may represent the same underlying value. Distinguish formatting differences from actual data-quality problems.
+
+### G. Decimal Precision
+
+Identify attributes where values contain excessive decimal places.
+
+Report:
+
+* Attribute name
+* Actual decimal precision
+* Typical precision observed
+* Maximum precision observed
+* Potentially problematic values
+
+Do not assume that 2 decimal places is always correct. Determine the expected precision from the data pattern where possible, and explicitly mark the result as "Potential Issue" when the expected precision cannot be established.
+
+### H. Cross-Row / Cross-Attribute Consistency
+
+Look for logical inconsistencies between related records or attributes.
+
+Examples:
+
+* Same entity has conflicting values
+* Related records have inconsistent attributes
+* One record is populated while its corresponding record is blank
+* Related status/value combinations don't make sense
+* Related identifiers do not match
+
+### I. Pattern and Structural Validation
+
+Detect recurring patterns such as:
+
+* Account/reference identifiers
+* Transaction identifiers
+* Customer identifiers
+* Date patterns
+* Code formats
+* Status values
+* Currency codes
+* Percentage formats
+* Numeric formats
+
+Identify values that deviate from the dominant pattern.
+
+### J. Outlier / Anomaly Detection
+
+Identify values that are significantly different from the normal population.
+
+Consider:
+
+* Statistical outliers
+* Unusually high/low amounts
+* Unexpected frequency
+* Unusual changes within a group
+* Unexpected changes across periods
+
+Do not automatically classify an outlier as an error. Label it as an anomaly requiring review when business validity cannot be established.
+
+## 3. Color Coding
+
+Highlight the ORIGINAL data cells containing issues.
+
+Use different colors for different issue categories:
+
+* RED = Critical / invalid data
+* ORANGE = Cross-record or partial-population inconsistency
+* YELLOW = Formatting, numeric, amount, precision, or currency issue
+* PURPLE = Duplicate or unexpected repetition
+* BLUE = Pattern, format, or standardization issue
+* BROWN = Outlier/anomaly requiring review
+* GREEN = Valid / passed validation, only if useful
+
+Do not overwrite the original values.
+
+If a row contains multiple issues, highlight the specific cells responsible for each issue rather than coloring the entire row whenever possible.
+
+If one cell has multiple issue types, use the highest-severity color and document the additional issue types in the findings report.
+
+## 4. Create a Validation Summary
+
+Create a separate "DQ_Summary" sheet containing:
+
+| Issue ID | Sheet | Row | Column | Attribute | Issue Category | Issue Description | Current Value | Expected/Observed Pattern | Severity | Recommendation |
+| -------- | ----- | --- | ------ | --------- | -------------- | ----------------- | ------------- | ------------------------- | -------- | -------------- |
+
+Every highlighted issue must have a corresponding entry in this summary.
+
+## 5. Create an Issue Statistics Section
+
+Provide:
+
+* Total rows
+* Total columns
+* Total issues
+* Issues by category
+* Issues by severity
+* Columns with the highest number of issues
+* Null percentage by important attributes
+* Duplicate count
+* Number of partial-population inconsistencies
+* Number of formatting issues
+* Number of numeric/amount issues
+* Number of anomalies
+
+## 6. Important Reasoning Rules
+
+Do not invent business rules that cannot reasonably be inferred from the data.
+
+For every potential issue:
+
+1. Identify the pattern.
+2. Explain why it may be a data-quality problem.
+3. Compare it with related records where possible.
+4. Distinguish a true data problem from a presentation/formatting difference.
+5. If the expected business rule cannot be determined, classify it as "Potential Issue – Business Confirmation Required."
+
+Be conservative: do not flag legitimate banking data simply because it looks unusual.
+
+The goal is to produce a practical banking Data Quality assessment that a data analyst can review and use for follow-up with the business/data owners.
+
+## 7. Final Output
+
+Return:
+
+1. The validated Excel file with cell-level color highlighting.
+2. A DQ_Summary sheet containing every identified issue.
+3. A concise overall assessment.
+4. The top 10 most important issues requiring business attention.
+5. A list of assumptions where the expected business rule could not be determined.
+
