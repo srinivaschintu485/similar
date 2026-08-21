@@ -145,131 +145,274 @@ For currency-related attributes check:
 
 Recognize that representations such as `$24.36`, `24.36 USD`, and `USD 24.36` may represent the same underlying value. Distinguish formatting differences from actual data-quality problems.
 
-### G. Decimal Precision
+1. TURN CLAUDE INTO A FULL STARTUP ENGINEERING TEAM
 
-Identify attributes where values contain excessive decimal places.
+Prompt:
 
-Report:
+“Act like a senior full-stack engineer building a production-ready startup MVP from scratch.
 
-* Attribute name
-* Actual decimal precision
-* Typical precision observed
-* Maximum precision observed
-* Potentially problematic values
+First design the complete system architecture, then build the most minimal but scalable version possible.
 
-Do not assume that 2 decimal places is always correct. Determine the expected precision from the data pattern where possible, and explicitly mark the result as "Potential Issue" when the expected precision cannot be established.
+Include:
 
-### H. Cross-Row / Cross-Attribute Consistency
+* System architecture
+* File structure
+* Database schema
+* API endpoints
+* UI architecture
+* Production-ready code
 
-Look for logical inconsistencies between related records or attributes.
+Build it like a real startup that could scale to millions of users.”
 
-Examples:
+⸻
 
-* Same entity has conflicting values
-* Related records have inconsistent attributes
-* One record is populated while its corresponding record is blank
-* Related status/value combinations don't make sense
-* Related identifiers do not match
+2. MAKE CLAUDE AUDIT YOUR ENTIRE CODEBASE LIKE A SENIOR ENGINEER
 
-### I. Pattern and Structural Validation
+Prompt:
 
-Detect recurring patterns such as:
+“Act like a senior engineer who just joined a massive unfamiliar codebase. First reverse-engineer the architecture and understand the complete data flow.
 
-* Account/reference identifiers
-* Transaction identifiers
-* Customer identifiers
-* Date patterns
-* Code formats
-* Status values
-* Currency codes
-* Percentage formats
-* Numeric formats
+Then identify:
 
-Identify values that deviate from the dominant pattern.
+* Bad architecture decisions
+* Duplicate logic
+* Performance bottlenecks
+* Scalability risks
+* Maintainability issues
 
-### J. Outlier / Anomaly Detection
+Finally provide:
 
-Identify values that are significantly different from the normal population.
+* A clean architecture breakdown
+* Critical problem areas
+* Refactoring strategies
+* Improved production-grade code
 
-Consider:
+Do not change functionality.
 
-* Statistical outliers
-* Unusually high/low amounts
-* Unexpected frequency
-* Unusual changes within a group
-* Unexpected changes across periods
+Only upgrade the code quality, scalability, and maintainability.”
 
-Do not automatically classify an outlier as an error. Label it as an anomaly requiring review when business validity cannot be established.
+⸻
 
-## 3. Color Coding
+3. TURN CLAUDE INTO A PRODUCTION-LEVEL DEBUGGING MONSTER
 
-Highlight the ORIGINAL data cells containing issues.
+Prompt:
 
-Use different colors for different issue categories:
+“Act like a senior debugging engineer investigating a live production issue. Analyze the codebase step by step like you’re handling a critical outage at a fast-growing startup.
 
-* RED = Critical / invalid data
-* ORANGE = Cross-record or partial-population inconsistency
-* YELLOW = Formatting, numeric, amount, precision, or currency issue
-* PURPLE = Duplicate or unexpected repetition
-* BLUE = Pattern, format, or standardization issue
-* BROWN = Outlier/anomaly requiring review
-* GREEN = Valid / passed validation, only if useful
+Your job:
 
-Do not overwrite the original values.
+* Understand what the code actually does
+* Trace the real root cause
+* Explain why the failure happens
+* Identify hidden edge cases
+* Propose the most robust fix possible
 
-If a row contains multiple issues, highlight the specific cells responsible for each issue rather than coloring the entire row whenever possible.
+Finally provide:
 
-If one cell has multiple issue types, use the highest-severity color and document the additional issue types in the findings report.
+* Code functionality breakdown
+* Root cause analysis
+* Failure explanation
+* Edge case analysis
+* Fixed production-ready code
 
-## 4. Create a Validation Summary
+Do not guess.
+Think deeply before making changes.”
 
-Create a separate "DQ_Summary" sheet containing:
+⸻
 
-| Issue ID | Sheet | Row | Column | Attribute | Issue Category | Issue Description | Current Value | Expected/Observed Pattern | Severity | Recommendation |
-| -------- | ----- | --- | ------ | --------- | -------------- | ----------------- | ------------- | ------------------------- | -------- | -------------- |
+4. TURN CLAUDE INTO A PERFORMANCE OPTIMIZATION ENGINEER
 
-Every highlighted issue must have a corresponding entry in this summary.
+Prompt:
 
-## 5. Create an Issue Statistics Section
+“Act like a senior performance engineer optimizing a production application used by millions of users.
+
+Your goals:
+
+* Maximum speed
+* Lower memory usage
+* Better scalability
+* Faster rendering
+* Cleaner execution
+
+Carefully identify:
+
+* Performance bottlenecks
+* Inefficient logic
+* Unnecessary rendering
+* Expensive operations
+* Memory leaks
+
+Then provide:
+
+* Performance issue breakdown
+* Optimization strategies
+* Improved production-ready code
+* Scalability recommendations
+
+Optimize the code like you’re preparing it for massive traffic.”
+
+⸻
+
+5. MAKE CLAUDE REBUILD MESSY CODE INTO CLEAN SCALABLE ARCHITECTURE
+
+Prompt:
+
+“Act like a senior software architect rebuilding a messy production codebase using clean architecture principles.
+
+Your mission:
+
+* Separate concerns properly
+* Increase modularity
+* Reduce tight coupling
+* Improve scalability
+* Make the codebase easier to maintain long term
+
+Do NOT change the product behavior. Only improve the architecture and code quality.
+
+Finally provide:
+
+* New folder structure
+* Clean architecture breakdown
+* Refactored production-grade code
+* Explanation of architectural improvements
+
+Refactor it like a real senior engineer preparing the codebase to scale.”
+
+⸻
+
+6. MAKE CLAUDE ARCHITECT YOUR ENTIRE STARTUP BACKEND LIKE A SENIOR SYSTEMS ENGINEER
+
+Prompt:
+
+“Act like a senior systems architect designing infrastructure for a high-growth startup.
+
+First design a scalable production-grade system architecture. Then build the minimal implementation that could realistically scale in the future.
+
+Include:
+
+* System architecture
+* Component structure
+* Data flow
+* API design
+* Database schema
+* Caching strategy
+* Production-ready implementation code
+
+Optimize for scalability, maintainability, and real-world production usage.”
+
+⸻
+
+7. TURN CLAUDE INTO A SENIOR FRONTEND ENGINEER
+
+Prompt:
+
+“Act like a senior frontend engineer building production-grade UI systems for a modern startup.
+
+Your task is to create:
+
+* Reusable UI components
+* Scalable component architecture
+* Accessible production-ready interfaces
+
+While building, carefully handle:
+
+* Loading states
+* Empty states
+* Edge cases
+* Responsive design
+* Accessibility
+* Component reusability
+* Clean developer experience
+
+Finally provide:
+
+* Component architecture
+* Props/API design
+* Production-ready implementation
+* Usage examples
+* Best practices
+
+Build it like it’s going into a real production app used by millions.”
+
+⸻
+
+8. AI TECHNICAL LEAD MODE
+
+Prompt:
+
+“Act like a senior technical lead managing a real engineering team.
+
+Before writing code:
+
+* Ask clarifying questions
+* Challenge bad decisions
+* Identify scaling risks
+* Suggest better approaches
+* Prioritize simplicity
+
+Think long-term like someone responsible for maintaining this product for 5+ years.
+
+Then provide:
+
+* Technical decisions
+* Tradeoff analysis
+* Recommended architecture
+* Implementation plan
+* Production-ready solution
+
+This makes Claude stop behaving like a code generator… and start thinking like an actual tech lead.”
+
+⸻
+
+9. PRODUCTION SECURITY AUDIT
+
+Prompt:
+
+“Act like a senior security engineer auditing a production application.
+
+Carefully inspect the system for:
+
+* Security vulnerabilities
+* Authentication flaws
+* API weaknesses
+* Injection risks
+* Sensitive data exposure
+* Infrastructure risks
+
+Then provide:
+
+* Vulnerability report
+* Severity levels
+* Attack scenarios
+* Secure implementation fixes
+* Production-grade recommendations
+
+Most people never ask Claude to think like a security engineer. That’s a huge mistake.”
+
+⸻
+
+10. SENIOR DEVOPS + DEPLOYMENT ENGINEER
+
+Prompt:
+
+“Act like a senior DevOps engineer preparing this application for real production deployment.
+
+Your job:
+
+* Design deployment architecture
+* Configure CI/CD
+* Setup monitoring/logging
+* Improve reliability
+* Reduce downtime risks
+* Optimize scaling
 
 Provide:
 
-* Total rows
-* Total columns
-* Total issues
-* Issues by category
-* Issues by severity
-* Columns with the highest number of issues
-* Null percentage by important attributes
-* Duplicate count
-* Number of partial-population inconsistencies
-* Number of formatting issues
-* Number of numeric/amount issues
-* Number of anomalies
+* Infrastructure architecture
+* Deployment workflow
+* CI/CD pipeline
+* Docker/Kubernetes setup
+* Monitoring strategy
+* Production deployment checklist
 
-## 6. Important Reasoning Rules
-
-Do not invent business rules that cannot reasonably be inferred from the data.
-
-For every potential issue:
-
-1. Identify the pattern.
-2. Explain why it may be a data-quality problem.
-3. Compare it with related records where possible.
-4. Distinguish a true data problem from a presentation/formatting difference.
-5. If the expected business rule cannot be determined, classify it as "Potential Issue – Business Confirmation Required."
-
-Be conservative: do not flag legitimate banking data simply because it looks unusual.
-
-The goal is to produce a practical banking Data Quality assessment that a data analyst can review and use for follow-up with the business/data owners.
-
-## 7. Final Output
-
-Return:
-
-1. The validated Excel file with cell-level color highlighting.
-2. A DQ_Summary sheet containing every identified issue.
-3. A concise overall assessment.
-4. The top 10 most important issues requiring business attention.
-5. A list of assumptions where the expected business rule could not be determined.
-
+This is where Claude becomes genuinely dangerous.”
