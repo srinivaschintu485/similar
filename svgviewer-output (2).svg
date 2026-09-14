@@ -1,0 +1,831 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="2560" height="1440" viewBox="0 0 2560 1440"
+     role="img" aria-labelledby="diagramTitle diagramDescription">
+
+  <title id="diagramTitle">
+    PdaSearch — End-to-End Hybrid Search Architecture
+  </title>
+
+  <desc id="diagramDescription">
+    A presentation-ready architecture diagram showing upstream attribute
+    preparation, Oracle and file-based loading, cache validation, normalized
+    document embeddings, metadata and source records, on-demand character
+    and word TF-IDF indexing, query preparation, semantic and lexical search,
+    sequential reranking or union aggregation, optional threshold filtering,
+    final result selection, enrichment and a standardized user-interface response.
+  </desc>
+
+  <defs>
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="122%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6"
+                    flood-color="#233D57" flood-opacity="0.06"/>
+    </filter>
+
+    <marker id="flowArrow" markerWidth="8" markerHeight="8"
+            refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#74869B"/>
+    </marker>
+
+    <marker id="dataArrow" markerWidth="7" markerHeight="7"
+            refX="6" refY="3.5" orient="auto">
+      <path d="M0 0 L7 3.5 L0 7 Z" fill="#879EAF"/>
+    </marker>
+
+    <style>
+      text {
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      .title {
+        font-size: 46px;
+        font-weight: 750;
+        fill: #173550;
+      }
+      .subtitle {
+        font-size: 25px;
+        fill: #62788F;
+      }
+      .zone {
+        font-size: 23px;
+        font-weight: 750;
+        letter-spacing: 0.7px;
+        fill: #325778;
+      }
+      .heading {
+        font-size: 25px;
+        font-weight: 700;
+        fill: #213E59;
+      }
+      .body {
+        font-size: 22px;
+        fill: #415A72;
+      }
+      .small {
+        font-size: 20px;
+        fill: #657C91;
+      }
+      .note {
+        font-size: 18px;
+        fill: #7A8DA0;
+      }
+      .tag {
+        font-size: 16px;
+        font-weight: 750;
+        letter-spacing: 0.65px;
+      }
+      .flow {
+        fill: none;
+        stroke: #74869B;
+        stroke-width: 2.5;
+        marker-end: url(#flowArrow);
+      }
+      .flowLine {
+        fill: none;
+        stroke: #74869B;
+        stroke-width: 2.5;
+      }
+      .dependency {
+        fill: none;
+        stroke: #879EAF;
+        stroke-width: 2;
+        stroke-dasharray: 6 5;
+        marker-end: url(#dataArrow);
+      }
+      .dependencyLabel {
+        font-size: 18px;
+        fill: #728D9F;
+      }
+    </style>
+  </defs>
+
+  <!-- ========================================================
+       BACKGROUND AND TITLE
+       ======================================================== -->
+
+  <rect width="2560" height="1440" fill="#F5F7FB"/>
+  <rect width="2560" height="7" fill="#294F74"/>
+
+  <text x="48" y="72" class="title">
+    PdaSearch | End-to-End Hybrid Search
+  </text>
+
+  <text x="48" y="116" class="subtitle">
+    Combining semantic understanding and lexical precision to discover relevant data attributes
+  </text>
+
+  <rect x="2016" y="43" width="496" height="45" rx="8"
+        fill="#E8EEF6" stroke="#D9E3EF"/>
+
+  <text x="2264" y="73" text-anchor="middle"
+        font-size="21" font-weight="650" fill="#42688C">
+    Source Data → Hybrid Retrieval → Ranked Results
+  </text>
+
+  <!-- ========================================================
+       PHASE CONTAINERS
+       ======================================================== -->
+
+  <rect x="40" y="154" width="2480" height="529" rx="16"
+        fill="#EEF3F8" stroke="#D9E3ED"/>
+
+  <text x="64" y="189" class="zone">
+    PHASE 1 — INDEX PREPARATION
+  </text>
+
+  <text x="657" y="188" class="small">
+    Upstream feature preparation and service initialization; lexical indexing is deferred until first use
+  </text>
+
+  <rect x="40" y="772" width="2480" height="594" rx="16"
+        fill="#EDF3F9" stroke="#D9E3ED"/>
+
+  <text x="64" y="808" class="zone">
+    PHASE 2 — REAL-TIME SEARCH
+  </text>
+
+  <text x="1434" y="807" class="small">
+    Standardize the query → compare attributes → rank candidates → enrich the response
+  </text>
+
+  <!-- ========================================================
+       STAGE 1: UPSTREAM ATTRIBUTE PREPARATION
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="210" width="440" height="455" rx="13"
+          fill="#FFFFFF" stroke="#D6E1EC"/>
+    <rect x="64" y="225" width="4" height="34" rx="2"
+          fill="#698BA4"/>
+
+    <text x="84" y="245" class="heading">
+      1 · Attribute Feature Preparation
+    </text>
+
+    <rect x="83" y="267" width="402" height="93" rx="8"
+          fill="#EFF4F9"/>
+
+    <text x="100" y="294" class="tag" fill="#597B97">
+      RAW DATA + ASSOCIATED METADATA
+    </text>
+    <text x="100" y="322" class="body">
+      Attribute names · descriptions
+    </text>
+    <text x="100" y="350" class="small">
+      Lineage · source context · other fields
+    </text>
+
+    <path d="M284 370 V384" class="flow"/>
+
+    <text x="84" y="412" font-size="23" font-weight="650" fill="#426585">
+      Create standardized attribute text
+    </text>
+    <text x="84" y="442" class="small">
+      Consolidate descriptive fields into one string.
+    </text>
+
+    <rect x="83" y="461" width="402" height="117" rx="8"
+          fill="#F3EEF9" stroke="#E1D7ED"/>
+
+    <text x="100" y="488" class="tag" fill="#7B5C9E">
+      UPSTREAM EMBEDDING GENERATION
+    </text>
+    <text x="100" y="519" font-size="22" fill="#695282">
+      Embedding model → document vectors
+    </text>
+    <text x="100" y="549" font-size="20" fill="#816C96">
+      Captures meaning, context and relationships.
+    </text>
+
+    <text x="84" y="610" class="note">
+      Generated before PdaSearch loads the dataset.
+    </text>
+    <text x="84" y="640" class="note">
+      The same attribute text supports lexical matching.
+    </text>
+  </g>
+
+  <!-- ========================================================
+       STAGE 2: INITIALIZATION AND DATA LOADING
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="532" y="210" width="660" height="455" rx="13"
+          fill="#FFFFFF" stroke="#D6E1EC"/>
+    <rect x="532" y="225" width="4" height="34" rx="2"
+          fill="#698BA4"/>
+
+    <text x="552" y="245" class="heading">
+      2 · Initialize the Service &amp; Load Data
+    </text>
+
+    <!-- Oracle -->
+    <rect x="551" y="267" width="622" height="78" rx="8"
+          fill="#EEF4F9" stroke="#DEE8F1"/>
+
+    <text x="568" y="292" class="tag" fill="#537894">
+      ORACLE · DIRECT MAPPING-TABLE RETRIEVAL
+    </text>
+    <text x="568" y="320" font-size="20" fill="#526D85">
+      Precomputed embeddings + metadata + source-row details
+    </text>
+
+    <!-- File/cache -->
+    <rect x="551" y="360" width="622" height="221" rx="8"
+          fill="#F8FAFC" stroke="#E1E8F0"/>
+
+    <text x="568" y="387" class="tag" fill="#537894">
+      DATAFABRIC / FILE SOURCE
+    </text>
+
+    <polygon points="612,414 664,458 612,502 560,458"
+             fill="#FFF4E3" stroke="#D6B583" stroke-width="1.5"/>
+
+    <text x="612" y="451" text-anchor="middle"
+          font-size="18" font-weight="700" fill="#96713F">
+      Valid
+    </text>
+    <text x="612" y="475" text-anchor="middle"
+          font-size="18" font-weight="700" fill="#96713F">
+      cache?
+    </text>
+
+    <!-- Cache hit -->
+    <path d="M664 458 H690 V414 H738" class="flow"/>
+    <text x="700" y="404" font-size="16" fill="#718497">Yes</text>
+
+    <rect x="740" y="393" width="415" height="48" rx="7"
+          fill="#EAF3ED" stroke="#D4E5D9"/>
+
+    <text x="756" y="424" font-size="20" fill="#487256">
+      Load cached matrix and metadata
+    </text>
+
+    <!-- Cache miss -->
+    <path d="M664 458 H690 V513 H738" class="flow"/>
+    <text x="700" y="503" font-size="16" fill="#718497">No</text>
+
+    <rect x="740" y="464" width="415" height="99" rx="7"
+          fill="#FFF5E7" stroke="#ECDCC1"/>
+
+    <text x="756" y="489" font-size="19" fill="#886946">
+      Missing / stale → extract raw embeddings
+    </text>
+    <text x="756" y="517" font-size="19" fill="#886946">
+      L2-normalize → save matrix + metadata
+    </text>
+    <text x="756" y="544" font-size="17" fill="#9A8264">
+      Reuse cached assets for faster future loading
+    </text>
+
+    <!-- Independent CSV read -->
+    <rect x="551" y="596" width="622" height="49" rx="8"
+          fill="#EAF0F6"/>
+
+    <text x="568" y="627" font-size="19" fill="#526F8A">
+      Separate CSV load → complete source rows + header + row index
+    </text>
+  </g>
+
+  <!-- ========================================================
+       STAGE 3A: SEMANTIC INDEX AND SOURCE RECORD STORE
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="1220" y="210" width="568" height="455" rx="13"
+          fill="#FFFFFF" stroke="#D6E1EC"/>
+    <rect x="1220" y="225" width="4" height="34" rx="2"
+          fill="#8B6CAE"/>
+
+    <text x="1240" y="245" class="heading">
+      3A · Semantic Index &amp; Record Store
+    </text>
+
+    <rect x="1238" y="267" width="532" height="160" rx="8"
+          fill="#F3EEF9" stroke="#E0D5ED"/>
+
+    <text x="1255" y="295" class="tag" fill="#7C5A9F">
+      PRECOMPUTED SEMANTIC EMBEDDING MATRIX
+    </text>
+
+    <text x="1255" y="328" class="body">
+      One embedding representation per source record
+    </text>
+    <text x="1255" y="358" font-size="22" fill="#695282">
+      N × D · float32 · L2-normalized vectors
+    </text>
+    <text x="1255" y="388" font-size="20" fill="#695282">
+      Unit-length vectors: dot product = cosine similarity
+    </text>
+    <text x="1255" y="414" font-size="18" fill="#856D9A">
+      Ready for meaning-based matching after data loading
+    </text>
+
+    <rect x="1238" y="445" width="532" height="200" rx="8"
+          fill="#F0F5F9" stroke="#E0E7EF"/>
+
+    <text x="1255" y="473" class="tag" fill="#567993">
+      METADATA + COMPLETE ORIGINAL RECORDS
+    </text>
+
+    <text x="1255" y="506" class="body">
+      Row index · physical column · source identifiers
+    </text>
+    <text x="1255" y="538" class="body">
+      Searchable embedding text · header information
+    </text>
+    <text x="1255" y="571" class="small">
+      Preserve all original source-row fields.
+    </text>
+    <text x="1255" y="603" class="small">
+      Retrieve complete source records using the row index.
+    </text>
+    <text x="1255" y="632" class="note">
+      Shared context for indexing and final result enrichment
+    </text>
+  </g>
+
+  <!-- ========================================================
+       STAGE 3B: ON-DEMAND LEXICAL INDEXING
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="1816" y="210" width="680" height="455" rx="13"
+          fill="#FFFFFF" stroke="#C9E1D5"/>
+    <rect x="1816" y="225" width="4" height="34" rx="2"
+          fill="#579C81"/>
+
+    <text x="1836" y="245" class="heading">
+      3B · On-Demand Lexical Indexes
+    </text>
+
+    <rect x="1834" y="267" width="644" height="46" rx="8"
+          fill="#E7F3EC" stroke="#D5E8DD"/>
+
+    <text x="2156" y="297" text-anchor="middle"
+          font-size="21" font-weight="650" fill="#437F63">
+      Build on the first lexical request · retain for reuse
+    </text>
+
+    <text x="1836" y="344" class="small">
+      Corpus: searchable embedding text from every document
+    </text>
+
+    <rect x="1834" y="363" width="314" height="157" rx="8"
+          fill="#F1F8F4" stroke="#DCEBE2"/>
+
+    <text x="1851" y="393" class="tag" fill="#3F8165">
+      CHARACTER N-GRAM TF-IDF
+    </text>
+    <text x="1851" y="425" font-size="22" fill="#4A705D">
+      3–5 character sequences
+    </text>
+    <text x="1851" y="455" font-size="19" fill="#698474">
+      Partial text and spelling patterns
+    </text>
+    <text x="1851" y="489" font-size="20" font-weight="650" fill="#437F63">
+      Fitted model + sparse matrix
+    </text>
+
+    <rect x="2164" y="363" width="314" height="157" rx="8"
+          fill="#F1F8F4" stroke="#DCEBE2"/>
+
+    <text x="2181" y="393" class="tag" fill="#3F8165">
+      WORD N-GRAM TF-IDF
+    </text>
+    <text x="2181" y="425" font-size="22" fill="#4A705D">
+      1–2 word sequences
+    </text>
+    <text x="2181" y="455" font-size="19" fill="#698474">
+      Keyword and phrase patterns
+    </text>
+    <text x="2181" y="489" font-size="20" font-weight="650" fill="#437F63">
+      Fitted model + sparse matrix
+    </text>
+
+    <text x="1836" y="553" class="small">
+      Fit both vectorizers across the full searchable corpus.
+    </text>
+    <text x="1836" y="584" class="small">
+      TF-IDF weights reflect pattern importance across documents.
+    </text>
+    <text x="1836" y="615" class="small">
+      Reuse the fitted models to transform incoming queries.
+    </text>
+    <text x="1836" y="644" class="note">
+      Built when needed—not assumed to be preloaded offline files.
+    </text>
+  </g>
+
+  <!-- PREPARATION FLOW -->
+  <path d="M504 439 H530" class="flow"/>
+  <path d="M1192 439 H1218" class="flow"/>
+  <path d="M1788 439 H1801 V340 H1814" class="dependency"/>
+
+  <!-- STORED ASSET DEPENDENCIES -->
+  <path d="M1500 665 V708 H900 V828" class="dependency"/>
+  <rect x="1037" y="696" width="310" height="24" fill="#F5F7FB"/>
+  <text x="1192" y="714" text-anchor="middle" class="dependencyLabel">
+    Stored normalized document embeddings
+  </text>
+
+  <path d="M2156 665 V742 H1190 V828" class="dependency"/>
+  <rect x="1531" y="729" width="426" height="25" fill="#F5F7FB"/>
+  <text x="1744" y="748" text-anchor="middle" class="dependencyLabel">
+    Character + word models and sparse TF-IDF matrices
+  </text>
+
+  <!-- ========================================================
+       STAGE 4: USER QUERY AND PIPELINE CONFIGURATION
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="830" width="382" height="518" rx="13"
+          fill="#FFFFFF" stroke="#D6E1EC"/>
+    <rect x="64" y="845" width="4" height="34" rx="2"
+          fill="#528CBD"/>
+
+    <text x="84" y="866" font-size="24" font-weight="700" fill="#213E59">
+      4 · Query &amp; Search Strategy
+    </text>
+
+    <rect x="83" y="890" width="344" height="104" rx="8"
+          fill="#ECF4FC" stroke="#DBE7F5"/>
+
+    <text x="100" y="918" class="tag" fill="#4B7BA5">
+      USER SEARCH REQUEST
+    </text>
+    <text x="100" y="948" class="body">
+      Name · description
+    </text>
+    <text x="100" y="979" class="body">
+      Flow · table · path
+    </text>
+
+    <path d="M255 1003 V1018" class="flow"/>
+
+    <text x="84" y="1047" font-size="22" font-weight="650" fill="#416C94">
+      Create one structured query
+    </text>
+    <text x="84" y="1077" class="small">
+      Mirror the representation used
+    </text>
+    <text x="84" y="1104" class="small">
+      by searchable attribute text.
+    </text>
+
+    <rect x="83" y="1123" width="344" height="207" rx="8"
+          fill="#F0F5FA"/>
+
+    <text x="100" y="1153" class="tag" fill="#4B7BA5">
+      CONFIGURABLE SEARCH PIPELINE
+    </text>
+
+    <text x="100" y="1187" class="small">
+      Semantic and/or lexical retrieval
+    </text>
+    <text x="100" y="1217" class="small">
+      Retrieval method execution order
+    </text>
+    <text x="100" y="1247" class="small">
+      Sequential or union strategy
+    </text>
+    <text x="100" y="1277" class="small">
+      Requested number of results
+    </text>
+
+    <text x="100" y="1310" font-size="20" font-weight="650" fill="#4B7BA5">
+      Dispatch the selected methods
+    </text>
+  </g>
+
+  <!-- ========================================================
+       STAGE 5: SEMANTIC AND LEXICAL SCORING
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="478" y="830" width="730" height="518" rx="13"
+          fill="#FFFFFF" stroke="#D6E1EC"/>
+
+    <text x="498" y="866" class="heading">
+      5 · Semantic &amp; Lexical Search
+    </text>
+    <text x="498" y="893" class="small">
+      Selected methods execute according to the configured pipeline.
+    </text>
+
+    <!-- Semantic -->
+    <rect x="496" y="909" width="694" height="190" rx="9"
+          fill="#F4EFF9" stroke="#DFD2ED"/>
+
+    <text x="514" y="942" font-size="25" font-weight="700" fill="#7957A1">
+      Semantic Similarity
+    </text>
+
+    <rect x="1028" y="922" width="142" height="28" rx="5"
+          fill="#E6DBF1"/>
+    <text x="1099" y="942" text-anchor="middle"
+          class="tag" fill="#7957A1">
+      ML-POWERED
+    </text>
+
+    <text x="514" y="977" font-size="22" fill="#66507F">
+      Query → compatible embedding model → query vector
+    </text>
+    <text x="514" y="1008" font-size="21" fill="#66507F">
+      L2-normalize the query vector to unit length.
+    </text>
+    <text x="514" y="1039" font-size="21" fill="#66507F">
+      Compute a dot product with stored normalized embeddings.
+    </text>
+
+    <line x1="514" y1="1053" x2="1172" y2="1053" stroke="#DFD3EA"/>
+
+    <text x="514" y="1081" font-size="22" font-weight="650" fill="#7957A1">
+      Output: cosine similarity measuring conceptual relevance
+    </text>
+
+    <!-- Lexical -->
+    <rect x="496" y="1114" width="694" height="216" rx="9"
+          fill="#F0F8F3" stroke="#D7E9DF"/>
+
+    <text x="514" y="1147" font-size="25" font-weight="700" fill="#448468">
+      Lexical Similarity
+    </text>
+
+    <text x="514" y="1177" font-size="20" fill="#62806F">
+      Transform the query with the same fitted TF-IDF models.
+    </text>
+
+    <rect x="514" y="1195" width="320" height="70" rx="7"
+          fill="#FFFFFF" stroke="#DCEAE2"/>
+
+    <text x="674" y="1222" text-anchor="middle"
+          font-size="20" font-weight="650" fill="#448468">
+      Character query vector
+    </text>
+    <text x="674" y="1249" text-anchor="middle"
+          font-size="18" fill="#6D8778">
+      Cosine against character document matrix
+    </text>
+
+    <rect x="850" y="1195" width="322" height="70" rx="7"
+          fill="#FFFFFF" stroke="#DCEAE2"/>
+
+    <text x="1011" y="1222" text-anchor="middle"
+          font-size="20" font-weight="650" fill="#448468">
+      Word query vector
+    </text>
+    <text x="1011" y="1249" text-anchor="middle"
+          font-size="18" fill="#6D8778">
+      Cosine against word document matrix
+    </text>
+
+    <text x="514" y="1306" font-size="22" font-weight="650" fill="#448468">
+      Output: average of character and word similarity scores
+    </text>
+  </g>
+
+  <!-- QUERY DISPATCH -->
+  <path d="M446 1094 H462" class="flowLine"/>
+  <circle cx="462" cy="1094" r="4" fill="#74869B"/>
+  <path d="M462 1094 V1004 H476" class="flow"/>
+  <path d="M462 1094 V1232 H476" class="flow"/>
+
+  <!-- SCORE HANDOFF -->
+  <path d="M1208 1004 H1224 V1094" class="flowLine"/>
+  <path d="M1208 1232 H1224 V1094" class="flowLine"/>
+  <circle cx="1224" cy="1094" r="4" fill="#74869B"/>
+  <path d="M1224 1094 H1238" class="flow"/>
+
+  <!-- ========================================================
+       STAGE 6: RETRIEVAL STRATEGIES AND FINAL RANKING
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="1240" y="830" width="700" height="518" rx="13"
+          fill="#FFFFFF" stroke="#E0CEB6"/>
+    <rect x="1240" y="845" width="4" height="34" rx="2"
+          fill="#BE9157"/>
+
+    <text x="1260" y="866" class="heading">
+      6 · Candidate Retrieval &amp; Ranking
+    </text>
+    <text x="1260" y="895" class="small">
+      Retrieve broad candidate pools before selecting the final matches.
+    </text>
+
+    <!-- Sequential -->
+    <rect x="1260" y="914" width="322" height="282" rx="9"
+          fill="#FFF7EB" stroke="#ECDDC5"/>
+
+    <text x="1421" y="941" text-anchor="middle"
+          class="tag" fill="#A4783E">
+      SEQUENTIAL · RETRIEVE THEN REFINE
+    </text>
+
+    <rect x="1274" y="957" width="294" height="49" rx="7"
+          fill="#FFFFFF" stroke="#EBDDCA"/>
+    <text x="1421" y="988" text-anchor="middle"
+          font-size="20" font-weight="600" fill="#7D6548">
+      Broad first-method retrieval
+    </text>
+
+    <path d="M1421 1012 V1025" class="flow"/>
+
+    <rect x="1274" y="1032" width="294" height="49" rx="7"
+          fill="#FFFFFF" stroke="#EBDDCA"/>
+    <text x="1421" y="1063" text-anchor="middle"
+          font-size="21" font-weight="600" fill="#7D6548">
+      Initial candidate pool
+    </text>
+
+    <path d="M1421 1087 V1100" class="flow"/>
+
+    <rect x="1274" y="1107" width="294" height="49" rx="7"
+          fill="#F2E3CE" stroke="#E5D1B2"/>
+    <text x="1421" y="1138" text-anchor="middle"
+          font-size="20" font-weight="650" fill="#976F3C">
+      Rerank only this candidate pool
+    </text>
+
+    <text x="1421" y="1182" text-anchor="middle"
+          font-size="17" fill="#967D5D">
+      Later methods refine existing matches.
+    </text>
+
+    <!-- Union -->
+    <rect x="1598" y="914" width="322" height="282" rx="9"
+          fill="#F0F5FA" stroke="#DCE5EF"/>
+
+    <text x="1759" y="941" text-anchor="middle"
+          class="tag" fill="#587995">
+      UNION · COMBINE RETRIEVAL POOLS
+    </text>
+
+    <rect x="1612" y="957" width="294" height="49" rx="7"
+          fill="#FFFFFF" stroke="#DCE5EF"/>
+    <text x="1759" y="988" text-anchor="middle"
+          font-size="20" font-weight="600" fill="#55718C">
+      Broad pool from each method
+    </text>
+
+    <path d="M1759 1012 V1025" class="flow"/>
+
+    <rect x="1612" y="1032" width="294" height="49" rx="7"
+          fill="#FFFFFF" stroke="#DCE5EF"/>
+    <text x="1759" y="1063" text-anchor="middle"
+          font-size="21" font-weight="600" fill="#55718C">
+      Merge and deduplicate candidates
+    </text>
+
+    <path d="M1759 1087 V1100" class="flow"/>
+
+    <rect x="1612" y="1107" width="294" height="49" rx="7"
+          fill="#E1EBF5" stroke="#D1DFED"/>
+    <text x="1759" y="1138" text-anchor="middle"
+          font-size="20" font-weight="650" fill="#55718C">
+      Average method scores; rank
+    </text>
+
+    <text x="1759" y="1182" text-anchor="middle"
+          font-size="17" fill="#768B9E">
+      Combines coverage across retrieval methods.
+    </text>
+
+    <!-- Merge mode paths -->
+    <path d="M1421 1196 V1213 H1590" class="flowLine"/>
+    <path d="M1759 1196 V1213 H1590" class="flowLine"/>
+    <path d="M1590 1213 V1225" class="flow"/>
+
+    <!-- Optional, not established by original documentation -->
+    <rect x="1260" y="1227" width="660" height="42" rx="7"
+          fill="#FFFAF1" stroke="#C7A36B" stroke-dasharray="6 4"/>
+
+    <text x="1590" y="1254" text-anchor="middle"
+          font-size="19" font-weight="600" fill="#97733E">
+      Optional similarity threshold · verify implementation
+    </text>
+
+    <path d="M1590 1270 V1283" class="flow"/>
+
+    <rect x="1260" y="1286" width="660" height="44" rx="8"
+          fill="#294F74"/>
+
+    <text x="1590" y="1316" text-anchor="middle"
+          font-size="23" font-weight="700" fill="#FFFFFF">
+      Final Ranking → Top N Results
+    </text>
+  </g>
+
+  <!-- RANKING TO ENRICHMENT -->
+  <path d="M1940 1094 H1970" class="flow"/>
+
+  <!-- ========================================================
+       STAGE 7: ENRICHMENT AND USER RESPONSE
+       ======================================================== -->
+
+  <g filter="url(#shadow)">
+    <rect x="1972" y="830" width="524" height="518" rx="13"
+          fill="#FFFFFF" stroke="#D6E1EC"/>
+    <rect x="1972" y="845" width="4" height="34" rx="2"
+          fill="#528CBD"/>
+
+    <text x="1992" y="866" class="heading">
+      7 · Enriched UI Response
+    </text>
+
+    <circle cx="2005" cy="908" r="13" fill="#E6EFF9"/>
+    <text x="2005" y="914" text-anchor="middle"
+          font-size="17" font-weight="700" fill="#4C7CA4">1</text>
+
+    <text x="2029" y="915" font-size="22" font-weight="650" fill="#416585">
+      Resolve matches by row index
+    </text>
+    <text x="1992" y="945" font-size="19" fill="#698095">
+      Fetch complete source records and associated metadata.
+    </text>
+
+    <rect x="1992" y="960" width="484" height="125" rx="8"
+          fill="#F0F5F9"/>
+
+    <text x="2008" y="987" class="tag" fill="#587C98">
+      PRESERVE FULL ATTRIBUTE CONTEXT
+    </text>
+    <text x="2008" y="1019" font-size="20" fill="#587188">
+      Physical column · searchable embedding text
+    </text>
+    <text x="2008" y="1050" font-size="20" fill="#587188">
+      Header · identifiers · complete source-row data
+    </text>
+    <text x="2008" y="1074" font-size="17" fill="#7A8D9E">
+      Linked back to the original dataset
+    </text>
+
+    <circle cx="2005" cy="1110" r="13" fill="#E6EFF9"/>
+    <text x="2005" y="1116" text-anchor="middle"
+          font-size="17" font-weight="700" fill="#4C7CA4">2</text>
+
+    <text x="2029" y="1117" font-size="22" font-weight="650" fill="#416585">
+      Add rank and similarity percentage
+    </text>
+    <text x="1992" y="1147" font-size="20" fill="#698095">
+      Present similarity on a user-friendly 0–100% scale.
+    </text>
+
+    <circle cx="2005" cy="1179" r="13" fill="#E6EFF9"/>
+    <text x="2005" y="1185" text-anchor="middle"
+          font-size="17" font-weight="700" fill="#4C7CA4">3</text>
+
+    <text x="2029" y="1186" font-size="22" font-weight="650" fill="#416585">
+      Standardize the result format
+    </text>
+
+    <rect x="1992" y="1210" width="484" height="120" rx="9"
+          fill="#EAF2FC" stroke="#D8E6F5"/>
+
+    <text x="2234" y="1245" text-anchor="middle"
+          font-size="25" font-weight="700" fill="#315B81">
+      Ranked Data Attributes
+    </text>
+    <text x="2234" y="1279" text-anchor="middle"
+          font-size="23" font-weight="650" fill="#315B81">
+      + Processed Query
+    </text>
+    <text x="2234" y="1310" text-anchor="middle"
+          font-size="19" fill="#6A849B">
+      Consistent, contextual records for the application / UI
+    </text>
+  </g>
+
+  <!-- ========================================================
+       FOOTER: MODEL BOUNDARY AND LEGEND
+       ======================================================== -->
+
+  <text x="48" y="1396" font-size="20" font-weight="650" fill="#70558C">
+    ML boundary:
+  </text>
+
+  <text x="180" y="1396" font-size="20" fill="#6F7F92">
+    Embeddings encode meaning. Reranking is similarity-based; no separate learned reranker is shown.
+  </text>
+
+  <text x="2512" y="1396" text-anchor="end"
+        font-size="18" fill="#7C8D9E">
+    Similarity indicates relevance—not calibrated confidence.
+  </text>
+
+  <path d="M49 1423 H84" class="flow"/>
+  <text x="98" y="1429" font-size="17" fill="#7C8D9E">
+    Processing flow
+  </text>
+
+  <path d="M277 1423 H313" class="dependency"/>
+  <text x="327" y="1429" font-size="17" fill="#7C8D9E">
+    Prepared-data dependency
+  </text>
+
+  <text x="2512" y="1429" text-anchor="end"
+        font-size="17" fill="#7C8D9E">
+    Branches show configurable retrieval methods—not guaranteed parallel execution.
+  </text>
+
+</svg>
